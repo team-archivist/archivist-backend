@@ -1,17 +1,18 @@
 package com.beside.archivist.service;
 
+import com.beside.archivist.dto.KakaoLoginDto;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
-@Slf4j
 @Service
 public interface KakaoService {
 	
-    public String getAccessTokenFromKakao(String client_id, String code) throws IOException;
+    String getAccessTokenFromKakao(String code) throws IOException;
 
-    public HashMap<String, Object> getUserInfo(String access_Token) throws IOException;
+    KakaoLoginDto getUserInfo(String accessToken) throws IOException;
 }

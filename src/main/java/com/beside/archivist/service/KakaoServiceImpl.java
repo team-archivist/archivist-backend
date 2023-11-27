@@ -1,13 +1,19 @@
 package com.beside.archivist.service;
 
+import com.beside.archivist.dto.KakaoLoginDto;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.beside.archivist.dto.KakaoLoginDto;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,97 +24,63 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-@Service
+@Service @Transactional
+@RequiredArgsConstructor
 public class KakaoServiceImpl implements KakaoService{
-	
-	private final Logger log = LoggerFactory.getLogger(getClass());
 
-    public String getAccessTokenFromKakao(String client_id, String code) throws IOException {
-        //------kakao POST 요청------
-        String reqURL = "https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id="+client_id+"&code=" + code;
-        URL url = new URL(reqURL);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("POST");
+    @Value("${kakao.client-id}")
+    private String clientId;
+
+    @Value("${kakao.access-token-uri}")
+    private String accessTokenUri;
+
+    @Value("${kakao.user-info-uri}")
+    private String userInfoUri;
+
+    private final WebClient webClient;
 
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+    /** 1. 인가 코드로 카카오 에 토큰 요청 **/
+    public String getAccessTokenFromKakao(String code) throws IOException {
+        MultiValueMap<String , String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "authorization_code");
+        params.add("client_id",clientId );
+        params.add("code", code);
 
-        String line = "";
-        String result = "";
-
-        while ((line = br.readLine()) != null) {
-            result += line;
-        }
+        String response = webClient.post()
+                .uri(accessTokenUri)
+                .body(BodyInserters.fromFormData(params))
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
 
         ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, Object> jsonMap = objectMapper.readValue(result, new TypeReference<Map<String, Object>>() {
-        });
+        Map<String, Object> jsonMap = objectMapper.readValue(response, new TypeReference<>() {});
 
-        log.info("Response Body : " + result);
-
-        String accessToken = (String) jsonMap.get("access_token");
-        String refreshToken = (String) jsonMap.get("refresh_token");
-        String scope = (String) jsonMap.get("scope");
-
-
-        log.info("Access Token : " + accessToken);
-        log.info("Refresh Token : " + refreshToken);
-        log.info("Scope : " + scope);
-
-
-        return accessToken;
+        return (String) jsonMap.get("access_token");
     }
 
-    public HashMap<String, Object> getUserInfo(String access_Token) throws IOException {
+    /** 2. 토큰으로 클라이언트 정보 요청 **/
+    public KakaoLoginDto getUserInfo(String accessToken) throws IOException {
         // 클라이언트 요청 정보
-        HashMap<String, Object> userInfo = new HashMap<String, Object>();
+        String response = webClient.get()
+                    .uri(userInfoUri)
+                    .header("Authorization", "Bearer " + accessToken)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
 
 
-        //------kakao GET 요청------
-        String reqURL = "https://kapi.kakao.com/v2/user/me";
-        URL url = new URL(reqURL);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("GET");
-        conn.setRequestProperty("Authorization", "Bearer " + access_Token);
-
-        int responseCode = conn.getResponseCode();
-        System.out.println("responseCode : " + responseCode);
-
-        BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-        String line = "";
-        String result = "";
-
-        while ((line = br.readLine()) != null) {
-            result += line;
-        }
-
-        log.info("Response Body : " + result);
-
-        // jackson objectmapper 객체 생성
         ObjectMapper objectMapper = new ObjectMapper();
-        // JSON String -> Map
-        Map<String, Object> jsonMap = objectMapper.readValue(result, new TypeReference<Map<String, Object>>() {
-        });
-
-
-        //사용자 정보 추출
+        Map<String, Object> jsonMap = objectMapper.readValue(response, new TypeReference<>() {});
+        // 사용자 정보 추출
         Map<String, Object> properties = (Map<String, Object>) jsonMap.get("properties");
-        Map<String, Object> kakao_account = (Map<String, Object>) jsonMap.get("kakao_account");
+        // userInfo에 넣기
+        KakaoLoginDto kakaoUser = KakaoLoginDto.builder()
+                .id(properties.get("nickname").toString())
+                .nickname(properties.get("profile_image").toString())
+                .build();
 
-
-        Long id = (Long) jsonMap.get("id");
-        String nickname = properties.get("nickname").toString();
-        String profileImage = properties.get("profile_image").toString();
-        //String email = kakao_account.get("email").toString();
-
-        //userInfo에 넣기
-        userInfo.put("id", id);
-        userInfo.put("nickname", nickname);
-        userInfo.put("profileImage", profileImage);
-        //userInfo.put("email", email);
-
-
-        return userInfo;
+        return kakaoUser;
     }
 }
