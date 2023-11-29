@@ -1,11 +1,10 @@
 package com.beside.archivist.service;
 
 import com.beside.archivist.dto.KakaoLoginDto;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,14 +12,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.HashMap;
+import java.lang.reflect.Type;
 import java.util.Map;
 
 @Slf4j
@@ -38,10 +30,11 @@ public class KakaoServiceImpl implements KakaoService{
     private String userInfoUri;
 
     private final WebClient webClient;
+    private final Type type = new TypeToken<Map<String, Object>>(){}.getType();
 
 
     /** 1. 인가 코드로 카카오 에 토큰 요청 **/
-    public String getAccessTokenFromKakao(String code) throws IOException {
+    public String getAccessTokenFromKakao(String code){
         MultiValueMap<String , String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id",clientId );
@@ -54,14 +47,13 @@ public class KakaoServiceImpl implements KakaoService{
                 .bodyToMono(String.class)
                 .block();
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, Object> jsonMap = objectMapper.readValue(response, new TypeReference<>() {});
-
-        return (String) jsonMap.get("access_token");
+        Gson gson = new Gson();
+        Map<String,Object> jsonMap = gson.fromJson(response, type);
+        return jsonMap.get("access_token").toString();
     }
 
     /** 2. 토큰으로 클라이언트 정보 요청 **/
-    public KakaoLoginDto getUserInfo(String accessToken) throws IOException {
+    public KakaoLoginDto getUserInfo(String accessToken){
         // 클라이언트 요청 정보
         String response = webClient.get()
                     .uri(userInfoUri)
@@ -70,9 +62,8 @@ public class KakaoServiceImpl implements KakaoService{
                     .bodyToMono(String.class)
                     .block();
 
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, Object> jsonMap = objectMapper.readValue(response, new TypeReference<>() {});
+        Gson gson = new Gson();
+        Map<String,Object> jsonMap = gson.fromJson(response, type);
         // 사용자 정보 추출
         Map<String, Object> properties = (Map<String, Object>) jsonMap.get("properties");
         // userInfo에 넣기
@@ -80,7 +71,6 @@ public class KakaoServiceImpl implements KakaoService{
                 .id(properties.get("nickname").toString())
                 .nickname(properties.get("profile_image").toString())
                 .build();
-
         return kakaoUser;
     }
 }

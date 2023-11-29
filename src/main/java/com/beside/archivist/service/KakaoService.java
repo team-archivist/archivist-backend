@@ -12,7 +12,7 @@ import java.util.Map;
 @Service
 public interface KakaoService {
 	
-    String getAccessTokenFromKakao(String code) throws IOException;
+    String getAccessTokenFromKakao(String code);
 
-    KakaoLoginDto getUserInfo(String accessToken) throws IOException;
+    KakaoLoginDto getUserInfo(String accessToken);
 }
