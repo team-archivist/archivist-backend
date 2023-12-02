@@ -1,4 +1,4 @@
-package com.beside.archivist.dto;
+package com.beside.archivist.dto.users;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,10 +10,11 @@ public class KakaoLoginDto {
 
     public String id;
     public String nickname;
+    public String profileImage;
 
     @Builder
-    public KakaoLoginDto(String id, String nickname) {
-        this.id = id;
+    public KakaoLoginDto(String nickname, String profileImage) {
         this.nickname = nickname;
+        this.profileImage = profileImage;
     }
 }

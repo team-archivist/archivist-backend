@@ -1,11 +1,12 @@
-package com.beside.archivist.service;
+package com.beside.archivist.service.users;
 
-import com.beside.archivist.dto.KakaoLoginDto;
+import com.beside.archivist.dto.users.KakaoLoginDto;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
@@ -31,7 +32,6 @@ public class KakaoServiceImpl implements KakaoService{
 
     private final WebClient webClient;
     private final Type type = new TypeToken<Map<String, Object>>(){}.getType();
-
 
     /** 1. 인가 코드로 카카오 에 토큰 요청 **/
     public String getAccessTokenFromKakao(String code){
@@ -68,9 +68,10 @@ public class KakaoServiceImpl implements KakaoService{
         Map<String, Object> properties = (Map<String, Object>) jsonMap.get("properties");
         // userInfo에 넣기
         KakaoLoginDto kakaoUser = KakaoLoginDto.builder()
-                .id(properties.get("nickname").toString())
-                .nickname(properties.get("profile_image").toString())
+                .nickname(properties.get("nickname").toString())
+                .profileImage(properties.get("profile_image").toString())
                 .build();
+
         return kakaoUser;
     }
 }
