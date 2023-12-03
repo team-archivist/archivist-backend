@@ -1,13 +1,8 @@
-package com.beside.archivist.service;
+package com.beside.archivist.service.users;
 
-import com.beside.archivist.dto.KakaoLoginDto;
-import lombok.extern.slf4j.Slf4j;
+import com.beside.archivist.dto.users.KakaoLoginDto;
 
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public interface KakaoService {
