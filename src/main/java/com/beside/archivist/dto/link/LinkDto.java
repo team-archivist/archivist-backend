@@ -1,6 +1,7 @@
 package com.beside.archivist.dto.link;
 
 import com.beside.archivist.entity.users.Category;
+import com.beside.archivist.entity.users.User;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -11,4 +12,5 @@ public class LinkDto {
     private String email;
     private String nickname;
     private List<Category> categories;
+    private User user;
 }

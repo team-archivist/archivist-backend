@@ -24,6 +24,7 @@ public class LinkServiceImpl implements LinkService {
                 .email(linkDto.getEmail())
                 .categories(linkDto.getCategories())
                 .nickname(linkDto.getNickname())
+                .user(linkDto.getUser())
                 .build();
         linkRepository.save(link);
         return link;
