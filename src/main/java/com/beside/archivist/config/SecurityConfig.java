@@ -23,7 +23,9 @@ public class SecurityConfig{
         http
                 .authorizeHttpRequests(
                         request -> request.requestMatchers("/api/admin").permitAll()
+                                .requestMatchers("/login/*").permitAll()
                 )
+                .csrf().disable()
                 .cors().configurationSource(corsConfigurationSource()); // cors 설정
 
         return http.build();
