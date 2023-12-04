@@ -5,6 +5,8 @@ import com.beside.archivist.entity.users.User;
 import com.beside.archivist.repository.users.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -53,6 +55,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Long userId) {
         userRepository.deleteById(userId);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email).orElseThrow();
+        return new org.springframework.security.core.userdetails.User(
+                user.getEmail(), user.getPassword(),
+                true, true, true, true,
+                new ArrayList<>()
+        );
     }
 
 }

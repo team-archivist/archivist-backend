@@ -5,11 +5,15 @@ import com.beside.archivist.dto.users.KakaoLoginDto;
 import com.beside.archivist.dto.users.UserDto;
 import com.beside.archivist.entity.users.User;
 import com.beside.archivist.service.users.UserService;
+import com.beside.archivist.utils.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.beside.archivist.service.users.KakaoService;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,8 +26,8 @@ public class UserController {
     @PostMapping("/login/kakao")
     public ResponseEntity<?> callback(@RequestParam("code") String code){
         String accessToken = kakaoServiceImpl.getAccessTokenFromKakao(code);
-        KakaoLoginDto userInfo = kakaoServiceImpl.getUserInfo(accessToken);
-        return ResponseEntity.ok().body(userInfo); // User 데이터
+        String response = kakaoServiceImpl.getUserInfo(accessToken);
+        return ResponseEntity.ok().body(response); // JWT 발급
     }
 
     /** 관리자용 엔드 포인트 구현 **/

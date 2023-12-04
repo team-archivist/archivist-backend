@@ -11,10 +11,12 @@ public class KakaoLoginDto {
     public String id;
     public String nickname;
     public String profileImage;
+    public String email;
 
     @Builder
-    public KakaoLoginDto(String nickname, String profileImage) {
+    public KakaoLoginDto(String nickname, String profileImage, String email) {
         this.nickname = nickname;
         this.profileImage = profileImage;
+        this.email = email;
     }
 }
