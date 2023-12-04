@@ -22,16 +22,12 @@ public class UserController {
 
     private final KakaoService kakaoServiceImpl;
     private final UserService userServiceImpl;
-    private final JwtTokenUtil jwtTokenUtil;
 
     @PostMapping("/login/kakao")
     public ResponseEntity<?> callback(@RequestParam("code") String code){
         String accessToken = kakaoServiceImpl.getAccessTokenFromKakao(code);
-        KakaoLoginDto userInfo = kakaoServiceImpl.getUserInfo(accessToken);
-
-        Map<String, String> token = new HashMap<>();
-        token.put("token", jwtTokenUtil.generateToken(userInfo.getNickname() + "@kakao.com"));
-        return ResponseEntity.ok().body(token); // JWT 발급
+        String response = kakaoServiceImpl.getUserInfo(accessToken);
+        return ResponseEntity.ok().body(response); // JWT 발급
     }
 
     /** 관리자용 엔드 포인트 구현 **/
