@@ -21,9 +21,9 @@ public class BookmarkServiceImpl implements BookmarkService {
     public Bookmark saveBookmark(BookmarkDto bookmarkDto)  {
 
         Bookmark bookmark = Bookmark.builder()
-                .book_url(bookmarkDto.getBook_url())
-                .book_name(bookmarkDto.getBook_name())
-                .book_desc(bookmarkDto.getBook_desc())
+                .bookUrl(bookmarkDto.getBookUrl())
+                .bookName(bookmarkDto.getBookName())
+                .bookDesc(bookmarkDto.getBookDesc())
                 .user(bookmarkDto.getUser())
                 .build();
         bookmarkRepository.save(bookmark);

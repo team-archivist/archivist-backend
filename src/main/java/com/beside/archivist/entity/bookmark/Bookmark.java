@@ -21,22 +21,22 @@ public class Bookmark {
     @JoinColumn(name="user_id", referencedColumnName = "user_id")
     private User user;
     @Column
-    private String book_url;
+    private String bookUrl;
     @Column
-    private String book_name;
+    private String bookName;
     @Column
-    private String book_desc;
+    private String bookDesc;
 
     @Builder
-    public Bookmark(String book_url, String book_name, String book_desc, User user) {
-        this.book_url = book_url;
-        this.book_name = book_name;
-        this.book_desc = book_desc;
+    public Bookmark(String bookUrl, String bookName, String bookDesc, User user) {
+        this.bookUrl = bookUrl;
+        this.bookName = bookName;
+        this.bookDesc = bookDesc;
         this.user = user;
     }
     public void update(BookmarkDto bookmarkDto) {
-        this.book_url = bookmarkDto.getBook_url();
-        this.book_name = bookmarkDto.getBook_name();
-        this.book_desc = bookmarkDto.getBook_desc();
+        this.bookUrl = bookmarkDto.getBookUrl();
+        this.bookName = bookmarkDto.getBookName();
+        this.bookDesc = bookmarkDto.getBookDesc();
     }
 }

@@ -6,8 +6,8 @@ import lombok.ToString;
 
 @Getter @ToString
 public class BookmarkDto {
-    private String book_url;    //북마크 경로
-    private String book_name;   //북마크 이름
-    private String book_desc;   //북마크 설명
+    private String bookUrl;    //북마크 경로
+    private String bookName;   //북마크 이름
+    private String bookDesc;   //북마크 설명
     private User user;
 }

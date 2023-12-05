@@ -21,7 +21,7 @@ public class BookmarkController {
         return ResponseEntity.ok().body(savedBookmark);
     }
 
-    @PatchMapping ("/bookmark/{bookmarkId}")
+    @PostMapping ("/bookmark/{bookmarkId}")
     public ResponseEntity<?> updateBookmark(@PathVariable("bookmarkId") Long bookmarkId, @RequestBody BookmarkDto bookmarkDto) {
         Bookmark updatedBookmark = bookmarkServiceImpl.updateBookmark(bookmarkId, bookmarkDto);
         return ResponseEntity.ok().body(updatedBookmark);
