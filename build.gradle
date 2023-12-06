@@ -39,8 +39,7 @@ dependencies {
 
 	// jwt 토큰 인증 설정
 	implementation "io.jsonwebtoken:jjwt-api:${jwtVersion}"
-	runtimeOnly "io.jsonwebtoken:jjwt-impl:${jwtVersion}", "io.jsonwebtoken:jjwt-jackson:${jwtVersion}",
-				'org.apache.commons:commons-lang3:3.0'
+	runtimeOnly "io.jsonwebtoken:jjwt-impl:${jwtVersion}", "io.jsonwebtoken:jjwt-jackson:${jwtVersion}"
 
 	// DB 설정
 	runtimeOnly 'com.h2database:h2'
