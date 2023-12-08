@@ -46,6 +46,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getUserInfo(Long userId) {
+        return userRepository.findById(userId).orElseThrow();
+    }
+
+    @Override
     public User updateUser(Long userId, UserDto userDto) {
         User user = userRepository.findById(userId).orElseThrow(RuntimeException::new); // 추후 예외 커스텀
         user.update(userDto);

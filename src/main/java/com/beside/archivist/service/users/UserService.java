@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 public interface UserService extends UserDetailsService {
     void adminLogin(String email, String password);
     User saveUser(UserDto userDto);
+    User getUserInfo(Long userId);
     User updateUser(Long userId, UserDto userDto);
     void deleteUser(Long userId);
 }
