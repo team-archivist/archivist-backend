@@ -2,6 +2,7 @@ package com.beside.archivist.entity.users;
 
 
 import com.beside.archivist.dto.users.UserDto;
+import com.beside.archivist.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -12,7 +13,7 @@ import java.util.List;
 
 @Entity @Table(name = "users") // user 예약어라 users로 명명
 @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User {
+public class User extends BaseEntity {
 
     @Id @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

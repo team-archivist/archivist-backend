@@ -2,6 +2,7 @@ package com.beside.archivist.entity.bookmark;
 
 
 import com.beside.archivist.dto.bookmark.BookmarkDto;
+import com.beside.archivist.entity.BaseEntity;
 import com.beside.archivist.entity.users.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -11,7 +12,7 @@ import lombok.NoArgsConstructor;
 
 @Entity @Table(name = "bookmark")
 @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Bookmark {
+public class Bookmark extends BaseEntity {
 
     @Id @Column(name = "bookmark_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
