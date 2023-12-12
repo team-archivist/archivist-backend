@@ -5,8 +5,12 @@ import com.beside.archivist.dto.bookmark.BookmarkDto;
 import com.beside.archivist.service.bookmark.BookmarkService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -14,6 +18,19 @@ import org.springframework.web.bind.annotation.*;
 public class BookmarkController {
     
     private final BookmarkService bookmarkServiceImpl;
+
+    @GetMapping("/api/bookmark/{userId}")
+    public ResponseEntity<List<Bookmark>> getUserBookmarkList(@PathVariable("userId") Long userId) {
+        List<Bookmark> bookmarks = bookmarkServiceImpl.getBookmarksByUserId(userId);
+        return new ResponseEntity<>(bookmarks, HttpStatus.OK);
+    }
+
+    @GetMapping("/api/bookmark/{id}")
+    public ResponseEntity<?> findBookmarkById(@PathVariable("id") Long id) {
+        Optional<Bookmark> bookmark = bookmarkServiceImpl.findBookmarkById(id);
+        return bookmark.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
 
     @PostMapping("/bookmark")
     public ResponseEntity<?> registerBookmark(@RequestBody BookmarkDto bookmarkDto) {
