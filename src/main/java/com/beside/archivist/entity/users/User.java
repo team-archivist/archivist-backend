@@ -14,29 +14,37 @@ import java.util.List;
 @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
 
-    @Id @Column(name = "user_id")
+    @Id
+    @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column
-    private String email;
+    private String email; // 변경 불가
     @Column
-    private String nickname;
+    private String nickname; // 변경 가능
     @Column
-    private String password;
+    private String password; // 임의 지정
     @Column
-    private List<Category> categories;
+    private List<Category> categories; // 변경 가능
     @Column
-    private String provider;
+    private String provider; // kakao or admin
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_img_id")
+    private UserImg userImg;
 
     @Builder
-    public User(String email, String password, String nickname, List<Category> categories) {
+    public User(String email, String password, String nickname, List<Category> categories, UserImg userImg) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
         this.categories = categories;
+        this.provider = "kakao";
+        this.userImg = userImg;
     }
-    public void update(UserDto userDto) {
-        this.nickname = userDto.getNickname();
-        this.categories = userDto.getCategories();
+
+    public void updateUserInfo(String nickname, List<Category> categories) {
+        this.nickname = nickname;
+        this.categories = categories;
     }
 }
