@@ -1,13 +1,16 @@
 package com.beside.archivist.service.users;
 
 import com.beside.archivist.dto.users.UserDto;
+import com.beside.archivist.dto.users.UserInfoDto;
 import com.beside.archivist.entity.users.User;
+import com.beside.archivist.entity.users.UserImg;
 import com.beside.archivist.repository.users.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
@@ -17,6 +20,7 @@ import java.util.*;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final UserImgService userImgServiceImpl;
 
     @Override
     public void adminLogin(String email, String password) {
@@ -31,30 +35,55 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User saveUser(UserDto userDto) {
+    public UserInfoDto saveUser(UserDto userDto, UserImg userImg) {
         /** TO DO
          * 기존에 있는 회원인지 검증하는 로직 추가
          */
-        User user = User.builder()
-                .email(userDto.getEmail())
-                .password(UUID.randomUUID().toString())
-                .categories(userDto.getCategories())
-                .nickname(userDto.getNickname())
+        User savedUser = userRepository.save(
+                User.builder()
+                        .email(userDto.getEmail())
+                        .password(UUID.randomUUID().toString())
+                        .categories(userDto.getCategories())
+                        .nickname(userDto.getNickname())
+                        .userImg(userImg) // 초기 디폴트 이미지 저장
+                        .build()
+        );
+
+        return UserInfoDto.builder()
+                .userId(savedUser.getId())
+                .email(savedUser.getEmail())
+                .nickname(savedUser.getNickname())
+                .imgUrl(savedUser.getUserImg().getImgUrl())
+                .categories(savedUser.getCategories())
                 .build();
-        userRepository.save(user);
-        return user;
     }
 
     @Override
-    public User getUserInfo(Long userId) {
-        return userRepository.findById(userId).orElseThrow();
+    public UserInfoDto getUserInfo(Long userId) {
+        User findUser = userRepository.findById(userId).orElseThrow();
+
+        return UserInfoDto.builder()
+                .userId(userId)
+                .email(findUser.getEmail())
+                .nickname(findUser.getNickname())
+                .imgUrl(findUser.getUserImg().getImgUrl())
+                .categories(findUser.getCategories())
+                .build();
     }
 
     @Override
-    public User updateUser(Long userId, UserDto userDto) {
+    public UserInfoDto updateUser(Long userId, UserDto userDto,MultipartFile userImgFile) {
         User user = userRepository.findById(userId).orElseThrow(RuntimeException::new); // 추후 예외 커스텀
-        user.update(userDto);
-        return user; // response 값 논의 필요
+        user.updateUserInfo(userDto.getNickname(),userDto.getCategories()); // 유저 정보 update
+        userImgServiceImpl.updateUserImg(user.getUserImg().getId(), userImgFile); // 유저 이미지 update
+
+        return UserInfoDto.builder()
+                .userId(userId)
+                .email(user.getEmail())
+                .nickname(user.getNickname())
+                .imgUrl(user.getUserImg().getImgUrl())
+                .categories(user.getCategories())
+                .build();
     }
 
     @Override
@@ -71,5 +100,4 @@ public class UserServiceImpl implements UserService {
                 new ArrayList<>()
         );
     }
-
 }

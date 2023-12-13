@@ -36,11 +36,17 @@ public class SecurityConfig{
     private final JwtRequestFilter jwtRequestFilter;
 
     @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().requestMatchers("/css/**", "/js/**", "/images/**");
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
                 .authorizeHttpRequests(
-                        request -> request.requestMatchers("/api/admin").permitAll()
+                        request -> request
+                                .requestMatchers("/api/admin").permitAll()
                                 .requestMatchers("/login/**").permitAll()
                                 .requestMatchers("/user").permitAll()
                                 .requestMatchers("/swagger-ui/**","/v3/api-docs/**").permitAll()

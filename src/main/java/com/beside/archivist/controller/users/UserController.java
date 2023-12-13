@@ -3,7 +3,10 @@ package com.beside.archivist.controller.users;
 
 import com.beside.archivist.dto.users.KakaoLoginDto;
 import com.beside.archivist.dto.users.UserDto;
+import com.beside.archivist.dto.users.UserInfoDto;
 import com.beside.archivist.entity.users.User;
+import com.beside.archivist.entity.users.UserImg;
+import com.beside.archivist.service.users.UserImgService;
 import com.beside.archivist.service.users.UserService;
 import com.beside.archivist.utils.JwtTokenUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.beside.archivist.service.users.KakaoService;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +28,7 @@ public class UserController {
 
     private final KakaoService kakaoServiceImpl;
     private final UserService userServiceImpl;
+    private final UserImgService userImgServiceImpl;
 
     /** 카카오 로그인 - JWT 발급 */
     @PostMapping("/login/kakao")
@@ -43,22 +48,25 @@ public class UserController {
     /** 회원 정보 저장 **/
     @PostMapping("/user")
     public ResponseEntity<?> registerUser(@RequestBody UserDto userDto) {
-        User savedUser = userServiceImpl.saveUser(userDto);
+        UserImg userImg = userImgServiceImpl.initializeDefaultImg();
+        UserInfoDto savedUser = userServiceImpl.saveUser(userDto,userImg);
         return ResponseEntity.ok().body(savedUser);
     }
 
     /** 회원 정보 조회 **/
     @GetMapping("/user/{userId}")
     public ResponseEntity<?> getUserInfo(@PathVariable("userId") Long userId) {
-        User findUser = userServiceImpl.getUserInfo(userId);
-        return ResponseEntity.ok().body(findUser);
+        UserInfoDto userInfo = userServiceImpl.getUserInfo(userId);
+        return ResponseEntity.ok().body(userInfo);
     }
 
     /** 회원 정보 수정 **/
     @PostMapping("/user/{userId}")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
-    public ResponseEntity<?> updateUser(@PathVariable("userId") Long userId, @RequestBody UserDto userDto) {
-        User updatedUser = userServiceImpl.updateUser(userId,userDto);
+    public ResponseEntity<?> updateUser(@PathVariable("userId") Long userId,
+                                        @RequestPart("userDto") UserDto userDto,
+                                        @RequestPart(value = "userImgFile", required = false) MultipartFile userImgFile) {
+        UserInfoDto updatedUser = userServiceImpl.updateUser(userId, userDto, userImgFile);
         return ResponseEntity.ok().body(updatedUser);
     }
 
