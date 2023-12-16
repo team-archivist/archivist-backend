@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.apache.commons.validator.routines.UrlValidator;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,21 +17,35 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class BookmarkController {
-    
+
     private final BookmarkService bookmarkServiceImpl;
 
-    @GetMapping("/api/bookmark/{userId}")
+    @GetMapping("/user/bookmark/{userId}")
     public ResponseEntity<List<Bookmark>> getUserBookmarkList(@PathVariable("userId") Long userId) {
         List<Bookmark> bookmarks = bookmarkServiceImpl.getBookmarksByUserId(userId);
-        return new ResponseEntity<>(bookmarks, HttpStatus.OK);
+        return ResponseEntity.ok().body(bookmarks);
     }
 
-    @GetMapping("/api/bookmark/{id}")
+    @GetMapping("/bookmark/{id}")
     public ResponseEntity<?> findBookmarkById(@PathVariable("id") Long id) {
         Optional<Bookmark> bookmark = bookmarkServiceImpl.findBookmarkById(id);
-        return bookmark.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return ResponseEntity.ok().body(bookmark);
     }
+
+    @GetMapping("/bookmark/valid")
+    public ResponseEntity<?> urlValidation(@RequestParam String url) {
+        String[] schemes = {"http", "https"};
+        UrlValidator urlValidator = new UrlValidator(schemes);
+
+        String validAt = "";
+        if (urlValidator.isValid(url)) {
+            validAt = "Valid URL";
+        } else {
+            validAt = "Invalid URL";
+        }
+        return ResponseEntity.ok().body(validAt);
+    }
+
 
     @PostMapping("/bookmark")
     public ResponseEntity<?> registerBookmark(@RequestBody BookmarkDto bookmarkDto) {
@@ -50,3 +65,4 @@ public class BookmarkController {
         return ResponseEntity.ok().body("링크 삭제 완료.");
     }
 }
+
