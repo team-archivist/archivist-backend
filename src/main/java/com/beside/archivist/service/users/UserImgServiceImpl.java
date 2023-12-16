@@ -29,7 +29,7 @@ public class UserImgServiceImpl implements UserImgService{
         return userImgRepository.save(UserImg.builder()
                 .oriImgName("userDefaultImg.png")
                 .imgName("userDefaultImg")
-                .imgUrl("/images/userDefaultImg.png")
+                .imgUrl("/image/userDefaultImg.png")
                 .build());
     }
 
