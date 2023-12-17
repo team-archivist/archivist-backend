@@ -1,6 +1,9 @@
 # archivist-backend
 archivist-backend repo
 
+* * *
+### Swagger 접속 주소
+- http://223.130.128.93:8080/swagger-ui/index.html 
 
 * * *
 ### 개발 환경
