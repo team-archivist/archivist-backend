@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,10 +27,13 @@ public class BookmarkController {
 
     @PostMapping ("/bookmark/{bookmarkId}")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
-    public ResponseEntity<?> updateBookmark(@PathVariable("bookmarkId") Long bookmarkId, @RequestBody BookmarkDto bookmarkDto) {
-        Bookmark updatedBookmark = bookmarkServiceImpl.updateBookmark(bookmarkId, bookmarkDto);
+    public ResponseEntity<?> updateBookmark(@PathVariable("bookmarkId") Long bookmarkId,
+                                            @RequestPart BookmarkDto bookmarkDto,
+                                            @RequestPart(value = "bookmarkImgFile", required = false) MultipartFile bookmarkImgFile) {
+        BookmarkDto updatedBookmark = bookmarkServiceImpl.updateBookmark(bookmarkId, bookmarkDto, bookmarkImgFile);
         return ResponseEntity.ok().body(updatedBookmark);
     }
+
 
     @DeleteMapping("/bookmark/{bookmarkId}")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })

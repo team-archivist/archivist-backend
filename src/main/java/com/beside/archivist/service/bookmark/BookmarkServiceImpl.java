@@ -3,10 +3,12 @@ package com.beside.archivist.service.bookmark;
 import com.beside.archivist.dto.bookmark.BookmarkDto;
 import com.beside.archivist.entity.bookmark.Bookmark;
 
+import com.beside.archivist.entity.bookmark.BookmarkImg;
 import com.beside.archivist.repository.bookmark.BookmarkRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Service
@@ -16,6 +18,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 
     private final BookmarkRepository bookmarkRepository;
 
+    private final BookmarkImgServiceImpl bookmarkImgServiceImpl;
 
     @Override
     public Bookmark saveBookmark(BookmarkDto bookmarkDto)  {
@@ -31,10 +34,25 @@ public class BookmarkServiceImpl implements BookmarkService {
     }
 
     @Override
-    public Bookmark updateBookmark(Long bookmarkId, BookmarkDto bookmarkDto) {
+    public BookmarkDto updateBookmark(Long bookmarkId, BookmarkDto bookmarkDto, MultipartFile bookmarkImgFile) {
         Bookmark bookmark = bookmarkRepository.findById(bookmarkId).orElseThrow(RuntimeException::new);
-        bookmarkRepository.deleteById(bookmarkId);
-        return bookmark; // response 값 논의 필요
+
+        BookmarkImg bookmarkImg = null;
+        if(bookmark.getBookmarkImg() == null){
+            bookmarkImg = bookmarkImgServiceImpl.insertBookmarkImg(bookmarkImgFile);
+        }else{
+            bookmarkImgServiceImpl.updateBookmarkImg(bookmark.getBookmarkImg().getId(), bookmarkImgFile);
+            bookmarkImg = bookmark.getBookmarkImg();
+        }
+
+        bookmark.update(BookmarkDto.builder()
+                .bookmarkId(bookmarkId)
+                .bookUrl(bookmarkDto.getBookUrl())
+                .bookName(bookmarkDto.getBookName())
+                .bookDesc(bookmarkDto.getBookDesc())
+                .bookmarkImg(bookmarkImg)
+                .build());
+        return bookmarkDto;
     }
 
     @Override
