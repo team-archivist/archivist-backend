@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 public interface UserService extends UserDetailsService {
     void adminLogin(String email, String password);
     UserInfoDto saveUser(UserDto userDto, UserImg userImg);
-    UserInfoDto getUserInfo(Long userId);
+    UserInfoDto getUserInfo(String email);
     UserInfoDto updateUser(Long userId, UserDto userDto, MultipartFile userImgFile);
     void deleteUser(Long userId);
 }

@@ -59,11 +59,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserInfoDto getUserInfo(Long userId) {
-        User findUser = userRepository.findById(userId).orElseThrow();
+    public UserInfoDto getUserInfo(String email) {
+        User findUser = userRepository.findByEmail(email).orElseThrow();
 
         return UserInfoDto.builder()
-                .userId(userId)
+                .userId(findUser.getId())
                 .email(findUser.getEmail())
                 .nickname(findUser.getNickname())
                 .imgUrl(findUser.getUserImg().getImgUrl())
