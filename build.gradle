@@ -49,8 +49,13 @@ dependencies {
 	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${swaggerVersion}"
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
+
+	// validation 체크
+	implementation 'commons-validator:commons-validator:1.7'
+
 	// shutdown endpoint 를 위한 actuator 주입
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'

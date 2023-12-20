@@ -5,9 +5,16 @@ import com.beside.archivist.entity.bookmark.Bookmark;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public interface BookmarkService {
     Bookmark saveBookmark(BookmarkDto bookmarkDto);
     BookmarkDto updateBookmark(Long bookmarkId, BookmarkDto bookmarkDto, MultipartFile bookmarkImgFile);
     void deleteBookmark(Long bookmarkId);
+
+    Optional<Bookmark> findBookmarkById(Long bookmarkId);
+
+    List<Bookmark>  getBookmarksByUserId(Long userId);
 }

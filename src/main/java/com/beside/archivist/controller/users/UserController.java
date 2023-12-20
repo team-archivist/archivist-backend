@@ -4,22 +4,18 @@ package com.beside.archivist.controller.users;
 import com.beside.archivist.dto.users.KakaoLoginDto;
 import com.beside.archivist.dto.users.UserDto;
 import com.beside.archivist.dto.users.UserInfoDto;
-import com.beside.archivist.entity.users.User;
 import com.beside.archivist.entity.users.UserImg;
 import com.beside.archivist.service.users.UserImgService;
 import com.beside.archivist.service.users.UserService;
-import com.beside.archivist.utils.JwtTokenUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import com.beside.archivist.service.users.KakaoService;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -54,9 +50,10 @@ public class UserController {
     }
 
     /** 회원 정보 조회 **/
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<?> getUserInfo(@PathVariable("userId") Long userId) {
-        UserInfoDto userInfo = userServiceImpl.getUserInfo(userId);
+    @GetMapping("/user")
+    @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
+    public ResponseEntity<?> getUserInfo(Authentication authentication) {
+        UserInfoDto userInfo = userServiceImpl.getUserInfo(authentication.getName());
         return ResponseEntity.ok().body(userInfo);
     }
 

@@ -2,13 +2,17 @@ package com.beside.archivist.service.bookmark;
 
 import com.beside.archivist.dto.bookmark.BookmarkDto;
 import com.beside.archivist.entity.bookmark.Bookmark;
-
 import com.beside.archivist.entity.bookmark.BookmarkImg;
+import com.beside.archivist.entity.users.User;
+
 import com.beside.archivist.repository.bookmark.BookmarkRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -60,4 +64,13 @@ public class BookmarkServiceImpl implements BookmarkService {
         bookmarkRepository.deleteById(bookmarkId);
     }
 
+    public Optional<Bookmark> findBookmarkById(Long id){
+        // 특정 북마크 ID에 해당하는 북마크 조회
+        return bookmarkRepository.findById(id);
+    }
+
+    public List<Bookmark> getBookmarksByUserId(Long userId){
+        // 특정 사용자 ID에 해당하는 북마크 목록 조회
+        return bookmarkRepository.findByUserId(userId);
+    }
 }
