@@ -4,6 +4,8 @@ import com.beside.archivist.dto.users.UserDto;
 import com.beside.archivist.dto.users.UserInfoDto;
 import com.beside.archivist.entity.users.User;
 import com.beside.archivist.entity.users.UserImg;
+import com.beside.archivist.exception.ExceptionCode;
+import com.beside.archivist.exception.users.UserAlreadyExistsException;
 import com.beside.archivist.repository.users.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,16 @@ public class UserServiceImpl implements UserService {
     private final UserImgService userImgServiceImpl;
 
     @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email).orElseThrow();
+        return new org.springframework.security.core.userdetails.User(
+                user.getEmail(), user.getPassword(),
+                true, true, true, true,
+                new ArrayList<>()
+        );
+    }
+
+    @Override
     public void adminLogin(String email, String password) {
         Optional<User> findUser = userRepository.findByEmail(email);
         if (findUser.isEmpty()) {
@@ -36,9 +48,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserInfoDto saveUser(UserDto userDto, UserImg userImg) {
-        /** TO DO
-         * 기존에 있는 회원인지 검증하는 로직 추가
-         */
+
+        checkDuplicateUser(userDto.getEmail()); // 중복 회원 체크
+
         User savedUser = userRepository.save(
                 User.builder()
                         .email(userDto.getEmail())
@@ -92,12 +104,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email).orElseThrow();
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(), user.getPassword(),
-                true, true, true, true,
-                new ArrayList<>()
-        );
+    public void checkDuplicateUser(String email) {
+        userRepository.findByEmail(email).ifPresent(user -> {
+            throw new UserAlreadyExistsException(ExceptionCode.USER_ALREADY_EXISTS);
+        });
     }
 }

@@ -9,9 +9,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public interface UserService extends UserDetailsService {
+
+    /* 회원 CRUD */
     void adminLogin(String email, String password);
     UserInfoDto saveUser(UserDto userDto, UserImg userImg);
     UserInfoDto getUserInfo(String email);
     UserInfoDto updateUser(Long userId, UserDto userDto, MultipartFile userImgFile);
     void deleteUser(Long userId);
+
+    /* 회원 유효성 검증 */
+    void checkDuplicateUser(String email);
 }
