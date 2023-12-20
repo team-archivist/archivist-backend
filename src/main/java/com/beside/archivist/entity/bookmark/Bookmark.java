@@ -28,16 +28,22 @@ public class Bookmark extends BaseEntity {
     @Column
     private String bookDesc;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bookmark_img_id")
+    private BookmarkImg bookmarkImg;
+
     @Builder
-    public Bookmark(String bookUrl, String bookName, String bookDesc, User user) {
+    public Bookmark(String bookUrl, String bookName, String bookDesc, User user,BookmarkImg bookmarkImg) {
         this.bookUrl = bookUrl;
         this.bookName = bookName;
         this.bookDesc = bookDesc;
         this.user = user;
+        this.bookmarkImg = bookmarkImg;
     }
     public void update(BookmarkDto bookmarkDto) {
         this.bookUrl = bookmarkDto.getBookUrl();
         this.bookName = bookmarkDto.getBookName();
         this.bookDesc = bookmarkDto.getBookDesc();
+        this.bookmarkImg = bookmarkDto.getBookmarkImg();
     }
 }

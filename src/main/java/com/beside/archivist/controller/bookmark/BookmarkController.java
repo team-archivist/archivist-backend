@@ -10,10 +10,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import org.apache.commons.validator.routines.UrlValidator;
 
 import java.util.List;
 import java.util.Optional;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -58,10 +61,13 @@ public class BookmarkController {
 
     @PatchMapping ("/bookmark/{bookmarkId}")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
-    public ResponseEntity<?> updateBookmark(@PathVariable("bookmarkId") Long bookmarkId, @RequestBody BookmarkDto bookmarkDto) {
-        Bookmark updatedBookmark = bookmarkServiceImpl.updateBookmark(bookmarkId, bookmarkDto);
+    public ResponseEntity<?> updateBookmark(@PathVariable("bookmarkId") Long bookmarkId,
+                                            @RequestPart BookmarkDto bookmarkDto,
+                                            @RequestPart(value = "bookmarkImgFile", required = false) MultipartFile bookmarkImgFile) {
+        BookmarkDto updatedBookmark = bookmarkServiceImpl.updateBookmark(bookmarkId, bookmarkDto, bookmarkImgFile);
         return ResponseEntity.ok().body(updatedBookmark);
     }
+
 
     @DeleteMapping("/bookmark/{bookmarkId}")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
