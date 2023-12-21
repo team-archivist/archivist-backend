@@ -25,13 +25,13 @@ public class BookmarkServiceImpl implements BookmarkService {
     private final BookmarkImgServiceImpl bookmarkImgServiceImpl;
 
     @Override
-    public Bookmark saveBookmark(BookmarkDto bookmarkDto)  {
+    public Bookmark saveBookmark(BookmarkDto bookmarkDto,User user)  {
 
         Bookmark bookmark = Bookmark.builder()
                 .bookUrl(bookmarkDto.getBookUrl())
                 .bookName(bookmarkDto.getBookName())
                 .bookDesc(bookmarkDto.getBookDesc())
-                .user(bookmarkDto.getUser())
+                .user(user)
                 .build();
         bookmarkRepository.save(bookmark);
         return bookmark;
@@ -71,6 +71,6 @@ public class BookmarkServiceImpl implements BookmarkService {
 
     public List<Bookmark> getBookmarksByUserId(Long userId){
         // 특정 사용자 ID에 해당하는 북마크 목록 조회
-        return bookmarkRepository.findByUserId(userId);
+        return bookmarkRepository.findByUsers_Id(userId);
     }
 }
