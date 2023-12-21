@@ -20,7 +20,7 @@ public class Bookmark extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name="user_id", referencedColumnName = "user_id")
-    private User user;
+    private User users;
     @Column
     private String bookUrl;
     @Column
@@ -33,11 +33,11 @@ public class Bookmark extends BaseEntity {
     private BookmarkImg bookmarkImg;
 
     @Builder
-    public Bookmark(String bookUrl, String bookName, String bookDesc, User user,BookmarkImg bookmarkImg) {
+    public Bookmark(String bookUrl, String bookName, String bookDesc, User user, BookmarkImg bookmarkImg) {
         this.bookUrl = bookUrl;
         this.bookName = bookName;
         this.bookDesc = bookDesc;
-        this.user = user;
+        this.users = user;
         this.bookmarkImg = bookmarkImg;
     }
     public void update(BookmarkDto bookmarkDto) {

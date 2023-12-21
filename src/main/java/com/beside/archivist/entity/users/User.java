@@ -4,12 +4,14 @@ package com.beside.archivist.entity.users;
 import com.beside.archivist.dto.users.UserDto;
 import com.beside.archivist.entity.BaseEntity;
 import com.beside.archivist.entity.BaseTimeEntity;
+import com.beside.archivist.entity.bookmark.Bookmark;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity @Table(name = "users") // user 예약어라 users로 명명
@@ -35,6 +37,9 @@ public class User extends BaseTimeEntity {
     @JoinColumn(name = "user_img_id")
     private UserImg userImg;
 
+    @OneToMany(mappedBy = "users", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Bookmark> bookmarks = new ArrayList<>();
+
     @Builder
     public User(String email, String password, String nickname, List<Category> categories, UserImg userImg) {
         this.email = email;
@@ -48,5 +53,9 @@ public class User extends BaseTimeEntity {
     public void updateUserInfo(String nickname, List<Category> categories) {
         this.nickname = nickname;
         this.categories = categories;
+    }
+
+    public void addBookmark(Bookmark b){
+        this.bookmarks.add(b);
     }
 }
