@@ -55,11 +55,11 @@ public class BookmarkController {
     @PostMapping("/bookmark")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     public ResponseEntity<?> registerBookmark(@RequestBody BookmarkDto bookmarkDto) {
-        Bookmark savedBookmark = bookmarkServiceImpl.saveBookmark(bookmarkDto);
+        BookmarkDto savedBookmark = bookmarkServiceImpl.saveBookmark(bookmarkDto);
         return ResponseEntity.ok().body(savedBookmark);
     }
 
-    @PatchMapping ("/bookmark/{bookmarkId}")
+    @PostMapping ("/bookmark/{bookmarkId}")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     public ResponseEntity<?> updateBookmark(@PathVariable("bookmarkId") Long bookmarkId,
                                             @RequestPart BookmarkDto bookmarkDto,
