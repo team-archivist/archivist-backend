@@ -24,7 +24,7 @@ public class BookmarkImgServiceImpl implements BookmarkImgService {
 
             String oriImgName = bookmarkImgFile.getOriginalFilename();
             String imgName = fileService.uploadFile(bookmarkImgLocation, bookmarkImgFile);
-            String imgUrl = "/images/"+imgName;
+            String imgUrl = "/images/bookmarks/"+imgName;
             return bookmarkImgRepository.save(BookmarkImg.builder()
                     .oriImgName(oriImgName)
                     .imgName(imgName)
@@ -46,7 +46,7 @@ public class BookmarkImgServiceImpl implements BookmarkImgService {
 
             String oriImgName = bookmarkImgFile.getOriginalFilename();
             String imgName = fileService.uploadFile(bookmarkImgLocation, bookmarkImgFile);
-            String imgUrl = "/images/"+imgName;
+            String imgUrl = "/images/bookmarks/"+imgName;
             savedBookmarkImg.updateBookmarkImg(imgName,oriImgName,imgUrl);
         }
     }

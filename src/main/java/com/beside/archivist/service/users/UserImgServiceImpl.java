@@ -47,7 +47,7 @@ public class UserImgServiceImpl implements UserImgService{
 
             String oriImgName = userImgFile.getOriginalFilename();
             String imgName = fileService.uploadFile(userImgLocation, userImgFile);
-            String imgUrl = "/images/"+imgName;
+            String imgUrl = "/images/users/"+imgName;
             savedUserImg.updateUserImg(imgName,oriImgName,imgUrl);
         }
     }
