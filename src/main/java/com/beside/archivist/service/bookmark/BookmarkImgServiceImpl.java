@@ -19,6 +19,15 @@ public class BookmarkImgServiceImpl implements BookmarkImgService {
     private final BookmarkImgRepository bookmarkImgRepository;
     private final FileService fileService;
 
+    @Override
+    public BookmarkImg initializeDefaultImg() {
+        return bookmarkImgRepository.save(BookmarkImg.builder()
+                .oriImgName("bookmarkDefaultImg.png")
+                .imgName("bookmarkDefaultImg")
+                .imgUrl("/image/bookmarkDefaultImg.png")
+                .build());
+    }
+
     public BookmarkImg insertBookmarkImg(MultipartFile bookmarkImgFile) {
         if(bookmarkImgFile != null){
 

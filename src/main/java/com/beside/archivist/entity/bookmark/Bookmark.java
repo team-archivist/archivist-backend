@@ -44,6 +44,5 @@ public class Bookmark extends BaseEntity {
         this.bookUrl = bookmarkDto.getBookUrl();
         this.bookName = bookmarkDto.getBookName();
         this.bookDesc = bookmarkDto.getBookDesc();
-        this.bookmarkImg = bookmarkDto.getBookmarkImg();
     }
 }

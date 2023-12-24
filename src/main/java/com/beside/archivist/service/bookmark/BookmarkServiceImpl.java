@@ -8,8 +8,7 @@ import com.beside.archivist.entity.bookmark.BookmarkImg;
 import com.beside.archivist.entity.users.User;
 
 import com.beside.archivist.repository.bookmark.BookmarkRepository;
-import com.beside.archivist.repository.users.
-  Repository;
+import com.beside.archivist.repository.users.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,17 +33,24 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 
     @Override
-    public BookmarkDto saveBookmark(BookmarkDto bookmarkDto)  {
+    public BookmarkDto saveBookmark(BookmarkDto bookmarkDto, MultipartFile bookmarkImgFile)  {
         Optional<String> authentication = auditConfig.auditorProvider().getCurrentAuditor();
-
         String email = authentication.get();
         User user = userRepository.findByEmail(email).orElseThrow();
+
+        BookmarkImg bookmarkImg = null;
+        if(bookmarkImgFile == null){
+            bookmarkImg = bookmarkImgService.initializeDefaultImg();
+        }else{
+            bookmarkImg = bookmarkImgService.insertBookmarkImg(bookmarkImgFile);
+        }
 
         Bookmark bookmark = Bookmark.builder()
                 .bookUrl(bookmarkDto.getBookUrl())
                 .bookName(bookmarkDto.getBookName())
                 .bookDesc(bookmarkDto.getBookDesc())
                 .user(user)
+                .bookmarkImg(bookmarkImg)
                 .build();
         bookmarkRepository.save(bookmark);
         return bookmarkDto;
@@ -54,20 +60,18 @@ public class BookmarkServiceImpl implements BookmarkService {
     public BookmarkDto updateBookmark(Long bookmarkId, BookmarkDto bookmarkDto, MultipartFile bookmarkImgFile) {
         Bookmark bookmark = bookmarkRepository.findById(bookmarkId).orElseThrow(RuntimeException::new);
 
-        BookmarkImg bookmarkImg = null;
-        if(bookmark.getBookmarkImg() == null){
-            bookmarkImg = bookmarkImgService.insertBookmarkImg(bookmarkImgFile);
-        }else{
-            bookmarkImgService.updateBookmarkImg(bookmark.getBookmarkImg().getId(), bookmarkImgFile);
-            bookmarkImg = bookmark.getBookmarkImg();
+        if(bookmarkImgFile != null){
+            if(bookmark.getBookmarkImg() == null){
+                bookmarkImgService.insertBookmarkImg(bookmarkImgFile);
+            }else{
+                bookmarkImgService.updateBookmarkImg(bookmark.getBookmarkImg().getId(), bookmarkImgFile);
+            }
         }
 
         bookmark.update(BookmarkDto.builder()
-                .bookmarkId(bookmarkId)
                 .bookUrl(bookmarkDto.getBookUrl())
                 .bookName(bookmarkDto.getBookName())
                 .bookDesc(bookmarkDto.getBookDesc())
-                .bookmarkImg(bookmarkImg)
                 .build());
         return bookmarkDto;
     }
