@@ -6,8 +6,10 @@ import com.beside.archivist.entity.bookmark.Bookmark;
 
 import com.beside.archivist.entity.bookmark.BookmarkImg;
 import com.beside.archivist.entity.users.User;
+
 import com.beside.archivist.repository.bookmark.BookmarkRepository;
-import com.beside.archivist.repository.users.UserRepository;
+import com.beside.archivist.repository.users.
+  Repository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -82,6 +84,6 @@ public class BookmarkServiceImpl implements BookmarkService {
 
     public List<Bookmark> getBookmarksByUserId(Long userId){
         // 특정 사용자 ID에 해당하는 북마크 목록 조회
-        return bookmarkRepository.findByUserId(userId);
+        return bookmarkRepository.findByUsers_Id(userId);
     }
 }
