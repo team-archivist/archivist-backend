@@ -2,6 +2,8 @@ package com.beside.archivist.service.users;
 
 import com.beside.archivist.dto.users.KakaoLoginDto;
 import com.beside.archivist.entity.users.User;
+import com.beside.archivist.exception.ExceptionCode;
+import com.beside.archivist.exception.users.UserNotFoundException;
 import com.beside.archivist.repository.users.UserRepository;
 import com.beside.archivist.utils.JwtTokenUtil;
 import com.google.gson.Gson;
@@ -17,6 +19,7 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import java.lang.reflect.Type;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Service @Transactional
@@ -76,7 +79,8 @@ public class KakaoServiceImpl implements KakaoService{
         Map<String, Object> kakaoAccount = (Map<String, Object>) jsonMap.get("kakao_account");
         String userEmail = kakaoAccount.get("email").toString();
 
-        User findUser = userRepository.findByEmail(userEmail).orElseThrow();
+        // 등록된 유저가 없을 때 userEmail 반환
+        User findUser = userRepository.findByEmail(userEmail).orElseThrow(() -> new UserNotFoundException(ExceptionCode.USER_NOT_FOUND, userEmail));
 
         return KakaoLoginDto.builder()
                 .userId(findUser.getId())
