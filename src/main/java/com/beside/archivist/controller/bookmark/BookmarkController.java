@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -54,8 +53,9 @@ public class BookmarkController {
 
     @PostMapping("/bookmark")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
-    public ResponseEntity<?> registerBookmark(@RequestBody BookmarkDto bookmarkDto) {
-        BookmarkDto savedBookmark = bookmarkServiceImpl.saveBookmark(bookmarkDto);
+    public ResponseEntity<?> registerBookmark(@RequestPart BookmarkDto bookmarkDto,
+                                              @RequestPart(value = "bookmarkImgFile", required = false) MultipartFile bookmarkImgFile) {
+        BookmarkDto savedBookmark = bookmarkServiceImpl.saveBookmark(bookmarkDto,bookmarkImgFile);
         return ResponseEntity.ok().body(savedBookmark);
     }
 

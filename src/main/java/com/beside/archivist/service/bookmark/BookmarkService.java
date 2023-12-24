@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Service
 public interface BookmarkService {
-    BookmarkDto saveBookmark(BookmarkDto bookmarkDto);
+    BookmarkDto saveBookmark(BookmarkDto bookmarkDto, MultipartFile bookmarkImgFile);
     BookmarkDto updateBookmark(Long bookmarkId, BookmarkDto bookmarkDto, MultipartFile bookmarkImgFile);
     void deleteBookmark(Long bookmarkId);
 

@@ -6,6 +6,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public interface BookmarkImgService {
+
+    BookmarkImg initializeDefaultImg();
     BookmarkImg insertBookmarkImg(MultipartFile bookmarkImgFile);
 
     void updateBookmarkImg(Long bookmarkImgId, MultipartFile bookmarkImgFile);
