@@ -1,22 +1,17 @@
 package com.beside.archivist.dto.users;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
 
 @Getter
 public class KakaoLoginDto {
 
-    public String id;
-    public String nickname;
-    public String profileImage;
-    public String email;
+    public Long userId;
+    public String token;
 
     @Builder
-    public KakaoLoginDto(String nickname, String profileImage, String email) {
-        this.nickname = nickname;
-        this.profileImage = profileImage;
-        this.email = email;
+    public KakaoLoginDto(Long userId, String token) {
+        this.userId = userId;
+        this.token = token;
     }
 }
