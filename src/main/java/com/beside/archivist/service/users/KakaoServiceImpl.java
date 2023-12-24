@@ -2,6 +2,8 @@ package com.beside.archivist.service.users;
 
 import com.beside.archivist.dto.users.KakaoLoginDto;
 import com.beside.archivist.entity.users.User;
+import com.beside.archivist.exception.ExceptionCode;
+import com.beside.archivist.exception.users.UserNotFoundException;
 import com.beside.archivist.repository.users.UserRepository;
 import com.beside.archivist.utils.JwtTokenUtil;
 import com.google.gson.Gson;
@@ -16,7 +18,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -63,7 +64,7 @@ public class KakaoServiceImpl implements KakaoService{
 
     /** 2. 토큰으로 클라이언트 정보 요청 **/
     @Override
-    public String getUserInfo(String accessToken){
+    public KakaoLoginDto getUserInfo(String accessToken){
         // 클라이언트 요청 정보
         String response = webClient.get()
                     .uri(userInfoUri)
@@ -75,20 +76,15 @@ public class KakaoServiceImpl implements KakaoService{
         Gson gson = new Gson();
         Map<String,Object> jsonMap = gson.fromJson(response, type);
         // 사용자 정보 추출
-        Map<String, Object> properties = (Map<String, Object>) jsonMap.get("properties");
         Map<String, Object> kakaoAccount = (Map<String, Object>) jsonMap.get("kakao_account");
-        // userInfo에 넣기
-        System.out.println(jsonMap);
-        KakaoLoginDto kakaoUser = KakaoLoginDto.builder()
-                .nickname(properties.get("nickname").toString())
-                .profileImage(properties.get("profile_image").toString())
-                .email(kakaoAccount.get("email").toString())
-                .build();
+        String userEmail = kakaoAccount.get("email").toString();
 
-        Optional<User> findUser = userRepository.findByEmail(kakaoUser.getEmail());
-        if (findUser.isEmpty()) { // DB 에 없는 경우
-            return kakaoUser.getEmail();
-        }
-        return jwtTokenUtil.generateToken(kakaoUser.getEmail());
+        // 등록된 유저가 없을 때 userEmail 반환
+        User findUser = userRepository.findByEmail(userEmail).orElseThrow(() -> new UserNotFoundException(ExceptionCode.USER_NOT_FOUND, userEmail));
+
+        return KakaoLoginDto.builder()
+                .userId(findUser.getId())
+                .token(jwtTokenUtil.generateToken(userEmail))
+                .build();
     }
 }

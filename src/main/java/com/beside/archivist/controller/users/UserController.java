@@ -30,7 +30,7 @@ public class UserController {
     @PostMapping("/login/kakao")
     public ResponseEntity<?> callback(@RequestParam("code") String code){
         String accessToken = kakaoServiceImpl.getAccessTokenFromKakao(code);
-        String response = kakaoServiceImpl.getUserInfo(accessToken);
+        KakaoLoginDto response = kakaoServiceImpl.getUserInfo(accessToken);
         return ResponseEntity.ok().body(response);
     }
 

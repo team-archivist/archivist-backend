@@ -9,5 +9,5 @@ public interface KakaoService {
 	
     String getAccessTokenFromKakao(String code);
 
-    String getUserInfo(String accessToken);
+    KakaoLoginDto getUserInfo(String accessToken);
 }
