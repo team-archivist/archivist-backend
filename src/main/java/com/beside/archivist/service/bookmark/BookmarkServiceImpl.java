@@ -1,10 +1,15 @@
 package com.beside.archivist.service.bookmark;
 
+import com.beside.archivist.config.AuditConfig;
 import com.beside.archivist.dto.bookmark.BookmarkDto;
 import com.beside.archivist.entity.bookmark.Bookmark;
+
 import com.beside.archivist.entity.bookmark.BookmarkImg;
+import com.beside.archivist.entity.users.User;
 
 import com.beside.archivist.repository.bookmark.BookmarkRepository;
+import com.beside.archivist.repository.users.
+  Repository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,19 +26,28 @@ public class BookmarkServiceImpl implements BookmarkService {
 
     private final BookmarkRepository bookmarkRepository;
 
-    private final BookmarkImgServiceImpl bookmarkImgServiceImpl;
+    private final BookmarkImgService bookmarkImgService;
+
+    private final AuditConfig auditConfig;
+
+    private final UserRepository userRepository;
+
 
     @Override
-    public Bookmark saveBookmark(BookmarkDto bookmarkDto)  {
+    public BookmarkDto saveBookmark(BookmarkDto bookmarkDto)  {
+        Optional<String> authentication = auditConfig.auditorProvider().getCurrentAuditor();
+
+        String email = authentication.get();
+        User user = userRepository.findByEmail(email).orElseThrow();
 
         Bookmark bookmark = Bookmark.builder()
                 .bookUrl(bookmarkDto.getBookUrl())
                 .bookName(bookmarkDto.getBookName())
                 .bookDesc(bookmarkDto.getBookDesc())
-                .user(bookmarkDto.getUser())
+                .user(user)
                 .build();
         bookmarkRepository.save(bookmark);
-        return bookmark;
+        return bookmarkDto;
     }
 
     @Override
@@ -42,9 +56,9 @@ public class BookmarkServiceImpl implements BookmarkService {
 
         BookmarkImg bookmarkImg = null;
         if(bookmark.getBookmarkImg() == null){
-            bookmarkImg = bookmarkImgServiceImpl.insertBookmarkImg(bookmarkImgFile);
+            bookmarkImg = bookmarkImgService.insertBookmarkImg(bookmarkImgFile);
         }else{
-            bookmarkImgServiceImpl.updateBookmarkImg(bookmark.getBookmarkImg().getId(), bookmarkImgFile);
+            bookmarkImgService.updateBookmarkImg(bookmark.getBookmarkImg().getId(), bookmarkImgFile);
             bookmarkImg = bookmark.getBookmarkImg();
         }
 
