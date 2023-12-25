@@ -59,7 +59,7 @@ public class UserController {
     }
 
     /** 회원 정보 수정 **/
-    @PostMapping("/user/{userId}")
+    @PatchMapping("/user/{userId}")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     public ResponseEntity<?> updateUser(@PathVariable("userId") Long userId,
                                         @RequestPart("userDto") UserDto userDto,
