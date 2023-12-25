@@ -1,4 +1,4 @@
-package com.beside.archivist.entity.bookmark;
+package com.beside.archivist.entity.link;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -7,11 +7,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
 
-@Entity @Table(name = "bookmark_img")
+@Entity @Table(name = "link_img")
 @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate // Dirty Checking
-public class BookmarkImg {
-    @Id @Column(name = "bookmark_img_id")
+public class LinkImg {
+    @Id @Column(name = "link_img_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -19,16 +19,16 @@ public class BookmarkImg {
     private String oriImgName; // 원본 이미지 파일명
     private String imgUrl; // 이미지 조회 경로
 
-    @OneToOne(mappedBy = "bookmarkImg", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Bookmark bookmark;
+    @OneToOne(mappedBy = "linkImg", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Link link;
 
     @Builder
-    public BookmarkImg(String imgName, String oriImgName, String imgUrl) {
+    public LinkImg(String imgName, String oriImgName, String imgUrl) {
         this.imgName = imgName;
         this.oriImgName = oriImgName;
         this.imgUrl = imgUrl;
     }
-    public void updateBookmarkImg(String imgName, String oriImgName, String imgUrl) {
+    public void updateLinkImg(String imgName, String oriImgName, String imgUrl) {
         this.imgName = imgName;
         this.oriImgName = oriImgName;
         this.imgUrl = imgUrl;

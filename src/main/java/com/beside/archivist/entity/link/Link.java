@@ -1,7 +1,7 @@
-package com.beside.archivist.entity.bookmark;
+package com.beside.archivist.entity.link;
 
 
-import com.beside.archivist.dto.bookmark.BookmarkDto;
+import com.beside.archivist.dto.link.LinkDto;
 import com.beside.archivist.entity.BaseEntity;
 import com.beside.archivist.entity.users.User;
 import jakarta.persistence.*;
@@ -10,11 +10,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity @Table(name = "bookmark")
+@Entity @Table(name = "link")
 @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Bookmark extends BaseEntity {
+public class Link extends BaseEntity {
 
-    @Id @Column(name = "bookmark_id")
+    @Id @Column(name = "link_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -29,20 +29,20 @@ public class Bookmark extends BaseEntity {
     private String bookDesc;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bookmark_img_id")
-    private BookmarkImg bookmarkImg;
+    @JoinColumn(name = "link_img_id")
+    private LinkImg linkImg;
 
     @Builder
-    public Bookmark(String bookUrl, String bookName, String bookDesc, User user, BookmarkImg bookmarkImg) {
+    public Link(String bookUrl, String bookName, String bookDesc, User user, LinkImg linkImg) {
         this.bookUrl = bookUrl;
         this.bookName = bookName;
         this.bookDesc = bookDesc;
         this.users = user;
-        this.bookmarkImg = bookmarkImg;
+        this.linkImg = linkImg;
     }
-    public void update(BookmarkDto bookmarkDto) {
-        this.bookUrl = bookmarkDto.getBookUrl();
-        this.bookName = bookmarkDto.getBookName();
-        this.bookDesc = bookmarkDto.getBookDesc();
+    public void update(LinkDto linkDto) {
+        this.bookUrl = linkDto.getBookUrl();
+        this.bookName = linkDto.getBookName();
+        this.bookDesc = linkDto.getBookDesc();
     }
 }
