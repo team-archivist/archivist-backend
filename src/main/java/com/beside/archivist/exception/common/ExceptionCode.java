@@ -1,4 +1,4 @@
-package com.beside.archivist.exception;
+package com.beside.archivist.exception.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,5 +1,7 @@
-package com.beside.archivist.exception;
+package com.beside.archivist.exception.common;
 
+import com.beside.archivist.dto.exception.ExceptionDto;
+import com.beside.archivist.dto.exception.ValidExceptionDto;
 import com.beside.archivist.exception.users.UserAlreadyExistsException;
 import com.beside.archivist.exception.users.UserNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -33,8 +35,8 @@ public class GlobalExceptionController {
 
     /** USER_001 중복 회원 체크 **/
     @ExceptionHandler(UserAlreadyExistsException.class)
-    protected ResponseEntity<ExceptionResponse> handlerUserAlreadyExistsException(UserAlreadyExistsException ex) {
-        final ExceptionResponse responseError = ExceptionResponse.builder()
+    protected ResponseEntity<ExceptionDto> handlerUserAlreadyExistsException(UserAlreadyExistsException ex) {
+        final ExceptionDto responseError = ExceptionDto.builder()
                 .statusCode(ex.getExceptionCode().getStatus().value())
                 .message(ex.getExceptionCode().getMessage())
                 .build();
@@ -43,8 +45,8 @@ public class GlobalExceptionController {
 
     /** USER_002 기존 회원 유무 체크 **/
     @ExceptionHandler(UserNotFoundException.class)
-    protected ResponseEntity<ExceptionResponse> handlerUserNotFoundException(UserNotFoundException ex) {
-        final ExceptionResponse responseError = ExceptionResponse.builder()
+    protected ResponseEntity<ExceptionDto> handlerUserNotFoundException(UserNotFoundException ex) {
+        final ExceptionDto responseError = ExceptionDto.builder()
                 .statusCode(ex.getExceptionCode().getStatus().value())
                 .message(ex.getEmail())
                 .build();

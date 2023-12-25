@@ -2,7 +2,7 @@ package com.beside.archivist.service.users;
 
 import com.beside.archivist.dto.users.KakaoLoginDto;
 import com.beside.archivist.entity.users.User;
-import com.beside.archivist.exception.ExceptionCode;
+import com.beside.archivist.exception.common.ExceptionCode;
 import com.beside.archivist.exception.users.UserNotFoundException;
 import com.beside.archivist.repository.users.UserRepository;
 import com.beside.archivist.utils.JwtTokenUtil;
@@ -19,7 +19,6 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import java.lang.reflect.Type;
 import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @Service @Transactional
