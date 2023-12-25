@@ -59,10 +59,10 @@ public class UserController {
     }
 
     /** 회원 정보 수정 **/
-    @PostMapping("/user/{userId}")
+    @PatchMapping("/user/{userId}")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     public ResponseEntity<?> updateUser(@PathVariable("userId") Long userId,
-                                        @RequestPart("userDto") UserDto userDto,
+                                        @RequestPart("userDto") @Valid UserDto userDto,
                                         @RequestPart(value = "userImgFile", required = false) MultipartFile userImgFile) {
         UserInfoDto updatedUser = userServiceImpl.updateUser(userId, userDto, userImgFile);
         return ResponseEntity.ok().body(updatedUser);
