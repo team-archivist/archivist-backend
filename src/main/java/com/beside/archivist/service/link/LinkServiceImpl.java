@@ -103,7 +103,8 @@ public class LinkServiceImpl implements LinkService {
                         m.getBookUrl(),
                         m.getBookName(),
                         m.getBookDesc(),
-                        m.getLinkImg().getImgUrl()))
+                        m.getLinkImg().getImgUrl(),
+                        m.getUsers().getId()))
                 .collect(Collectors.toList());
     }
 }
