@@ -4,7 +4,7 @@ import com.beside.archivist.dto.users.UserDto;
 import com.beside.archivist.dto.users.UserInfoDto;
 import com.beside.archivist.entity.users.User;
 import com.beside.archivist.entity.users.UserImg;
-import com.beside.archivist.exception.ExceptionCode;
+import com.beside.archivist.exception.common.ExceptionCode;
 import com.beside.archivist.exception.users.UserAlreadyExistsException;
 import com.beside.archivist.repository.users.UserRepository;
 import jakarta.transaction.Transactional;

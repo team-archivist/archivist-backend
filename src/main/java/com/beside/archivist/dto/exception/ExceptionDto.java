@@ -1,15 +1,15 @@
-package com.beside.archivist.exception;
+package com.beside.archivist.dto.exception;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor @Getter
-public class ExceptionResponse {
+public class ExceptionDto {
     private int statusCode;
     private String message;
     @Builder
-    public ExceptionResponse(int statusCode, String message) {
+    public ExceptionDto(int statusCode, String message) {
         this.statusCode = statusCode;
         this.message = message;
     }

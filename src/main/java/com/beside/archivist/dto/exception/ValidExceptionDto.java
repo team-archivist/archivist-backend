@@ -1,4 +1,4 @@
-package com.beside.archivist.exception;
+package com.beside.archivist.dto.exception;
 
 import lombok.Builder;
 import lombok.Getter;
