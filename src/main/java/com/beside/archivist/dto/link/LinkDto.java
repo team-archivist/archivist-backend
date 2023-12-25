@@ -1,16 +1,13 @@
-package com.beside.archivist.dto.bookmark;
+package com.beside.archivist.dto.link;
 
-import com.beside.archivist.entity.bookmark.BookmarkImg;
 import com.beside.archivist.entity.users.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.util.List;
-
 @Getter @ToString
-public class BookmarkDto {
-    private Long bookmarkId;
+public class LinkDto {
+    private Long linkId;
     private String bookUrl;    //북마크 경로
     private String bookName;   //북마크 이름
     private String bookDesc;   //북마크 설명
@@ -18,8 +15,8 @@ public class BookmarkDto {
     private User user;
 
     @Builder
-    public BookmarkDto(Long bookmarkId, String bookUrl, String bookName, String bookDesc, String imgUrl) {
-        this.bookmarkId = bookmarkId;
+    public LinkDto(Long linkId, String bookUrl, String bookName, String bookDesc, String imgUrl) {
+        this.linkId = linkId;
         this.bookUrl = bookUrl;
         this.bookName = bookName;
         this.bookDesc = bookDesc;

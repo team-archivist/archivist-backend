@@ -4,7 +4,7 @@ package com.beside.archivist.entity.users;
 import com.beside.archivist.dto.users.UserDto;
 import com.beside.archivist.entity.BaseEntity;
 import com.beside.archivist.entity.BaseTimeEntity;
-import com.beside.archivist.entity.bookmark.Bookmark;
+import com.beside.archivist.entity.link.Link;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -38,7 +38,7 @@ public class User extends BaseTimeEntity {
     private UserImg userImg;
 
     @OneToMany(mappedBy = "users", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Bookmark> bookmarks = new ArrayList<>();
+    private List<Link> links = new ArrayList<>();
 
     @Builder
     public User(String email, String password, String nickname, List<Category> categories, UserImg userImg) {
@@ -55,7 +55,7 @@ public class User extends BaseTimeEntity {
         this.categories = categories;
     }
 
-    public void addBookmark(Bookmark b){
-        this.bookmarks.add(b);
+    public void addLink(Link b){
+        this.links.add(b);
     }
 }
