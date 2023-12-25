@@ -9,6 +9,7 @@ import com.beside.archivist.service.users.UserImgService;
 import com.beside.archivist.service.users.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +44,7 @@ public class UserController {
 
     /** 회원 정보 저장 **/
     @PostMapping("/user")
-    public ResponseEntity<?> registerUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<?> registerUser(@RequestBody @Valid UserDto userDto) {
         UserImg userImg = userImgServiceImpl.initializeDefaultImg();
         UserInfoDto savedUser = userServiceImpl.saveUser(userDto,userImg);
         return ResponseEntity.ok().body(savedUser);
