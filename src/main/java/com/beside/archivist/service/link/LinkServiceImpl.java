@@ -47,14 +47,21 @@ public class LinkServiceImpl implements LinkService {
         }
 
         Link link = Link.builder()
-                .bookUrl(linkDto.getBookUrl())
-                .bookName(linkDto.getBookName())
-                .bookDesc(linkDto.getBookDesc())
+                .linkUrl(linkDto.getLinkUrl())
+                .linkName(linkDto.getLinkName())
+                .linkDesc(linkDto.getLinkDesc())
                 .user(user)
                 .linkImg(linkImg)
                 .build();
         linkRepository.save(link);
-        return linkDto;
+        return LinkDto.builder()
+                .linkId(link.getId())
+                .linkUrl(linkDto.getLinkUrl())
+                .linkName(linkDto.getLinkName())
+                .linkDesc(linkDto.getLinkDesc())
+                .imgUrl(link.getLinkImg().getImgUrl())
+                .userId(link.getId())
+                .build();
     }
 
     @Override
@@ -70,11 +77,18 @@ public class LinkServiceImpl implements LinkService {
         }
 
         link.update(LinkDto.builder()
-                .bookUrl(linkDto.getBookUrl())
-                .bookName(linkDto.getBookName())
-                .bookDesc(linkDto.getBookDesc())
+                .linkUrl(linkDto.getLinkUrl())
+                .linkName(linkDto.getLinkName())
+                .linkDesc(linkDto.getLinkDesc())
                 .build());
-        return linkDto;
+        return LinkDto.builder()
+                .linkId(link.getId())
+                .linkUrl(linkDto.getLinkUrl())
+                .linkName(linkDto.getLinkName())
+                .linkDesc(linkDto.getLinkDesc())
+                .imgUrl(link.getLinkImg().getImgUrl())
+                .userId(link.getId())
+                .build();
     }
 
     @Override
@@ -87,10 +101,12 @@ public class LinkServiceImpl implements LinkService {
         Link link = linkRepository.findById(id).orElseThrow();
 
         return LinkDto.builder()
-                .bookUrl(link.getBookUrl())
-                .bookName(link.getBookName())
-                .bookDesc(link.getBookDesc())
+                .linkId(link.getId())
+                .linkUrl(link.getLinkUrl())
+                .linkName(link.getLinkName())
+                .linkDesc(link.getLinkDesc())
                 .imgUrl(link.getLinkImg().getImgUrl())
+                .userId(link.getId())
                 .build();
     }
 
@@ -100,9 +116,9 @@ public class LinkServiceImpl implements LinkService {
 
         return linkList.stream()
                 .map(m-> new LinkDto(m.getId(),
-                        m.getBookUrl(),
-                        m.getBookName(),
-                        m.getBookDesc(),
+                        m.getLinkUrl(),
+                        m.getLinkName(),
+                        m.getLinkDesc(),
                         m.getLinkImg().getImgUrl(),
                         m.getUsers().getId()))
                 .collect(Collectors.toList());
