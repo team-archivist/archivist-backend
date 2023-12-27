@@ -4,6 +4,7 @@ package com.beside.archivist.controller.users;
 import com.beside.archivist.dto.users.KakaoLoginDto;
 import com.beside.archivist.dto.users.UserDto;
 import com.beside.archivist.dto.users.UserInfoDto;
+import com.beside.archivist.entity.users.Category;
 import com.beside.archivist.entity.users.UserImg;
 import com.beside.archivist.service.users.UserImgService;
 import com.beside.archivist.service.users.UserService;
@@ -74,5 +75,11 @@ public class UserController {
     public ResponseEntity<?> deleteUser(@PathVariable("userId") Long userId){
         userServiceImpl.deleteUser(userId);
         return ResponseEntity.ok().body("회원 탈퇴가 완료되었습니다.");
+    }
+
+    /** 카테고리 모든 값 조회 **/
+    @GetMapping("/categories")
+    public ResponseEntity<?> getCategories() {
+        return ResponseEntity.ok().body(Category.values());
     }
 }
