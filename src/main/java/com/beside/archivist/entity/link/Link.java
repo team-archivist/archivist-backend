@@ -22,27 +22,27 @@ public class Link extends BaseEntity {
     @JoinColumn(name="user_id", referencedColumnName = "user_id")
     private User users;
     @Column
-    private String bookUrl;
-    @Column
-    private String bookName;
-    @Column
-    private String bookDesc;
+    private String linkUrl;
+    @Column(columnDefinition = "TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
+    private String linkName;
+    @Column(columnDefinition = "TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
+    private String linkDesc;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "link_img_id")
     private LinkImg linkImg;
 
     @Builder
-    public Link(String bookUrl, String bookName, String bookDesc, User user, LinkImg linkImg) {
-        this.bookUrl = bookUrl;
-        this.bookName = bookName;
-        this.bookDesc = bookDesc;
+    public Link(String linkUrl, String linkName, String linkDesc, User user, LinkImg linkImg) {
+        this.linkUrl = linkUrl;
+        this.linkName = linkName;
+        this.linkDesc = linkDesc;
         this.users = user;
         this.linkImg = linkImg;
     }
     public void update(LinkDto linkDto) {
-        this.bookUrl = linkDto.getBookUrl();
-        this.bookName = linkDto.getBookName();
-        this.bookDesc = linkDto.getBookDesc();
+        this.linkUrl = linkDto.getLinkUrl();
+        this.linkName = linkDto.getLinkName();
+        this.linkDesc = linkDto.getLinkDesc();
     }
 }

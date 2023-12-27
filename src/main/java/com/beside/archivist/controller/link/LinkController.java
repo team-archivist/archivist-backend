@@ -4,6 +4,7 @@ import com.beside.archivist.dto.link.LinkDto;
 import com.beside.archivist.service.link.LinkService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -51,16 +52,16 @@ public class LinkController {
 
     @PostMapping("/link")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
-    public ResponseEntity<?> registerLink(@RequestPart LinkDto linkDto,
+    public ResponseEntity<?> registerLink(@RequestPart @Valid LinkDto linkDto,
                                               @RequestPart(value = "linkImgFile", required = false) MultipartFile linkImgFile) {
         LinkDto savedLink = linkServiceImpl.saveLink(linkDto,linkImgFile);
         return ResponseEntity.ok().body(savedLink);
     }
 
-    @PostMapping ("/link/{linkId}")
+    @PatchMapping ("/link/{linkId}")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     public ResponseEntity<?> updateLink(@PathVariable("linkId") Long linkId,
-                                            @RequestPart LinkDto linkDto,
+                                            @RequestPart @Valid LinkDto linkDto,
                                             @RequestPart(value = "linkImgFile", required = false) MultipartFile linkImgFile) {
         LinkDto updatedLink = linkServiceImpl.updateLink(linkId, linkDto, linkImgFile);
         return ResponseEntity.ok().body(updatedLink);
