@@ -1,5 +1,7 @@
 package com.beside.archivist.service.util;
 
+import com.beside.archivist.exception.common.ExceptionCode;
+import com.beside.archivist.exception.images.InvalidFileExtensionException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -38,7 +40,13 @@ public class FileService {
 
     private String extractExt(String originalFilename) { // 확장자 추출
         int pos = originalFilename.lastIndexOf(".");
-        return originalFilename.substring(pos + 1);
+        String ext = originalFilename.substring(pos + 1);
+
+        // jpg, jpeg, png 제외 확장자 예외 처리
+        if (!ext.equalsIgnoreCase("jpg") && !ext.equalsIgnoreCase("jpeg") && !ext.equalsIgnoreCase("png")){
+            throw new InvalidFileExtensionException(ExceptionCode.INVALID_FILE_EXTENSION);
+        }
+        return ext;
     }
 
     public void deleteFile(String imgLocation, String filePath){ // 파일 삭제
