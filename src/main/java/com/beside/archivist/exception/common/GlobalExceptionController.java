@@ -2,6 +2,7 @@ package com.beside.archivist.exception.common;
 
 import com.beside.archivist.dto.exception.ExceptionDto;
 import com.beside.archivist.dto.exception.ValidExceptionDto;
+import com.beside.archivist.exception.images.InvalidFileExtensionException;
 import com.beside.archivist.exception.users.UserAlreadyExistsException;
 import com.beside.archivist.exception.users.UserNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,17 @@ public class GlobalExceptionController {
                 .build();
         return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
     }
+
+    /** 이미지 확장자 체크 **/
+    @ExceptionHandler(InvalidFileExtensionException.class)
+    protected ResponseEntity<ExceptionDto> handlerInvalidFileExtensionException(InvalidFileExtensionException ex) {
+        final ExceptionDto responseError = ExceptionDto.builder()
+                .statusCode(ex.getExceptionCode().getStatus().value())
+                .message(ex.getExceptionCode().getMessage())
+                .build();
+        return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
+    }
+
 
     /** USER_001 중복 회원 체크 **/
     @ExceptionHandler(UserAlreadyExistsException.class)
