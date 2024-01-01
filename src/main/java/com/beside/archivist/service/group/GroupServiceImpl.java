@@ -2,6 +2,7 @@ package com.beside.archivist.service.group;
 
 import com.beside.archivist.config.AuditConfig;
 import com.beside.archivist.dto.group.GroupDto;
+import com.beside.archivist.dto.link.LinkDto;
 import com.beside.archivist.entity.group.Group;
 import com.beside.archivist.entity.group.GroupImg;
 import com.beside.archivist.entity.users.User;
@@ -37,9 +38,7 @@ public class GroupServiceImpl implements GroupService {
         String email = authentication.get();
         User user = userRepository.findByEmail(email).orElseThrow();
 
-        System.out.println("getCategories ==="+groupDto.getCategories());
-
-        GroupImg groupImg = null;
+        GroupImg groupImg;
         if(groupImgFile == null){
             groupImg = groupImgService.initializeDefaultImg();
         }else{
@@ -61,6 +60,7 @@ public class GroupServiceImpl implements GroupService {
                 .groupDesc(groupDto.getGroupDesc())
                 .isGroupPublic(group.isGroupPublic())
                 .categories(group.getCategories())
+                .linkCount(group.getLinkCount())
                 .imgUrl(groupImg.getImgUrl())
                 .userId(group.getId())
                 .build();
@@ -110,6 +110,7 @@ public class GroupServiceImpl implements GroupService {
                 .groupDesc(group.getGroupDesc())
                 .isGroupPublic(group.isGroupPublic())
                 .categories(group.getCategories())
+                .linkCount(group.getLinkCount())
                 .imgUrl(group.getGroupImg().getImgUrl())
                 .userId(group.getId())
                 .build();
@@ -126,7 +127,23 @@ public class GroupServiceImpl implements GroupService {
                         m.isGroupPublic(),
                         m.getCategories(),
                         m.getGroupImg().getImgUrl(),
-                        m.getUsers().getId()))
+                        m.getUsers().getId(),
+                        m.getLinkCount()))
                 .collect(Collectors.toList());
+    }
+
+
+    public  List<LinkDto> getLinksByGroupId(Long groupId){
+        Optional<Group> groupList = groupRepository.findByIdWithLinks(groupId);
+
+
+        return groupList.orElseThrow().getLinks().stream()
+                .map(m-> new LinkDto(m.getLink().getId(),
+                        m.getLink().getLinkUrl(),
+                        m.getLink().getLinkName(),
+                        m.getLink().getLinkDesc(),
+                        m.getLink().getLinkImg().getImgUrl(),
+                        m.getLink().getUsers().getId())
+                ).toList();
     }
 }

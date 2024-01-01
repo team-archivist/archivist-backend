@@ -21,9 +21,10 @@ public class GroupDto {
     private List<Category> categories;  //그룹 카테고리
     private Long userId;
     private String imgUrl;
+    private Long linkCount;
 
     @Builder
-    public GroupDto(Long groupId, String groupName, String groupDesc, Boolean isGroupPublic, List<Category> categories, String imgUrl, Long userId) {
+    public GroupDto(Long groupId, String groupName, String groupDesc, Boolean isGroupPublic, List<Category> categories, String imgUrl, Long userId,Long linkCount) {
         this.groupId = groupId;
         this.groupName = groupName.trim();
         this.groupDesc = groupDesc;
@@ -31,5 +32,6 @@ public class GroupDto {
         this.categories = categories;
         this.imgUrl = imgUrl;
         this.userId = userId;
+        this.linkCount = linkCount;
     }
 }

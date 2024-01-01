@@ -1,6 +1,7 @@
 package com.beside.archivist.controller.group;
 
 import com.beside.archivist.dto.group.GroupDto;
+import com.beside.archivist.dto.link.LinkDto;
 import com.beside.archivist.service.group.GroupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -56,6 +57,12 @@ public class GroupController {
     public ResponseEntity<?> deleteGroup(@PathVariable("groupId") Long groupId){
         groupServiceImpl.deleteGroup(groupId);
         return ResponseEntity.ok().body("그룹 삭제 완료.");
+    }
+
+    @GetMapping("/group/link/{id}")
+    public ResponseEntity<?> getLinksByGroupId(@PathVariable("id") Long id) {
+        List<LinkDto> group = groupServiceImpl.getLinksByGroupId(id);
+        return ResponseEntity.ok().body(group);
     }
 }
 

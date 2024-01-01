@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Formula;
 
 import java.util.List;
 
@@ -30,6 +31,8 @@ public class Group extends BaseEntity {
     private boolean isGroupPublic;
     @Column
     private List<Category> categories;
+    @Formula("(SELECT COUNT(lg.link_group_id) FROM link_group lg WHERE lg.group_id = group_id)")
+    private Long linkCount;
 
     @ManyToOne
     @JoinColumn(name="user_id", referencedColumnName = "user_id")
@@ -39,20 +42,26 @@ public class Group extends BaseEntity {
     @JoinColumn(name = "group_img_id")
     private GroupImg groupImg;
 
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
+    private List<LinkGroup> links;
+
 
     @Builder
-    public Group(String groupName, String groupDesc, Boolean isGroupPublic, User user, List<Category> categories,GroupImg groupImg) {
+    public Group(String groupName, String groupDesc, Boolean isGroupPublic, User user, List<Category> categories,GroupImg groupImg, Long linkCount, List<LinkGroup> links) {
         this.groupName = groupName;
         this.groupDesc = groupDesc;
         this.isGroupPublic = isGroupPublic;
         this.users = user;
         this.categories = categories;
         this.groupImg = groupImg;
+        this.linkCount = linkCount;
+        this.links = links;
     }
     public void update(GroupDto groupDto) {
         this.groupName = groupDto.getGroupName();
         this.groupDesc = groupDto.getGroupDesc();
         this.isGroupPublic = groupDto.getIsGroupPublic();
         this.categories = groupDto.getCategories();
+        this.linkCount = groupDto.getLinkCount();
     }
 }
