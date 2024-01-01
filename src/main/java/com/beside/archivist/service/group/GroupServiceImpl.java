@@ -52,6 +52,7 @@ public class GroupServiceImpl implements GroupService {
                 .categories(groupDto.getCategories())
                 .user(user)
                 .groupImg(groupImg)
+                .linkCount(0L)
                 .build();
         groupRepository.save(group);
         return GroupDto.builder()
@@ -62,7 +63,8 @@ public class GroupServiceImpl implements GroupService {
                 .categories(group.getCategories())
                 .linkCount(group.getLinkCount())
                 .imgUrl(groupImg.getImgUrl())
-                .userId(group.getId())
+                .userId(group.getUsers().getId())
+                .linkCount(group.getLinkCount())
                 .build();
     }
 
@@ -91,7 +93,8 @@ public class GroupServiceImpl implements GroupService {
                 .isGroupPublic(groupDto.getIsGroupPublic())
                 .categories(groupDto.getCategories())
                 .imgUrl(group.getGroupImg().getImgUrl())
-                .userId(group.getId())
+                .userId(group.getUsers().getId())
+                .linkCount(group.getLinkCount())
                 .build();
     }
 
