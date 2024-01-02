@@ -6,6 +6,7 @@ import com.beside.archivist.dto.link.LinkDto;
 import com.beside.archivist.entity.group.Group;
 import com.beside.archivist.entity.group.GroupImg;
 import com.beside.archivist.entity.users.User;
+import com.beside.archivist.mapper.GroupMapper;
 import com.beside.archivist.repository.group.GroupRepository;
 import com.beside.archivist.repository.users.UserRepository;
 import jakarta.transaction.Transactional;
@@ -26,6 +27,7 @@ public class GroupServiceImpl implements GroupService {
     private final GroupRepository groupRepository;
 
     private final GroupImgService groupImgService;
+    private final GroupMapper groupMapperImpl;
 
     private final AuditConfig auditConfig;
 
@@ -55,17 +57,7 @@ public class GroupServiceImpl implements GroupService {
                 .linkCount(0L)
                 .build();
         groupRepository.save(group);
-        return GroupDto.builder()
-                .groupId(group.getId())
-                .groupName(groupDto.getGroupName())
-                .groupDesc(groupDto.getGroupDesc())
-                .isGroupPublic(group.isGroupPublic())
-                .categories(group.getCategories())
-                .linkCount(group.getLinkCount())
-                .imgUrl(groupImg.getImgUrl())
-                .userId(group.getUsers().getId())
-                .linkCount(group.getLinkCount())
-                .build();
+        return groupMapperImpl.toDto(group);
     }
 
     @Override
@@ -86,16 +78,7 @@ public class GroupServiceImpl implements GroupService {
                 .isGroupPublic(groupDto.getIsGroupPublic())
                 .categories(groupDto.getCategories())
                 .build());
-        return GroupDto.builder()
-                .groupId(group.getId())
-                .groupName(groupDto.getGroupName())
-                .groupDesc(groupDto.getGroupDesc())
-                .isGroupPublic(groupDto.getIsGroupPublic())
-                .categories(groupDto.getCategories())
-                .imgUrl(group.getGroupImg().getImgUrl())
-                .userId(group.getUsers().getId())
-                .linkCount(group.getLinkCount())
-                .build();
+        return groupMapperImpl.toDto(group);
     }
 
     @Override
@@ -107,16 +90,7 @@ public class GroupServiceImpl implements GroupService {
         // 특정 북마크 ID에 해당하는 북마크 조회
         Group group = groupRepository.findById(id).orElseThrow();
 
-        return GroupDto.builder()
-                .groupId(group.getId())
-                .groupName(group.getGroupName())
-                .groupDesc(group.getGroupDesc())
-                .isGroupPublic(group.isGroupPublic())
-                .categories(group.getCategories())
-                .linkCount(group.getLinkCount())
-                .imgUrl(group.getGroupImg().getImgUrl())
-                .userId(group.getId())
-                .build();
+        return groupMapperImpl.toDto(group);
     }
 
     public List<GroupDto> getGroupsByUserId(Long userId){
@@ -124,21 +98,13 @@ public class GroupServiceImpl implements GroupService {
         List<Group> groupList = groupRepository.findByUsers_Id(userId);
 
         return groupList.stream()
-                .map(m-> new GroupDto(m.getId(),
-                        m.getGroupName(),
-                        m.getGroupDesc(),
-                        m.isGroupPublic(),
-                        m.getCategories(),
-                        m.getGroupImg().getImgUrl(),
-                        m.getUsers().getId(),
-                        m.getLinkCount()))
+                .map(groupMapperImpl::toDto)
                 .collect(Collectors.toList());
     }
 
 
     public  List<LinkDto> getLinksByGroupId(Long groupId){
         Optional<Group> groupList = groupRepository.findByIdWithLinks(groupId);
-
 
         return groupList.orElseThrow().getLinks().stream()
                 .map(m-> new LinkDto(m.getLink().getId(),

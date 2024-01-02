@@ -5,6 +5,7 @@ import com.beside.archivist.entity.group.Group;
 import com.beside.archivist.entity.group.LinkGroup;
 import com.beside.archivist.entity.link.Link;
 
+import com.beside.archivist.mapper.LinkGroupMapper;
 import com.beside.archivist.repository.group.GroupRepository;
 import com.beside.archivist.repository.group.LinkGroupRepository;
 import com.beside.archivist.repository.link.LinkRepository;
@@ -22,6 +23,8 @@ public class LinkGroupServiceImpl implements LinkGroupService {
 
     private final LinkGroupRepository linkGroupRepository;
 
+    private final LinkGroupMapper linkGroupMapperImpl;
+
     private final LinkRepository linkRepository;
 
     private final GroupRepository groupRepository;
@@ -37,11 +40,7 @@ public class LinkGroupServiceImpl implements LinkGroupService {
                 .group(group.orElseThrow())
                 .build();
         linkGroupRepository.save(linkGroup);
-        return LinkGroupDto.builder()
-                .linkGroupId(linkGroup.getId())
-                .linkId(linkGroup.getLink().getId())
-                .groupId(linkGroup.getGroup().getId())
-                .build();
+        return linkGroupMapperImpl.toDto(linkGroup);
     }
 
     @Override
