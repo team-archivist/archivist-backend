@@ -7,6 +7,8 @@ import com.beside.archivist.entity.link.Link;
 import com.beside.archivist.entity.link.LinkImg;
 import com.beside.archivist.entity.users.User;
 
+import com.beside.archivist.mapper.LinkMapper;
+import com.beside.archivist.mapper.LinkMapperImpl;
 import com.beside.archivist.repository.link.LinkRepository;
 import com.beside.archivist.repository.users.UserRepository;
 import jakarta.transaction.Transactional;
@@ -26,12 +28,13 @@ public class LinkServiceImpl implements LinkService {
 
     private final LinkRepository linkRepository;
 
+    private final LinkMapper linkMapperImpl;
+
     private final LinkImgService linkImgService;
 
     private final AuditConfig auditConfig;
 
     private final UserRepository userRepository;
-
 
     @Override
     public LinkDto saveLink(LinkDto linkDto, MultipartFile linkImgFile)  {
@@ -54,20 +57,13 @@ public class LinkServiceImpl implements LinkService {
                 .linkImg(linkImg)
                 .build();
         linkRepository.save(link);
-        return LinkDto.builder()
-                .linkId(link.getId())
-                .linkUrl(linkDto.getLinkUrl())
-                .linkName(linkDto.getLinkName())
-                .linkDesc(linkDto.getLinkDesc())
-                .imgUrl(link.getLinkImg().getImgUrl())
-                .userId(link.getId())
-                .build();
+
+        return linkMapperImpl.toDto(link);
     }
 
     @Override
     public LinkDto updateLink(Long linkId, LinkDto linkDto, MultipartFile linkImgFile) {
         Link link = linkRepository.findById(linkId).orElseThrow(RuntimeException::new);
-
         if(linkImgFile != null){
             if(link.getLinkImg() == null){
                 linkImgService.insertLinkImg(linkImgFile);
@@ -75,20 +71,9 @@ public class LinkServiceImpl implements LinkService {
                 linkImgService.updateLinkImg(link.getLinkImg().getId(), linkImgFile);
             }
         }
+        link.update(linkDto);
 
-        link.update(LinkDto.builder()
-                .linkUrl(linkDto.getLinkUrl())
-                .linkName(linkDto.getLinkName())
-                .linkDesc(linkDto.getLinkDesc())
-                .build());
-        return LinkDto.builder()
-                .linkId(link.getId())
-                .linkUrl(linkDto.getLinkUrl())
-                .linkName(linkDto.getLinkName())
-                .linkDesc(linkDto.getLinkDesc())
-                .imgUrl(link.getLinkImg().getImgUrl())
-                .userId(link.getId())
-                .build();
+        return linkMapperImpl.toDto(link);
     }
 
     @Override
@@ -100,14 +85,7 @@ public class LinkServiceImpl implements LinkService {
         // 특정 북마크 ID에 해당하는 북마크 조회
         Link link = linkRepository.findById(id).orElseThrow();
 
-        return LinkDto.builder()
-                .linkId(link.getId())
-                .linkUrl(link.getLinkUrl())
-                .linkName(link.getLinkName())
-                .linkDesc(link.getLinkDesc())
-                .imgUrl(link.getLinkImg().getImgUrl())
-                .userId(link.getId())
-                .build();
+        return linkMapperImpl.toDto(link);
     }
 
     public List<LinkDto> getLinksByUserId(Long userId){
@@ -115,12 +93,7 @@ public class LinkServiceImpl implements LinkService {
         List<Link> linkList = linkRepository.findByUsers_Id(userId);
 
         return linkList.stream()
-                .map(m-> new LinkDto(m.getId(),
-                        m.getLinkUrl(),
-                        m.getLinkName(),
-                        m.getLinkDesc(),
-                        m.getLinkImg().getImgUrl(),
-                        m.getUsers().getId()))
+                .map(linkMapperImpl::toDto)
                 .collect(Collectors.toList());
     }
 }

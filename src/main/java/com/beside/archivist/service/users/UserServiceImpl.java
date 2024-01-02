@@ -6,6 +6,7 @@ import com.beside.archivist.entity.users.User;
 import com.beside.archivist.entity.users.UserImg;
 import com.beside.archivist.exception.common.ExceptionCode;
 import com.beside.archivist.exception.users.UserAlreadyExistsException;
+import com.beside.archivist.mapper.UserMapper;
 import com.beside.archivist.repository.users.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import java.util.*;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final UserMapper userMapperImpl;
     private final UserImgService userImgServiceImpl;
 
     @Override
@@ -48,7 +50,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserInfoDto saveUser(UserDto userDto, UserImg userImg) {
-
         checkDuplicateUser(userDto.getEmail()); // 중복 회원 체크
 
         User savedUser = userRepository.save(
@@ -61,26 +62,14 @@ public class UserServiceImpl implements UserService {
                         .build()
         );
 
-        return UserInfoDto.builder()
-                .userId(savedUser.getId())
-                .email(savedUser.getEmail())
-                .nickname(savedUser.getNickname())
-                .imgUrl(savedUser.getUserImg().getImgUrl())
-                .categories(savedUser.getCategories())
-                .build();
+        return userMapperImpl.toDto(savedUser);
     }
 
     @Override
     public UserInfoDto getUserInfo(String email) {
         User findUser = userRepository.findByEmail(email).orElseThrow();
 
-        return UserInfoDto.builder()
-                .userId(findUser.getId())
-                .email(findUser.getEmail())
-                .nickname(findUser.getNickname())
-                .imgUrl(findUser.getUserImg().getImgUrl())
-                .categories(findUser.getCategories())
-                .build();
+        return userMapperImpl.toDto(findUser);
     }
 
     @Override
@@ -89,13 +78,7 @@ public class UserServiceImpl implements UserService {
         user.updateUserInfo(userDto.getNickname(),userDto.getCategories()); // 유저 정보 update
         userImgServiceImpl.updateUserImg(user.getUserImg().getId(), userImgFile); // 유저 이미지 update
 
-        return UserInfoDto.builder()
-                .userId(userId)
-                .email(user.getEmail())
-                .nickname(user.getNickname())
-                .imgUrl(user.getUserImg().getImgUrl())
-                .categories(user.getCategories())
-                .build();
+        return userMapperImpl.toDto(user);
     }
 
     @Override
