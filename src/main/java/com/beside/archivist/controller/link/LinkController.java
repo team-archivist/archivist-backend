@@ -23,18 +23,21 @@ public class LinkController {
 
     private final LinkService linkServiceImpl;
 
+    /** 회원이 북마크/저장한 링크 모두 조회 **/
     @GetMapping("/user/link/{userId}")
     public ResponseEntity<List<LinkDto>> getUserLinkList(@PathVariable("userId") Long userId) {
         List<LinkDto> links = linkServiceImpl.getLinksByUserId(userId);
         return ResponseEntity.ok().body(links);
     }
 
+    /** 특정 링크 상세 조회 **/
     @GetMapping("/link/{id}")
     public ResponseEntity<?> findLinkById(@PathVariable("id") Long id) {
         LinkDto link = linkServiceImpl.findLinkById(id);
         return ResponseEntity.ok().body(link);
     }
 
+    /** URL 유효성 검증 **/
     @GetMapping("/link/valid")
     public ResponseEntity<?> urlValidation(@RequestParam String url) {
         String[] schemes = {"http", "https"};
@@ -49,7 +52,7 @@ public class LinkController {
         return ResponseEntity.ok().body(validAt);
     }
 
-
+    /** 외부 웹에서 링크 저장 **/
     @PostMapping("/link")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     public ResponseEntity<?> registerLink(@RequestPart @Valid LinkDto linkDto,
@@ -58,6 +61,7 @@ public class LinkController {
         return ResponseEntity.ok().body(savedLink);
     }
 
+    /** 링크 수정 **/
     @PatchMapping ("/link/{linkId}")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     public ResponseEntity<?> updateLink(@PathVariable("linkId") Long linkId,
@@ -67,7 +71,7 @@ public class LinkController {
         return ResponseEntity.ok().body(updatedLink);
     }
 
-
+    /** 링크 삭제 **/
     @DeleteMapping("/link/{linkId}")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     public ResponseEntity<?> deleteLink(@PathVariable("linkId") Long linkId){
