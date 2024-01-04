@@ -5,6 +5,7 @@ import com.beside.archivist.dto.exception.ValidExceptionDto;
 import com.beside.archivist.exception.images.InvalidFileExtensionException;
 import com.beside.archivist.exception.users.UserAlreadyExistsException;
 import com.beside.archivist.exception.users.UserNotFoundException;
+import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -40,6 +41,16 @@ public class GlobalExceptionController {
         final ExceptionDto responseError = ExceptionDto.builder()
                 .statusCode(ex.getExceptionCode().getStatus().value())
                 .message(ex.getExceptionCode().getMessage())
+                .build();
+        return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
+    }
+
+    /** 이미지 크기 체크 **/
+    @ExceptionHandler(FileSizeLimitExceededException.class)
+    public ResponseEntity<ExceptionDto> handleMaxSizeExceededException() {
+        final ExceptionDto responseError = ExceptionDto.builder()
+                .statusCode(ExceptionCode.MAX_SIZE_EXCEEDED.getStatus().value())
+                .message(ExceptionCode.MAX_SIZE_EXCEEDED.getMessage())
                 .build();
         return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
     }
