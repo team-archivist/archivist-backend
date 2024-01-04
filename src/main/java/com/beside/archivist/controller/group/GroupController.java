@@ -22,18 +22,21 @@ public class GroupController {
 
     private final GroupService groupServiceImpl;
 
+    /** 특정 유저의 소유한 모든 그룹 조회 **/
     @GetMapping("/user/group/{userId}")
     public ResponseEntity<List<GroupDto>> getUserGroupList(@PathVariable("userId") Long userId) {
         List<GroupDto> groups = groupServiceImpl.getGroupsByUserId(userId);
         return ResponseEntity.ok().body(groups);
     }
 
+    /** 특정 그룹 상세 조회 **/
     @GetMapping("/group/{id}")
     public ResponseEntity<?> findGroupById(@PathVariable("id") Long id) {
         GroupDto group = groupServiceImpl.findGroupById(id);
         return ResponseEntity.ok().body(group);
     }
 
+    /** 그룹 생성 **/
     @PostMapping("/group")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     public ResponseEntity<?> registerGroup(@RequestPart @Valid GroupDto groupDto,
@@ -42,6 +45,7 @@ public class GroupController {
         return ResponseEntity.ok().body(savedGroup);
     }
 
+    /** 그룹 수정 **/
     @PatchMapping ("/group/{groupId}")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     public ResponseEntity<?> updateGroup(@PathVariable("groupId") Long groupId,
@@ -51,7 +55,7 @@ public class GroupController {
         return ResponseEntity.ok().body(updatedGroup);
     }
 
-
+    /** 그룹 삭제 **/
     @DeleteMapping("/group/{groupId}")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     public ResponseEntity<?> deleteGroup(@PathVariable("groupId") Long groupId){
@@ -59,6 +63,7 @@ public class GroupController {
         return ResponseEntity.ok().body("그룹 삭제 완료.");
     }
 
+    /** 특정 그룹에 속한 링크들 모두 조회 **/
     @GetMapping("/group/link/{id}")
     public ResponseEntity<?> getLinksByGroupId(@PathVariable("id") Long id) {
         List<LinkDto> group = groupServiceImpl.getLinksByGroupId(id);
