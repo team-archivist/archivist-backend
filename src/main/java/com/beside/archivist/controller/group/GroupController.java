@@ -23,11 +23,11 @@ public class GroupController {
     private final GroupService groupServiceImpl;
 
     /** 특정 유저의 소유한 모든 그룹 조회 **/
-    @GetMapping("/user/group/{userId}")
-    public ResponseEntity<List<GroupDto>> getUserGroupList(@PathVariable("userId") Long userId) {
-        List<GroupDto> groups = groupServiceImpl.getGroupsByUserId(userId);
-        return ResponseEntity.ok().body(groups);
-    }
+//    @GetMapping("/user/group/{userId}")
+//    public ResponseEntity<List<GroupDto>> getUserGroupList(@PathVariable("userId") Long userId) {
+//        List<GroupDto> groups = groupServiceImpl.getGroupsByUserId(userId);
+//        return ResponseEntity.ok().body(groups);
+//    }
 
     /** 특정 그룹 상세 조회 **/
     @GetMapping("/group/{id}")

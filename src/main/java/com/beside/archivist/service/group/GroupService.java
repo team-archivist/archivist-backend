@@ -2,6 +2,7 @@ package com.beside.archivist.service.group;
 
 import com.beside.archivist.dto.group.GroupDto;
 import com.beside.archivist.dto.link.LinkDto;
+import com.beside.archivist.entity.group.Group;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,7 +18,7 @@ public interface GroupService {
 
     GroupDto findGroupById(Long groupId);
 
-    List<GroupDto> getGroupsByUserId(Long userId);
+//    List<GroupDto> getGroupsByUserId(Long userId);
 
     List<LinkDto> getLinksByGroupId(Long groupId);
 }

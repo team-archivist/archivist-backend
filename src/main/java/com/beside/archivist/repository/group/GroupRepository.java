@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface GroupRepository extends JpaRepository<Group,Long> {
 
-    List<Group> findByUsers_Id(Long userId);
+//    List<Group> findByUsers_Id(Long userId);
 
     @Query("SELECT g FROM Group g LEFT JOIN FETCH g.links WHERE g.id = :groupId")
     Optional<Group> findByIdWithLinks(@Param("groupId") Long groupId);

@@ -19,19 +19,17 @@ public class GroupDto {
     private String groupDesc;           //그룹 설명
     private Boolean isGroupPublic;      //그룹 공개 여부
     private List<Category> categories;  //그룹 카테고리
-    private Long userId;
     private String imgUrl;
     private Long linkCount;
 
     @Builder
-    public GroupDto(Long groupId, String groupName, String groupDesc, Boolean isGroupPublic, List<Category> categories, String imgUrl, Long userId,Long linkCount) {
+    public GroupDto(Long groupId, String groupName, String groupDesc, Boolean isGroupPublic, List<Category> categories, String imgUrl, Long linkCount) {
         this.groupId = groupId;
         this.groupName = groupName.trim();
         this.groupDesc = groupDesc;
         this.isGroupPublic = isGroupPublic;
         this.categories = categories;
         this.imgUrl = imgUrl;
-        this.userId = userId;
         this.linkCount = linkCount;
     }
 }
