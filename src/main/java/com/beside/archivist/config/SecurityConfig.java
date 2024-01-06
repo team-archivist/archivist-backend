@@ -83,7 +83,7 @@ public class SecurityConfig{
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of("http://223.130.128.93:3000")); // 추후 배포 주소로 변경
+        configuration.setAllowedOrigins(List.of("http://localhost:5220")); // 추후 배포 주소로 변경
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setExposedHeaders(List.of("*"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
