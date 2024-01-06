@@ -2,6 +2,7 @@ package com.beside.archivist.controller.group;
 
 import com.beside.archivist.dto.group.GroupDto;
 import com.beside.archivist.dto.link.LinkDto;
+import com.beside.archivist.service.bookmark.BookmarkService;
 import com.beside.archivist.service.group.GroupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -21,6 +22,7 @@ import java.util.List;
 public class GroupController {
 
     private final GroupService groupServiceImpl;
+    private final BookmarkService bookmarkServiceImpl;
 
     /** 특정 유저의 소유한 모든 그룹 조회 **/
 //    @GetMapping("/user/group/{userId}")
@@ -42,6 +44,7 @@ public class GroupController {
     public ResponseEntity<?> registerGroup(@RequestPart @Valid GroupDto groupDto,
                                               @RequestPart(value = "groupImgFile", required = false) MultipartFile groupImgFile) {
         GroupDto savedGroup = groupServiceImpl.saveGroup(groupDto,groupImgFile);
+        bookmarkServiceImpl.saveBookmark(savedGroup.getGroupId());
         return ResponseEntity.ok().body(savedGroup);
     }
 

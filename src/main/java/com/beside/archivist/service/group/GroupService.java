@@ -10,15 +10,14 @@ import java.util.List;
 
 @Service
 public interface GroupService {
+
+    /** GROUP CRUD **/
     GroupDto saveGroup(GroupDto groupDto, MultipartFile groupImgFile);
-
+    GroupDto findGroupById(Long groupId);
     GroupDto updateGroup(Long groupId, GroupDto groupDto, MultipartFile groupImgFile);
-
+    Group getGroup(Long groupId);
     void deleteGroup(Long groupId);
 
-    GroupDto findGroupById(Long groupId);
-
 //    List<GroupDto> getGroupsByUserId(Long userId);
-
     List<LinkDto> getLinksByGroupId(Long groupId);
 }

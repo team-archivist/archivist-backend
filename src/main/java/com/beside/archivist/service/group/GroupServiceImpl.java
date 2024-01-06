@@ -5,7 +5,6 @@ import com.beside.archivist.dto.group.GroupDto;
 import com.beside.archivist.dto.link.LinkDto;
 import com.beside.archivist.entity.group.Group;
 import com.beside.archivist.entity.group.GroupImg;
-import com.beside.archivist.entity.users.User;
 import com.beside.archivist.mapper.GroupMapper;
 import com.beside.archivist.repository.group.GroupRepository;
 import com.beside.archivist.repository.users.UserRepository;
@@ -25,21 +24,11 @@ import java.util.stream.Collectors;
 public class GroupServiceImpl implements GroupService {
 
     private final GroupRepository groupRepository;
-
     private final GroupImgService groupImgServiceImpl;
     private final GroupMapper groupMapperImpl;
 
-    private final AuditConfig auditConfig;
-
-    private final UserRepository userRepository;
-
-
     @Override
     public GroupDto saveGroup(GroupDto groupDto, MultipartFile groupImgFile)  {
-        Optional<String> authentication = auditConfig.auditorProvider().getCurrentAuditor();
-        String email = authentication.get();
-        User user = userRepository.findByEmail(email).orElseThrow();
-
         GroupImg groupImg;
         if(groupImgFile == null){
             groupImg = groupImgServiceImpl.initializeDefaultImg();
@@ -79,6 +68,11 @@ public class GroupServiceImpl implements GroupService {
                 .categories(groupDto.getCategories())
                 .build());
         return groupMapperImpl.toDto(group);
+    }
+
+    @Override
+    public Group getGroup(Long groupId) {
+        return groupRepository.findById(groupId).orElseThrow(RuntimeException::new);
     }
 
     @Override
