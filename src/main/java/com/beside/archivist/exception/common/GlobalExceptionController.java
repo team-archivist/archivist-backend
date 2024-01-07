@@ -1,11 +1,16 @@
 package com.beside.archivist.exception.common;
 
 import com.beside.archivist.dto.exception.ExceptionDto;
+import com.beside.archivist.dto.exception.LoginFailureDto;
 import com.beside.archivist.dto.exception.ValidExceptionDto;
 import com.beside.archivist.exception.images.InvalidFileExtensionException;
+import com.beside.archivist.exception.users.EmailTokenMismatchException;
 import com.beside.archivist.exception.users.UserAlreadyExistsException;
 import com.beside.archivist.exception.users.UserNotFoundException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -68,10 +73,21 @@ public class GlobalExceptionController {
 
     /** USER_002 기존 회원 유무 체크 **/
     @ExceptionHandler(UserNotFoundException.class)
-    protected ResponseEntity<ExceptionDto> handlerUserNotFoundException(UserNotFoundException ex) {
+    protected ResponseEntity<LoginFailureDto> handlerUserNotFoundException(UserNotFoundException ex) {
+        final LoginFailureDto responseError = LoginFailureDto.builder()
+                .statusCode(ex.getExceptionCode().getStatus().value())
+                .email(ex.getEmail())
+                .token(ex.getToken())
+                .build();
+        return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
+    }
+
+    /** USER_003 토큰에서 추출한 이메일과 요청받은 이메일이 맞지 않은 경우 **/
+    @ExceptionHandler(EmailTokenMismatchException.class)
+    protected ResponseEntity<ExceptionDto> handlerEmailTokenMismatchException(EmailTokenMismatchException ex) {
         final ExceptionDto responseError = ExceptionDto.builder()
                 .statusCode(ex.getExceptionCode().getStatus().value())
-                .message(ex.getEmail())
+                .message(ex.getExceptionCode().getMessage())
                 .build();
         return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
     }

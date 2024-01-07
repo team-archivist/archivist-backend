@@ -6,13 +6,17 @@ import com.beside.archivist.dto.users.UserDto;
 import com.beside.archivist.dto.users.UserInfoDto;
 import com.beside.archivist.entity.users.Category;
 import com.beside.archivist.entity.users.UserImg;
+import com.beside.archivist.exception.common.ExceptionCode;
+import com.beside.archivist.exception.users.EmailTokenMismatchException;
 import com.beside.archivist.service.users.UserImgService;
 import com.beside.archivist.service.users.UserService;
+import com.beside.archivist.utils.JwtTokenUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +31,7 @@ public class UserController {
     private final KakaoService kakaoServiceImpl;
     private final UserService userServiceImpl;
     private final UserImgService userImgServiceImpl;
+    private final JwtTokenUtil jwtTokenUtil;
 
     /** 카카오 로그인 - JWT 발급 */
     @PostMapping("/login/kakao")
@@ -45,7 +50,13 @@ public class UserController {
 
     /** 회원 정보 저장 **/
     @PostMapping("/user")
-    public ResponseEntity<?> registerUser(@RequestBody @Valid UserDto userDto) {
+    @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
+    public ResponseEntity<?> registerUser(@RequestBody @Valid UserDto userDto, @RequestHeader("Authorization") String tokenHeader) {
+        // 토큰에서 추출한 이메일과 요청받은 이메일이 다를 경우 예외 발생
+        String emailFromToken = jwtTokenUtil.getUsernameFromToken(tokenHeader.substring(7));
+        if (!emailFromToken.equals(userDto.getEmail())) {
+            throw new EmailTokenMismatchException(ExceptionCode.EMAIL_TOKEN_MISMATCH);
+        }
         UserImg userImg = userImgServiceImpl.initializeDefaultImg();
         UserInfoDto savedUser = userServiceImpl.saveUser(userDto,userImg);
         return ResponseEntity.ok().body(savedUser);
