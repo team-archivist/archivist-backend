@@ -38,7 +38,12 @@ public class UserController {
     public ResponseEntity<?> callback(@RequestParam("code") String code){
         String accessToken = kakaoServiceImpl.getAccessTokenFromKakao(code);
         KakaoLoginDto response = kakaoServiceImpl.getUserInfo(accessToken);
-        return ResponseEntity.ok().body(response);
+
+        // 쿠키에 토큰 정보 추가- FE 요청
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Set-Cookie", "Token=" + response.getToken() + "; HttpOnly; Path=/; Max-Age=3600");
+
+        return ResponseEntity.ok().headers(headers).body(response);
     }
 
     /** 관리자용 엔드 포인트 구현 **/

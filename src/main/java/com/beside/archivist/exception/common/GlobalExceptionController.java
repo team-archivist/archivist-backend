@@ -79,7 +79,12 @@ public class GlobalExceptionController {
                 .email(ex.getEmail())
                 .token(ex.getToken())
                 .build();
-        return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
+
+        // 쿠키에 토큰 정보 추가- FE 요청
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Set-Cookie", "Token=" + ex.getToken() + "; HttpOnly; Path=/; Max-Age=3600");
+
+        return ResponseEntity.status(responseError.getStatusCode()).headers(headers).body(responseError);
     }
 
     /** USER_003 토큰에서 추출한 이메일과 요청받은 이메일이 맞지 않은 경우 **/
