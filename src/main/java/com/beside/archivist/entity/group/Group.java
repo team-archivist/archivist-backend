@@ -2,6 +2,7 @@ package com.beside.archivist.entity.group;
 
 import com.beside.archivist.dto.group.GroupDto;
 import com.beside.archivist.entity.BaseEntity;
+import com.beside.archivist.entity.bookmark.Bookmark;
 import com.beside.archivist.entity.users.Category;
 import com.beside.archivist.entity.users.User;
 import jakarta.persistence.*;
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Formula;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity @Table(name = "group_info")
@@ -34,10 +36,6 @@ public class Group extends BaseEntity {
     @Formula("(SELECT COUNT(lg.link_group_id) FROM link_group lg WHERE lg.group_id = group_id)")
     private Long linkCount;
 
-    @ManyToOne
-    @JoinColumn(name="user_id", referencedColumnName = "user_id")
-    private User users;
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_img_id")
     private GroupImg groupImg;
@@ -45,13 +43,15 @@ public class Group extends BaseEntity {
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
     private List<LinkGroup> links;
 
+    @OneToMany(mappedBy = "groups", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Bookmark> bookmarks = new ArrayList<>();
+
 
     @Builder
-    public Group(String groupName, String groupDesc, Boolean isGroupPublic, User user, List<Category> categories,GroupImg groupImg, Long linkCount, List<LinkGroup> links) {
+    public Group(String groupName, String groupDesc, Boolean isGroupPublic, List<Category> categories,GroupImg groupImg, Long linkCount, List<LinkGroup> links) {
         this.groupName = groupName;
         this.groupDesc = groupDesc;
         this.isGroupPublic = isGroupPublic;
-        this.users = user;
         this.categories = categories;
         this.groupImg = groupImg;
         this.linkCount = linkCount;
@@ -63,5 +63,9 @@ public class Group extends BaseEntity {
         this.isGroupPublic = groupDto.getIsGroupPublic();
         this.categories = groupDto.getCategories();
         this.linkCount = groupDto.getLinkCount();
+    }
+
+    public void addBookmark(Bookmark b) {
+        this.bookmarks.add(b);
     }
 }

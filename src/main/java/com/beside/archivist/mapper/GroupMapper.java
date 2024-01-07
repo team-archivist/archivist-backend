@@ -10,7 +10,6 @@ import org.mapstruct.ReportingPolicy;
 public interface GroupMapper {
 
     @Mapping(target = "groupId", source = "id")
-    @Mapping(target = "userId", source = "users.id")
     @Mapping(target = "imgUrl", source = "groupImg.imgUrl")
     GroupDto toDto(Group group);
     Group toEntity(GroupDto groupDto);

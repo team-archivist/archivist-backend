@@ -67,14 +67,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserInfoDto getUserInfo(String email) {
-        User findUser = userRepository.findByEmail(email).orElseThrow();
-
+        User findUser = getUserByEmail(email);
         return userMapperImpl.toDto(findUser);
     }
 
     @Override
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(RuntimeException::new); // todo: 예외 처리
+    }
+
+    @Override
     public UserInfoDto updateUser(Long userId, UserDto userDto,MultipartFile userImgFile) {
-        User user = userRepository.findById(userId).orElseThrow(RuntimeException::new); // 추후 예외 커스텀
+        User user = userRepository.findById(userId).orElseThrow(RuntimeException::new); // todo: 예외 처리
         user.updateUserInfo(userDto.getNickname(),userDto.getCategories()); // 유저 정보 update
         userImgServiceImpl.updateUserImg(user.getUserImg().getId(), userImgFile); // 유저 이미지 update
 
