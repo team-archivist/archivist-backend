@@ -8,4 +8,5 @@ import lombok.Getter;
 public class UserNotFoundException extends RuntimeException{
     private final ExceptionCode exceptionCode;
     private final String email;
+    private final String token;
 }

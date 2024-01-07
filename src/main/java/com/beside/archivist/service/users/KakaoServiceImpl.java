@@ -77,13 +77,14 @@ public class KakaoServiceImpl implements KakaoService{
         // 사용자 정보 추출
         Map<String, Object> kakaoAccount = (Map<String, Object>) jsonMap.get("kakao_account");
         String userEmail = kakaoAccount.get("email").toString();
+        String token = jwtTokenUtil.generateToken(userEmail);
 
-        // 등록된 유저가 없을 때 userEmail 반환
-        User findUser = userRepository.findByEmail(userEmail).orElseThrow(() -> new UserNotFoundException(ExceptionCode.USER_NOT_FOUND, userEmail));
+        // 등록된 유저가 없을 때 userEmail 반환 + JWT
+        User findUser = userRepository.findByEmail(userEmail).orElseThrow(() -> new UserNotFoundException(ExceptionCode.USER_NOT_FOUND, userEmail, token));
 
         return KakaoLoginDto.builder()
                 .userId(findUser.getId())
-                .token(jwtTokenUtil.generateToken(userEmail))
+                .token(token)
                 .build();
     }
 }

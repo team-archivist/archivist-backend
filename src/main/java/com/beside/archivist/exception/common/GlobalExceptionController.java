@@ -1,6 +1,7 @@
 package com.beside.archivist.exception.common;
 
 import com.beside.archivist.dto.exception.ExceptionDto;
+import com.beside.archivist.dto.exception.LoginFailureDto;
 import com.beside.archivist.dto.exception.ValidExceptionDto;
 import com.beside.archivist.exception.images.InvalidFileExtensionException;
 import com.beside.archivist.exception.users.UserAlreadyExistsException;
@@ -68,10 +69,11 @@ public class GlobalExceptionController {
 
     /** USER_002 기존 회원 유무 체크 **/
     @ExceptionHandler(UserNotFoundException.class)
-    protected ResponseEntity<ExceptionDto> handlerUserNotFoundException(UserNotFoundException ex) {
-        final ExceptionDto responseError = ExceptionDto.builder()
+    protected ResponseEntity<LoginFailureDto> handlerUserNotFoundException(UserNotFoundException ex) {
+        final LoginFailureDto responseError = LoginFailureDto.builder()
                 .statusCode(ex.getExceptionCode().getStatus().value())
-                .message(ex.getEmail())
+                .email(ex.getEmail())
+                .token(ex.getToken())
                 .build();
         return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
     }
