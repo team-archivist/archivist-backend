@@ -25,4 +25,5 @@ public interface UserService extends UserDetailsService {
     /* 회원 유효성 검증 */
     void checkDuplicateUser(String email);
     void checkInvalidCategory(List<Category> categories);
+    List<String> getNicknames();
 }

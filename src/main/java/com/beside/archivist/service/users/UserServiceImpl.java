@@ -107,5 +107,9 @@ public class UserServiceImpl implements UserService {
         if(containsNull){
             throw new InvalidCategoryNameException(ExceptionCode.INVALID_CATEGORY_NAME);
         }
+    
+    @Override
+    public List<String> getNicknames() {
+        return userRepository.findAll().stream().map(User::getNickname).toList();
     }
 }
