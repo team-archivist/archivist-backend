@@ -2,9 +2,11 @@ package com.beside.archivist.service.users;
 
 import com.beside.archivist.dto.users.UserDto;
 import com.beside.archivist.dto.users.UserInfoDto;
+import com.beside.archivist.entity.users.Category;
 import com.beside.archivist.entity.users.User;
 import com.beside.archivist.entity.users.UserImg;
 import com.beside.archivist.exception.common.ExceptionCode;
+import com.beside.archivist.exception.users.InvalidCategoryNameException;
 import com.beside.archivist.exception.users.UserAlreadyExistsException;
 import com.beside.archivist.mapper.UserMapper;
 import com.beside.archivist.repository.users.UserRepository;
@@ -51,6 +53,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserInfoDto saveUser(UserDto userDto, UserImg userImg) {
         checkDuplicateUser(userDto.getEmail()); // 중복 회원 체크
+        checkInvalidCategory(userDto.getCategories()); // 카테고리 null 값 체크
 
         User savedUser = userRepository.save(
                 User.builder()
@@ -79,6 +82,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserInfoDto updateUser(Long userId, UserDto userDto,MultipartFile userImgFile) {
         User user = userRepository.findById(userId).orElseThrow(RuntimeException::new); // todo: 예외 처리
+        checkInvalidCategory(userDto.getCategories()); // 카테고리 null 값 체크
         user.updateUserInfo(userDto.getNickname(),userDto.getCategories()); // 유저 정보 update
         userImgServiceImpl.updateUserImg(user.getUserImg().getId(), userImgFile); // 유저 이미지 update
 
@@ -96,6 +100,14 @@ public class UserServiceImpl implements UserService {
             throw new UserAlreadyExistsException(ExceptionCode.USER_ALREADY_EXISTS);
         });
     }
+
+    @Override
+    public void checkInvalidCategory(List<Category> categories) {
+        boolean containsNull = categories.stream().anyMatch(Objects::isNull);
+        if(containsNull){
+            throw new InvalidCategoryNameException(ExceptionCode.INVALID_CATEGORY_NAME);
+        }
+    
     @Override
     public List<String> getNicknames() {
         return userRepository.findAll().stream().map(User::getNickname).toList();
