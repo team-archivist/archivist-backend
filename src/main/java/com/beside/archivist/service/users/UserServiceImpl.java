@@ -96,4 +96,8 @@ public class UserServiceImpl implements UserService {
             throw new UserAlreadyExistsException(ExceptionCode.USER_ALREADY_EXISTS);
         });
     }
+    @Override
+    public List<String> getNicknames() {
+        return userRepository.findAll().stream().map(User::getNickname).toList();
+    }
 }
