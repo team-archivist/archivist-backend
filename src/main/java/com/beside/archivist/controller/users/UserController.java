@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.*;
 import com.beside.archivist.service.users.KakaoService;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -98,4 +100,12 @@ public class UserController {
     public ResponseEntity<?> getCategories() {
         return ResponseEntity.ok().body(Category.values());
     }
+
+    /** 정의되어있는 모든 닉네임 조회 **/
+    @GetMapping("/nicknames")
+    public ResponseEntity<?> getNicknames() {
+        List<String> nicknames = userServiceImpl.getNicknames();
+        return ResponseEntity.ok().body(nicknames);
+    }
+
 }
