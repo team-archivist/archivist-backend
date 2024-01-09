@@ -2,9 +2,8 @@ package com.beside.archivist.entity.group;
 
 import com.beside.archivist.dto.group.GroupDto;
 import com.beside.archivist.entity.BaseEntity;
-import com.beside.archivist.entity.bookmark.Bookmark;
+import com.beside.archivist.entity.usergroup.UserGroup;
 import com.beside.archivist.entity.users.Category;
-import com.beside.archivist.entity.users.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -44,7 +43,7 @@ public class Group extends BaseEntity {
     private List<LinkGroup> links;
 
     @OneToMany(mappedBy = "groups", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Bookmark> bookmarks = new ArrayList<>();
+    private List<UserGroup> userGroups = new ArrayList<>();
 
 
     @Builder
@@ -65,7 +64,7 @@ public class Group extends BaseEntity {
         this.linkCount = groupDto.getLinkCount();
     }
 
-    public void addBookmark(Bookmark b) {
-        this.bookmarks.add(b);
+    public void addUserGroup(UserGroup userGroup) {
+        this.userGroups.add(userGroup);
     }
 }
