@@ -5,6 +5,7 @@ import com.beside.archivist.dto.exception.LoginFailureDto;
 import com.beside.archivist.dto.exception.ValidExceptionDto;
 import com.beside.archivist.exception.images.InvalidFileExtensionException;
 import com.beside.archivist.exception.users.EmailTokenMismatchException;
+import com.beside.archivist.exception.users.InvalidCategoryNameException;
 import com.beside.archivist.exception.users.UserAlreadyExistsException;
 import com.beside.archivist.exception.users.UserNotFoundException;
 import jakarta.servlet.http.Cookie;
@@ -90,6 +91,16 @@ public class GlobalExceptionController {
     /** USER_003 토큰에서 추출한 이메일과 요청받은 이메일이 맞지 않은 경우 **/
     @ExceptionHandler(EmailTokenMismatchException.class)
     protected ResponseEntity<ExceptionDto> handlerEmailTokenMismatchException(EmailTokenMismatchException ex) {
+        final ExceptionDto responseError = ExceptionDto.builder()
+                .statusCode(ex.getExceptionCode().getStatus().value())
+                .message(ex.getExceptionCode().getMessage())
+                .build();
+        return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
+    }
+
+    /** CATEGORY_001 정의되지 않은 카테고리 값 체크 **/
+    @ExceptionHandler(InvalidCategoryNameException.class)
+    protected ResponseEntity<ExceptionDto> handlerInvalidCategoryNameException(InvalidCategoryNameException ex) {
         final ExceptionDto responseError = ExceptionDto.builder()
                 .statusCode(ex.getExceptionCode().getStatus().value())
                 .message(ex.getExceptionCode().getMessage())
