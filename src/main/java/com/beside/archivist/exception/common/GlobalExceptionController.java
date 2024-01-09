@@ -7,9 +7,7 @@ import com.beside.archivist.exception.images.InvalidFileExtensionException;
 import com.beside.archivist.exception.users.EmailTokenMismatchException;
 import com.beside.archivist.exception.users.InvalidCategoryNameException;
 import com.beside.archivist.exception.users.UserAlreadyExistsException;
-import com.beside.archivist.exception.users.UserNotFoundException;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
+import com.beside.archivist.exception.users.SignUpRequiredException;
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -73,8 +71,8 @@ public class GlobalExceptionController {
     }
 
     /** USER_002 기존 회원 유무 체크 **/
-    @ExceptionHandler(UserNotFoundException.class)
-    protected ResponseEntity<LoginFailureDto> handlerUserNotFoundException(UserNotFoundException ex) {
+    @ExceptionHandler(SignUpRequiredException.class)
+    protected ResponseEntity<LoginFailureDto> handlerSignUpRequiredException(SignUpRequiredException ex) {
         final LoginFailureDto responseError = LoginFailureDto.builder()
                 .statusCode(ex.getExceptionCode().getStatus().value())
                 .email(ex.getEmail())
