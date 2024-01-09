@@ -1,8 +1,8 @@
-package com.beside.archivist.service.bookmark;
+package com.beside.archivist.service.usergroup;
 
 import com.beside.archivist.config.AuditConfig;
-import com.beside.archivist.entity.bookmark.Bookmark;
-import com.beside.archivist.repository.bookmark.BookmarkRepository;
+import com.beside.archivist.entity.usergroup.UserGroup;
+import com.beside.archivist.repository.usergroup.UserGroupRepository;
 import com.beside.archivist.service.group.GroupService;
 import com.beside.archivist.service.users.UserService;
 import lombok.RequiredArgsConstructor;
@@ -11,24 +11,24 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service @Transactional
 @RequiredArgsConstructor
-public class BookmarkServiceImpl implements BookmarkService{
-    private final BookmarkRepository bookmarkRepository;
+public class UserGroupServiceImpl implements UserGroupService {
+    private final UserGroupRepository userGroupRepository;
     private final UserService userServiceImpl;
     private final GroupService groupServiceImpl;
     private final AuditConfig auditConfig;
     @Override
-    public void saveBookmark(Long groupId) {
+    public void saveUserGroup(Long groupId) {
         String userEmail = auditConfig.auditorProvider().getCurrentAuditor()
                 .orElseThrow(RuntimeException::new); // todo: 인증 X, 예외 처리
 
-        Bookmark bookmark = Bookmark.builder()
+        UserGroup userGroup = UserGroup.builder()
                 .isOwner(true) // 내가 생성한 그룹
                 .users(userServiceImpl.getUserByEmail(userEmail))
                 .groups(groupServiceImpl.getGroup(groupId))
                 .build();
 
-        bookmark.getUsers().addBookmark(bookmark);
-        bookmark.getGroups().addBookmark(bookmark);
-        bookmarkRepository.save(bookmark);
+        userGroup.getUsers().addUserGroup(userGroup);
+        userGroup.getGroups().addUserGroup(userGroup);
+        userGroupRepository.save(userGroup);
     }
 }
