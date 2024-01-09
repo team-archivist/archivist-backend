@@ -4,10 +4,7 @@ import com.beside.archivist.dto.exception.ExceptionDto;
 import com.beside.archivist.dto.exception.LoginFailureDto;
 import com.beside.archivist.dto.exception.ValidExceptionDto;
 import com.beside.archivist.exception.images.InvalidFileExtensionException;
-import com.beside.archivist.exception.users.EmailTokenMismatchException;
-import com.beside.archivist.exception.users.InvalidCategoryNameException;
-import com.beside.archivist.exception.users.UserAlreadyExistsException;
-import com.beside.archivist.exception.users.SignUpRequiredException;
+import com.beside.archivist.exception.users.*;
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -70,7 +67,7 @@ public class GlobalExceptionController {
         return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
     }
 
-    /** USER_002 기존 회원 유무 체크 **/
+    /** USER_002 회원 가입 유무 체크 **/
     @ExceptionHandler(SignUpRequiredException.class)
     protected ResponseEntity<LoginFailureDto> handlerSignUpRequiredException(SignUpRequiredException ex) {
         final LoginFailureDto responseError = LoginFailureDto.builder()
@@ -86,7 +83,17 @@ public class GlobalExceptionController {
         return ResponseEntity.status(responseError.getStatusCode()).headers(headers).body(responseError);
     }
 
-    /** USER_003 토큰에서 추출한 이메일과 요청받은 이메일이 맞지 않은 경우 **/
+    /** USER_003 회원 유무 체크 **/
+    @ExceptionHandler(UserNotFoundException.class)
+    protected ResponseEntity<ExceptionDto> handlerUserNotFoundException(UserNotFoundException ex) {
+        final ExceptionDto responseError = ExceptionDto.builder()
+                .statusCode(ex.getExceptionCode().getStatus().value())
+                .message(ex.getExceptionCode().getMessage())
+                .build();
+        return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
+    }
+
+    /** USER_004 토큰에서 추출한 이메일과 요청받은 이메일이 맞지 않은 경우 **/
     @ExceptionHandler(EmailTokenMismatchException.class)
     protected ResponseEntity<ExceptionDto> handlerEmailTokenMismatchException(EmailTokenMismatchException ex) {
         final ExceptionDto responseError = ExceptionDto.builder()
