@@ -14,9 +14,9 @@ public enum ExceptionCode {
     USER_ALREADY_EXISTS(CONFLICT, "USER_001", "이미 등록된 회원입니다."),
     USER_NOT_FOUND(NOT_FOUND,"USER_002", "등록되지 않은 회원입니다."),
     EMAIL_TOKEN_MISMATCH(FORBIDDEN, "USER_003", "회원과 토큰의 정보가 맞지 않습니다."),
-    INVALID_CATEGORY_NAME(BAD_REQUEST,"CATEGORY_001", "정의되지 않은 카테고리 값 입니다.")
+    INVALID_CATEGORY_NAME(BAD_REQUEST,"CATEGORY_001", "정의되지 않은 카테고리 값 입니다."),
+    REQUEST_PART_MISSING(BAD_REQUEST,"VALID_001","필수 값이 누락되었습니다.")
     ;
-    
 
     private final HttpStatus status; // HTTP 상태 코드
     private final String code; // 우리가 정의한 코드

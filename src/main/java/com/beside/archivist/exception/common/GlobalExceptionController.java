@@ -8,8 +8,6 @@ import com.beside.archivist.exception.users.EmailTokenMismatchException;
 import com.beside.archivist.exception.users.InvalidCategoryNameException;
 import com.beside.archivist.exception.users.UserAlreadyExistsException;
 import com.beside.archivist.exception.users.UserNotFoundException;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,6 +16,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -104,6 +103,16 @@ public class GlobalExceptionController {
         final ExceptionDto responseError = ExceptionDto.builder()
                 .statusCode(ex.getExceptionCode().getStatus().value())
                 .message(ex.getExceptionCode().getMessage())
+                .build();
+        return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
+    }
+
+    /** VALID_001 필수 값 체크 **/
+    @ExceptionHandler(MissingServletRequestPartException.class)
+    protected ResponseEntity<ExceptionDto> handlerRequestPartMissingException() {
+        final ExceptionDto responseError = ExceptionDto.builder()
+                .statusCode(ExceptionCode.REQUEST_PART_MISSING.getStatus().value())
+                .message(ExceptionCode.REQUEST_PART_MISSING.getMessage())
                 .build();
         return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
     }
