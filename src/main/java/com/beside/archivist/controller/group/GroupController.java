@@ -2,6 +2,7 @@ package com.beside.archivist.controller.group;
 
 import com.beside.archivist.dto.group.GroupDto;
 import com.beside.archivist.dto.link.LinkDto;
+import com.beside.archivist.entity.usergroup.UserGroup;
 import com.beside.archivist.service.usergroup.UserGroupService;
 import com.beside.archivist.service.group.GroupService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,12 +25,13 @@ public class GroupController {
     private final GroupService groupServiceImpl;
     private final UserGroupService userGroupServiceImpl;
 
-    /** 특정 유저의 소유한 모든 그룹 조회 **/
-//    @GetMapping("/user/group/{userId}")
-//    public ResponseEntity<List<GroupDto>> getUserGroupList(@PathVariable("userId") Long userId) {
-//        List<GroupDto> groups = groupServiceImpl.getGroupsByUserId(userId);
-//        return ResponseEntity.ok().body(groups);
-//    }
+    /** 특정 유저가 생성한 모든 그룹 조회 **/
+    @GetMapping("/user/group/{userId}")
+    public ResponseEntity<List<GroupDto>> getUserGroupList(@PathVariable("userId") Long userId) {
+        List<UserGroup> userGroups = userGroupServiceImpl.getUserGroupsByUserId(userId);
+        List<GroupDto> groups = groupServiceImpl.getGroupsByUserGroup(userGroups);
+        return ResponseEntity.ok().body(groups);
+    }
 
     /** 특정 그룹 상세 조회 **/
     @GetMapping("/group/{id}")
