@@ -3,7 +3,7 @@ package com.beside.archivist.service.users;
 import com.beside.archivist.dto.users.KakaoLoginDto;
 import com.beside.archivist.entity.users.User;
 import com.beside.archivist.exception.common.ExceptionCode;
-import com.beside.archivist.exception.users.UserNotFoundException;
+import com.beside.archivist.exception.users.SignUpRequiredException;
 import com.beside.archivist.repository.users.UserRepository;
 import com.beside.archivist.utils.JwtTokenUtil;
 import com.google.gson.Gson;
@@ -80,7 +80,7 @@ public class KakaoServiceImpl implements KakaoService{
         String token = jwtTokenUtil.generateToken(userEmail);
 
         // 등록된 유저가 없을 때 userEmail 반환 + JWT
-        User findUser = userRepository.findByEmail(userEmail).orElseThrow(() -> new UserNotFoundException(ExceptionCode.USER_NOT_FOUND, userEmail, token));
+        User findUser = userRepository.findByEmail(userEmail).orElseThrow(() -> new SignUpRequiredException(ExceptionCode.SIGN_UP_REQUIRED, userEmail, token));
 
         return KakaoLoginDto.builder()
                 .userId(findUser.getId())

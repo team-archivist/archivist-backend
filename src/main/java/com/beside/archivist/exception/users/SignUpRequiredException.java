@@ -4,7 +4,9 @@ import com.beside.archivist.exception.common.ExceptionCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@Getter @AllArgsConstructor
-public class UserNotFoundException extends RuntimeException{
+@AllArgsConstructor @Getter
+public class SignUpRequiredException extends RuntimeException{
     private final ExceptionCode exceptionCode;
+    private final String email;
+    private final String token;
 }

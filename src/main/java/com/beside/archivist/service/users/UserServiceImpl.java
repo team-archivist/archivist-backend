@@ -8,6 +8,7 @@ import com.beside.archivist.entity.users.UserImg;
 import com.beside.archivist.exception.common.ExceptionCode;
 import com.beside.archivist.exception.users.InvalidCategoryNameException;
 import com.beside.archivist.exception.users.UserAlreadyExistsException;
+import com.beside.archivist.exception.users.UserNotFoundException;
 import com.beside.archivist.mapper.UserMapper;
 import com.beside.archivist.repository.users.UserRepository;
 import jakarta.transaction.Transactional;
@@ -76,12 +77,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(RuntimeException::new); // todo: 예외 처리
+        return userRepository.findByEmail(email).orElseThrow(
+                () -> new UserNotFoundException(ExceptionCode.USER_NOT_FOUND));
     }
 
     @Override
     public UserInfoDto updateUser(Long userId, UserDto userDto,MultipartFile userImgFile) {
-        User user = userRepository.findById(userId).orElseThrow(RuntimeException::new); // todo: 예외 처리
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new UserNotFoundException(ExceptionCode.USER_NOT_FOUND));
+
         checkInvalidCategory(userDto.getCategories()); // 카테고리 null 값 체크
         user.updateUserInfo(userDto.getNickname(),userDto.getCategories()); // 유저 정보 update
         userImgServiceImpl.updateUserImg(user.getUserImg().getId(), userImgFile); // 유저 이미지 update
@@ -104,9 +108,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public void checkInvalidCategory(List<Category> categories) {
         boolean containsNull = categories.stream().anyMatch(Objects::isNull);
-        if(containsNull){
+        if (containsNull) {
             throw new InvalidCategoryNameException(ExceptionCode.INVALID_CATEGORY_NAME);
         }
+    }
     
     @Override
     public List<String> getNicknames() {
