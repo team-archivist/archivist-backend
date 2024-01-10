@@ -1,13 +1,12 @@
 package com.beside.archivist.service.group;
 
-import com.beside.archivist.config.AuditConfig;
 import com.beside.archivist.dto.group.GroupDto;
 import com.beside.archivist.dto.link.LinkDto;
 import com.beside.archivist.entity.group.Group;
 import com.beside.archivist.entity.group.GroupImg;
+import com.beside.archivist.entity.usergroup.UserGroup;
 import com.beside.archivist.mapper.GroupMapper;
 import com.beside.archivist.repository.group.GroupRepository;
-import com.beside.archivist.repository.users.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -82,19 +80,20 @@ public class GroupServiceImpl implements GroupService {
 
     public GroupDto findGroupById(Long id){
         // 특정 북마크 ID에 해당하는 북마크 조회
-        Group group = groupRepository.findById(id).orElseThrow();
-
+        Group group = groupRepository.findById(id).orElseThrow(); // todo: 예외처리
         return groupMapperImpl.toDto(group);
     }
 
-//    public List<GroupDto> getGroupsByUserId(Long userId){
-//        // 특정 사용자 ID에 해당하는 북마크 목록 조회
-//        List<Group> groupList = groupRepository.findByUsers_Id(userId);
-//
-//        return groupList.stream()
-//                .map(groupMapperImpl::toDto)
-//                .collect(Collectors.toList());
-//    }
+    @Override
+    public List<GroupDto> getGroupsByUserGroup(List<UserGroup> userGroups){
+        List<Group> groupList = userGroups.stream()
+                .map(UserGroup::getGroups)
+                .toList();
+
+        return groupList.stream()
+                .map(groupMapperImpl::toDto)
+                .toList();
+    }
 
 
     public  List<LinkDto> getLinksByGroupId(Long groupId){
