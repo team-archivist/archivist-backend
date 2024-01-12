@@ -14,6 +14,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -123,4 +124,15 @@ public class GlobalExceptionController {
                 .build();
         return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
     }
+
+    /** USER_005 카카오 인가코드가 만료되거나 잘못되었을 경우 체크 **/
+    @ExceptionHandler(WebClientResponseException.class)
+    protected ResponseEntity<ExceptionDto> handlerWebClientResponseException() {
+        final ExceptionDto responseError = ExceptionDto.builder()
+                .statusCode(ExceptionCode.AUTHORIZATION_CODE_EXPIRED.getStatus().value())
+                .message(ExceptionCode.AUTHORIZATION_CODE_EXPIRED.getMessage())
+                .build();
+        return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
+    }
+
 }
