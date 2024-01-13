@@ -32,8 +32,8 @@ public class LinkController {
     }
 
     /** 특정 링크 상세 조회 **/
-    @GetMapping("/link/{id}")
-    public ResponseEntity<?> findLinkById(@PathVariable("id") Long id) {
+    @GetMapping("/link/{linkId}")
+    public ResponseEntity<?> findLinkById(@PathVariable("linkId") Long id) {
         LinkDto link = linkServiceImpl.findLinkById(id);
         return ResponseEntity.ok().body(link);
     }
