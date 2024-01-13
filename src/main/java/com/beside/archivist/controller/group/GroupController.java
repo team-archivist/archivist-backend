@@ -27,6 +27,7 @@ public class GroupController {
 
     /** 특정 유저가 생성한 모든 그룹 조회 **/
     @GetMapping("/user/group/{userId}")
+    @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     public ResponseEntity<List<GroupDto>> getUserGroupList(@PathVariable("userId") Long userId) {
         List<UserGroup> userGroups = userGroupServiceImpl.getUserGroupsByUserId(userId);
         List<GroupDto> groups = groupServiceImpl.getGroupsByUserGroup(userGroups);
