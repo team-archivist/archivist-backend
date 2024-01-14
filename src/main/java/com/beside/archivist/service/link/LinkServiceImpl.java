@@ -75,9 +75,6 @@ public class LinkServiceImpl implements LinkService {
     public LinkDto updateLink(Long linkId, LinkDto linkDto, MultipartFile linkImgFile) {
         Link link = linkRepository.findById(linkId).orElseThrow(RuntimeException::new);
         if(linkImgFile != null){
-            if(extractExtCheck(linkImgFile)){
-                throw new InvalidFileExtensionException(ExceptionCode.INVALID_FILE_EXTENSION);
-            }
             if(link.getLinkImg() == null){
                 linkImgService.insertLinkImg(linkImgFile);
             }else{
