@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -46,13 +47,13 @@ public class SecurityConfig{
         http
                 .authorizeHttpRequests(
                         request -> request
-                                .requestMatchers("/api/admin").permitAll()
-                                .requestMatchers("/login/**").permitAll()
-                                .requestMatchers("/user").permitAll()
-                                .requestMatchers("/categories", "/nicknames").permitAll()
-                                .requestMatchers("/swagger-ui/**","/v3/api-docs/**").permitAll()
-                                .requestMatchers("/actuator/**").permitAll()
-                                .anyRequest().authenticated()
+                                .requestMatchers("/user").permitAll() // Controller 에서 인증
+                                .requestMatchers("/user/**").authenticated()
+                                .requestMatchers(HttpMethod.GET, "/link/{linkId}").permitAll()
+                                .requestMatchers("/link","/link/{linkId}").authenticated()
+                                .requestMatchers(HttpMethod.GET, "/group/{groupId}").permitAll()
+                                .requestMatchers("/group","/group/{groupId}").authenticated()
+                                .anyRequest().permitAll()
                 )
                 .csrf().disable()
                 .cors().configurationSource(corsConfigurationSource())// cors 설정
