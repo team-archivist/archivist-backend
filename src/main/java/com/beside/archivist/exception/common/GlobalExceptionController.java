@@ -3,7 +3,9 @@ package com.beside.archivist.exception.common;
 import com.beside.archivist.dto.exception.ExceptionDto;
 import com.beside.archivist.dto.exception.LoginFailureDto;
 import com.beside.archivist.dto.exception.ValidExceptionDto;
+import com.beside.archivist.exception.group.GroupNotFoundException;
 import com.beside.archivist.exception.images.InvalidFileExtensionException;
+import com.beside.archivist.exception.link.LinkNotFoundException;
 import com.beside.archivist.exception.users.*;
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.http.HttpHeaders;
@@ -104,6 +106,16 @@ public class GlobalExceptionController {
                 .build();
         return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
     }
+  
+    /** USER_005 카카오 인가코드가 만료되거나 잘못되었을 경우 체크 **/
+    @ExceptionHandler(WebClientResponseException.class)
+    protected ResponseEntity<ExceptionDto> handlerWebClientResponseException() {
+        final ExceptionDto responseError = ExceptionDto.builder()
+                .statusCode(ExceptionCode.AUTHORIZATION_CODE_EXPIRED.getStatus().value())
+                .message(ExceptionCode.AUTHORIZATION_CODE_EXPIRED.getMessage())
+                .build();
+        return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
+    }
 
     /** CATEGORY_001 정의되지 않은 카테고리 값 체크 **/
     @ExceptionHandler(InvalidCategoryNameException.class)
@@ -124,15 +136,34 @@ public class GlobalExceptionController {
                 .build();
         return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
     }
-
-    /** USER_005 카카오 인가코드가 만료되거나 잘못되었을 경우 체크 **/
-    @ExceptionHandler(WebClientResponseException.class)
-    protected ResponseEntity<ExceptionDto> handlerWebClientResponseException() {
+  
+    /** VALID_001 필수 값 체크 **/
+    @ExceptionHandler(MissingServletRequestPartException.class)
+    protected ResponseEntity<ExceptionDto> handlerRequestPartMissingException() {
         final ExceptionDto responseError = ExceptionDto.builder()
-                .statusCode(ExceptionCode.AUTHORIZATION_CODE_EXPIRED.getStatus().value())
-                .message(ExceptionCode.AUTHORIZATION_CODE_EXPIRED.getMessage())
+                .statusCode(ExceptionCode.REQUEST_PART_MISSING.getStatus().value())
+                .message(ExceptionCode.REQUEST_PART_MISSING.getMessage())
                 .build();
         return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
     }
 
+    /** LINK_001 링크 유무 체크 **/
+    @ExceptionHandler(LinkNotFoundException.class)
+    protected ResponseEntity<ExceptionDto> handlerLinkNotFoundException(LinkNotFoundException ex) {
+        final ExceptionDto responseError = ExceptionDto.builder()
+                .statusCode(ex.getExceptionCode().getStatus().value())
+                .message(ex.getExceptionCode().getMessage())
+                .build();
+        return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
+    }
+
+    /** GROUP_001 그룹 유무 체크 **/
+    @ExceptionHandler(GroupNotFoundException.class)
+    protected ResponseEntity<ExceptionDto> handlerGroupNotFoundException(GroupNotFoundException ex) {
+        final ExceptionDto responseError = ExceptionDto.builder()
+                .statusCode(ex.getExceptionCode().getStatus().value())
+                .message(ex.getExceptionCode().getMessage())
+                .build();
+        return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
+    }
 }

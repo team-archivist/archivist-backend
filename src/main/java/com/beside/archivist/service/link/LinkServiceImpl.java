@@ -7,8 +7,10 @@ import com.beside.archivist.entity.link.Link;
 import com.beside.archivist.entity.link.LinkImg;
 import com.beside.archivist.entity.users.User;
 
+import com.beside.archivist.exception.common.ExceptionCode;
+import com.beside.archivist.exception.link.LinkNotFoundException;
+import com.beside.archivist.exception.users.UserNotFoundException;
 import com.beside.archivist.mapper.LinkMapper;
-import com.beside.archivist.mapper.LinkMapperImpl;
 import com.beside.archivist.repository.link.LinkRepository;
 import com.beside.archivist.repository.users.UserRepository;
 import jakarta.transaction.Transactional;
@@ -40,7 +42,7 @@ public class LinkServiceImpl implements LinkService {
     public LinkDto saveLink(LinkDto linkDto, MultipartFile linkImgFile)  {
         Optional<String> authentication = auditConfig.auditorProvider().getCurrentAuditor();
         String email = authentication.get();
-        User user = userRepository.findByEmail(email).orElseThrow();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(ExceptionCode.USER_NOT_FOUND));
 
         LinkImg linkImg = null;
         if(linkImgFile == null){
@@ -63,7 +65,7 @@ public class LinkServiceImpl implements LinkService {
 
     @Override
     public LinkDto updateLink(Long linkId, LinkDto linkDto, MultipartFile linkImgFile) {
-        Link link = linkRepository.findById(linkId).orElseThrow(RuntimeException::new);
+        Link link = linkRepository.findById(linkId).orElseThrow(() -> new LinkNotFoundException(ExceptionCode.LINK_NOT_FOUND));
         if(linkImgFile != null){
             if(link.getLinkImg() == null){
                 linkImgService.insertLinkImg(linkImgFile);
@@ -83,7 +85,7 @@ public class LinkServiceImpl implements LinkService {
 
     public LinkDto findLinkById(Long id){
         // 특정 북마크 ID에 해당하는 북마크 조회
-        Link link = linkRepository.findById(id).orElseThrow();
+        Link link = linkRepository.findById(id).orElseThrow(() -> new LinkNotFoundException(ExceptionCode.LINK_NOT_FOUND));
 
         return linkMapperImpl.toDto(link);
     }

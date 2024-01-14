@@ -19,7 +19,12 @@ public enum ExceptionCode {
     AUTHORIZATION_CODE_EXPIRED(BAD_REQUEST, "USER_005", "인가 코드가 만료되었습니다. 재발급 받아주세요."),
 
     INVALID_CATEGORY_NAME(BAD_REQUEST,"CATEGORY_001", "정의되지 않은 카테고리 값 입니다."),
+  
     REQUEST_PART_MISSING(BAD_REQUEST,"VALID_001","필수 값이 누락되었습니다."),
+  
+    LINK_NOT_FOUND(NOT_FOUND,"LINK_001","링크 정보가 존재하지 않습니다."),
+  
+    GROUP_NOT_FOUND(NOT_FOUND,"GROUP_001","그룹 정보가 존재하지 않습니다.")
     ;
 
     private final HttpStatus status; // HTTP 상태 코드

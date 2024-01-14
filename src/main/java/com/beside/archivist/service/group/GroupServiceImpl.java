@@ -5,6 +5,8 @@ import com.beside.archivist.dto.link.LinkDto;
 import com.beside.archivist.entity.group.Group;
 import com.beside.archivist.entity.group.GroupImg;
 import com.beside.archivist.entity.usergroup.UserGroup;
+import com.beside.archivist.exception.common.ExceptionCode;
+import com.beside.archivist.exception.group.GroupNotFoundException;
 import com.beside.archivist.mapper.GroupMapper;
 import com.beside.archivist.repository.group.GroupRepository;
 import jakarta.transaction.Transactional;
@@ -49,7 +51,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public GroupDto updateGroup(Long groupId, GroupDto groupDto, MultipartFile groupImgFile) {
-        Group group = groupRepository.findById(groupId).orElseThrow(RuntimeException::new);
+        Group group = groupRepository.findById(groupId).orElseThrow(() -> new GroupNotFoundException(ExceptionCode.GROUP_NOT_FOUND));
 
         if(groupImgFile != null){
             if(group.getGroupImg() == null){
@@ -70,7 +72,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public Group getGroup(Long groupId) {
-        return groupRepository.findById(groupId).orElseThrow(RuntimeException::new);
+        return groupRepository.findById(groupId).orElseThrow(() -> new GroupNotFoundException(ExceptionCode.GROUP_NOT_FOUND));
     }
 
     @Override
@@ -80,7 +82,7 @@ public class GroupServiceImpl implements GroupService {
 
     public GroupDto findGroupById(Long id){
         // 특정 북마크 ID에 해당하는 북마크 조회
-        Group group = groupRepository.findById(id).orElseThrow(); // todo: 예외처리
+        Group group = groupRepository.findById(id).orElseThrow(() -> new GroupNotFoundException(ExceptionCode.GROUP_NOT_FOUND)); // todo: 예외처리
         return groupMapperImpl.toDto(group);
     }
 
@@ -99,7 +101,8 @@ public class GroupServiceImpl implements GroupService {
     public  List<LinkDto> getLinksByGroupId(Long groupId){
         Optional<Group> groupList = groupRepository.findByIdWithLinks(groupId);
 
-        return groupList.orElseThrow().getLinks().stream()
+        return groupList.orElseThrow(() -> new GroupNotFoundException(ExceptionCode.GROUP_NOT_FOUND))
+                .getLinks().stream()
                 .map(m-> new LinkDto(m.getLink().getId(),
                         m.getLink().getLinkUrl(),
                         m.getLink().getLinkName(),
