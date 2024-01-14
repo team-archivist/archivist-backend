@@ -8,7 +8,6 @@ import com.beside.archivist.entity.link.LinkImg;
 import com.beside.archivist.entity.users.User;
 
 import com.beside.archivist.exception.common.ExceptionCode;
-import com.beside.archivist.exception.images.InvalidFileExtensionException;
 import com.beside.archivist.exception.link.LinkNotFoundException;
 import com.beside.archivist.exception.users.UserNotFoundException;
 import com.beside.archivist.mapper.LinkMapper;
@@ -46,7 +45,7 @@ public class LinkServiceImpl implements LinkService {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(ExceptionCode.USER_NOT_FOUND));
 
         LinkImg linkImg = null;
-        if(linkImgFile == null || extractExtCheck(linkImgFile)){
+        if(linkImgFile == null){
             linkImg = linkImgService.initializeDefaultImg();
         }else{
             linkImg = linkImgService.insertLinkImg(linkImgFile);
@@ -64,22 +63,10 @@ public class LinkServiceImpl implements LinkService {
         return linkMapperImpl.toDto(link);
     }
 
-    private boolean extractExtCheck(MultipartFile imgFile) { // 확장자 추출
-        String originalFilename = imgFile.getOriginalFilename();
-        int pos = originalFilename.lastIndexOf(".");
-        String ext = originalFilename.substring(pos + 1);
-
-        // jpg, jpeg, png 제외 확장자 예외 처리
-        return !ext.equalsIgnoreCase("jpg") && !ext.equalsIgnoreCase("jpeg") && !ext.equalsIgnoreCase("png");
-    }
-
     @Override
     public LinkDto updateLink(Long linkId, LinkDto linkDto, MultipartFile linkImgFile) {
         Link link = linkRepository.findById(linkId).orElseThrow(() -> new LinkNotFoundException(ExceptionCode.LINK_NOT_FOUND));
         if(linkImgFile != null){
-            if(extractExtCheck(linkImgFile)){
-                throw new InvalidFileExtensionException(ExceptionCode.INVALID_FILE_EXTENSION);
-            }
             if(link.getLinkImg() == null){
                 linkImgService.insertLinkImg(linkImgFile);
             }else{
