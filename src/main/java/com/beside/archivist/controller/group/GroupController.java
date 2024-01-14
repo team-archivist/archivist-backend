@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -47,7 +48,7 @@ public class GroupController {
                                               @RequestPart(value = "groupImgFile", required = false) MultipartFile groupImgFile) {
         GroupDto savedGroup = groupServiceImpl.saveGroup(groupDto,groupImgFile);
         userGroupServiceImpl.saveUserGroup(savedGroup.getGroupId());
-        return ResponseEntity.ok().body(savedGroup);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedGroup);
     }
 
     /** 그룹 수정 **/

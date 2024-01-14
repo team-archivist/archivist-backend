@@ -17,6 +17,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -66,7 +67,7 @@ public class UserController {
         }
         UserImg userImg = userImgServiceImpl.initializeDefaultImg();
         UserInfoDto savedUser = userServiceImpl.saveUser(userDto,userImg);
-        return ResponseEntity.ok().body(savedUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 
     /** 회원 정보 조회 **/
