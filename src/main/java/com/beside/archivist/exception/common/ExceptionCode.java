@@ -17,8 +17,8 @@ public enum ExceptionCode {
     EMAIL_TOKEN_MISMATCH(FORBIDDEN, "USER_004", "회원과 토큰의 정보가 맞지 않습니다."),
     INVALID_CATEGORY_NAME(BAD_REQUEST,"CATEGORY_001", "정의되지 않은 카테고리 값 입니다."),
     REQUEST_PART_MISSING(BAD_REQUEST,"VALID_001","필수 값이 누락되었습니다."),
-    LINK_NOT_FOUND(BAD_REQUEST,"LINK_001","링크 정보가 존재하지 않습니다."),
-    GROUP_NOT_FOUND(BAD_REQUEST,"GROUP_001","그룹 정보가 존재하지 않습니다.")
+    LINK_NOT_FOUND(NOT_FOUND,"LINK_001","링크 정보가 존재하지 않습니다."),
+    GROUP_NOT_FOUND(NOT_FOUND,"GROUP_001","그룹 정보가 존재하지 않습니다.")
     ;
 
     private final HttpStatus status; // HTTP 상태 코드
