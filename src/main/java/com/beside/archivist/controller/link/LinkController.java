@@ -23,16 +23,17 @@ public class LinkController {
 
     private final LinkService linkServiceImpl;
 
-    /** 회원이 북마크/저장한 링크 모두 조회 **/
+    /** 회원이 저장한 링크 모두 조회 **/
     @GetMapping("/user/link/{userId}")
+    @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     public ResponseEntity<List<LinkDto>> getUserLinkList(@PathVariable("userId") Long userId) {
         List<LinkDto> links = linkServiceImpl.getLinksByUserId(userId);
         return ResponseEntity.ok().body(links);
     }
 
     /** 특정 링크 상세 조회 **/
-    @GetMapping("/link/{id}")
-    public ResponseEntity<?> findLinkById(@PathVariable("id") Long id) {
+    @GetMapping("/link/{linkId}")
+    public ResponseEntity<?> findLinkById(@PathVariable("linkId") Long id) {
         LinkDto link = linkServiceImpl.findLinkById(id);
         return ResponseEntity.ok().body(link);
     }
