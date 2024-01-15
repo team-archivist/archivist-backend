@@ -56,7 +56,7 @@ public class LinkGroupServiceImpl implements LinkGroupService {
     @Override
     public void deleteLinkGroup(Long linkGroupId) {
         LinkGroup linkGroup = getLinkGroupById(linkGroupId);
-        boolean existImageCheck = checkGroupImg(linkGroup); // 기존에 저장된 이미지가 삭제하는 링크 이미지인 경우 true
+        boolean existImageCheck = checkGroupLinkImgEquality(linkGroup); // 기존에 저장된 이미지가 삭제하는 링크 이미지인 경우 true
 
         linkGroupRepository.deleteById(linkGroupId);
 
@@ -80,7 +80,7 @@ public class LinkGroupServiceImpl implements LinkGroupService {
             groupServiceImpl.changeToLinkImg(groupId, LinkImg.initializeDefaultLinkImg());
             return;
         } else if(!linkGroups.get(0).getGroup().getGroupImg().getImgUrl().equals("/image/linkDefaultImg.png")){
-            return; // 2. 링크 이미지로 되어있을 때는 변경 X 
+            return; // 2. 링크 이미지로 되어있을 때는 변경 X
         }
 
         Optional<Link> firstLink = linkGroups.stream()
@@ -92,7 +92,7 @@ public class LinkGroupServiceImpl implements LinkGroupService {
     }
 
     @Override // 그룹 내에서 삭제하는 링크 이미지와 그룹 이미지가 같을 때
-    public boolean checkGroupImg(LinkGroup linkGroup) {
+    public boolean checkGroupLinkImgEquality(LinkGroup linkGroup) {
         String linkImg = linkGroup.getLink().getLinkImg().getImgUrl();
         String groupImg = linkGroup.getGroup().getGroupImg().getImgUrl();
         return linkImg.equals(groupImg);

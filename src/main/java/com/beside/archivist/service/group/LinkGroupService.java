@@ -13,5 +13,5 @@ public interface LinkGroupService {
     void deleteLinkGroup(Long groupId);
     List<LinkGroup> getLinkGroupsByGroupId(Long groupId);
     void changeGroupImg(Long groupId);
-    boolean checkGroupImg(LinkGroup linkGroup);
+    boolean checkGroupLinkImgEquality(LinkGroup linkGroup);
 }
