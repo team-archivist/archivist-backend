@@ -20,14 +20,16 @@ public class LinkGroupController {
 
     private final LinkGroupService linkGroupServiceImpl;
 
+    /** 그룹에 링크 저장 **/
     @PostMapping("/group/link")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     public ResponseEntity<?> registerLinkGroup(@RequestPart @Valid LinkGroupDto linkGroupDto) {
         LinkGroupDto savedLinkGroup = linkGroupServiceImpl.saveLinkGroup(linkGroupDto);
+        linkGroupServiceImpl.changeGroupImg(linkGroupDto.getGroupId()); // 그룹 이미지 변경
         return ResponseEntity.status(HttpStatus.CREATED).body(savedLinkGroup);
     }
     
-
+    /** 그룹에서 링크 제거하기 **/
     @DeleteMapping("/group/link/{linkGroupId}")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     public ResponseEntity<?> deleteLinkGroup(@PathVariable("linkGroupId") Long linkGroupId){

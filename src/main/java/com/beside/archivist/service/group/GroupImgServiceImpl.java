@@ -1,6 +1,7 @@
 package com.beside.archivist.service.group;
 
 import com.beside.archivist.entity.group.GroupImg;
+import com.beside.archivist.entity.link.LinkImg;
 import com.beside.archivist.repository.group.GroupImgRepository;
 import com.beside.archivist.service.group.GroupImgService;
 import com.beside.archivist.service.util.FileService;
@@ -21,14 +22,19 @@ public class GroupImgServiceImpl implements GroupImgService {
     private final FileService fileService;
 
     @Override
-    public GroupImg initializeDefaultImg() {
+    public GroupImg initializeDefaultLinkImg() {
         return groupImgRepository.save(GroupImg.builder()
-                .oriImgName("groupDefaultImg.png")
-                .imgName("groupDefaultImg")
-                .imgUrl("/image/groupDefaultImg.png")
+                .oriImgName("linkDefaultImg.png")
+                .imgName("linkDefaultImg")
+                .imgUrl("/image/linkDefaultImg.png")
                 .build());
     }
+    @Override
+    public void initializeLinkImg(GroupImg groupImg, LinkImg linkImg) {
+        groupImg.updateGroupImg(linkImg.getImgName(), linkImg.getOriImgName(), linkImg.getImgUrl());
+    }
 
+    @Override
     public GroupImg insertGroupImg(MultipartFile groupImgFile) {
         if(groupImgFile != null){
 
