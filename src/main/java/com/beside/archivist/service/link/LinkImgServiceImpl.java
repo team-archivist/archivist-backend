@@ -21,11 +21,7 @@ public class LinkImgServiceImpl implements LinkImgService {
 
     @Override
     public LinkImg initializeDefaultImg() {
-        return linkImgRepository.save(LinkImg.builder()
-                .oriImgName("linkDefaultImg.png")
-                .imgName("linkDefaultImg")
-                .imgUrl("/image/linkDefaultImg.png")
-                .build());
+        return linkImgRepository.save(LinkImg.initializeDefaultLinkImg());
     }
 
     public LinkImg insertLinkImg(MultipartFile linkImgFile) {

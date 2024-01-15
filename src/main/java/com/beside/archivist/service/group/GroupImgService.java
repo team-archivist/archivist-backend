@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 public interface GroupImgService {
 
     GroupImg initializeDefaultLinkImg();
-    void initializeLinkImg(GroupImg groupImg, LinkImg linkImg);
+    void changeToLinkImg(GroupImg groupImg, LinkImg linkImg);
     GroupImg insertGroupImg(MultipartFile groupImgFile);
     void updateGroupImg(Long groupImgId, MultipartFile groupImgFile);
 }

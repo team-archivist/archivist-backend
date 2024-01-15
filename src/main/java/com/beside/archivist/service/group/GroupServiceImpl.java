@@ -31,7 +31,7 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public GroupDto saveGroup(GroupDto groupDto, MultipartFile groupImgFile)  {
         GroupImg groupImg;
-        if(groupImgFile == null){
+        if(groupImgFile == null){ // 그룹 이미지를 넣지 않았을 때 링크 디폴트 이미지로 설정
             groupImg = groupImgServiceImpl.initializeDefaultLinkImg();
         }else{
             groupImg = groupImgServiceImpl.insertGroupImg(groupImgFile);
@@ -50,12 +50,13 @@ public class GroupServiceImpl implements GroupService {
         return groupMapperImpl.toDto(group);
     }
 
+    /** 그룹 썸네일을 파라미터로 전달받은 linkImg 로 변경 **/
     @Override
     public void changeToLinkImg(Long groupId, LinkImg linkImg) { // 해당 링크 이미지 삭제했을 떄 다른 이미지로 바꾸는 등의 작업 필요
         GroupImg groupImg = groupRepository.findById(groupId)
                 .orElseThrow(() -> new GroupNotFoundException(ExceptionCode.GROUP_NOT_FOUND))
                 .getGroupImg();
-        groupImgServiceImpl.initializeLinkImg(groupImg,linkImg);
+        groupImgServiceImpl.changeToLinkImg(groupImg,linkImg); // groupImg -> linkImg 로 변경
     }
 
     @Override
@@ -92,7 +93,7 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public GroupDto findGroupById(Long id){
         // 특정 북마크 ID에 해당하는 북마크 조회
-        Group group = groupRepository.findById(id).orElseThrow(() -> new GroupNotFoundException(ExceptionCode.GROUP_NOT_FOUND)); // todo: 예외처리
+        Group group = groupRepository.findById(id).orElseThrow(() -> new GroupNotFoundException(ExceptionCode.GROUP_NOT_FOUND));
         return groupMapperImpl.toDto(group);
     }
 
