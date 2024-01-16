@@ -1,7 +1,6 @@
 package com.beside.archivist.service.usergroup;
 
 import com.beside.archivist.config.AuditConfig;
-import com.beside.archivist.entity.group.Group;
 import com.beside.archivist.entity.usergroup.UserGroup;
 import com.beside.archivist.repository.usergroup.UserGroupRepository;
 import com.beside.archivist.service.group.GroupService;
@@ -20,12 +19,12 @@ public class UserGroupServiceImpl implements UserGroupService {
     private final GroupService groupServiceImpl;
     private final AuditConfig auditConfig;
     @Override
-    public void saveUserGroup(Long groupId) {
+    public void saveUserGroup(Long groupId, boolean isOwner) {
         String userEmail = auditConfig.auditorProvider().getCurrentAuditor()
                 .orElseThrow(RuntimeException::new); // todo: 인증 X, 예외 처리
 
         UserGroup userGroup = UserGroup.builder()
-                .isOwner(true) // 내가 생성한 그룹
+                .isOwner(isOwner) // save / bookmark 그룹 구분
                 .users(userServiceImpl.getUserByEmail(userEmail))
                 .groups(groupServiceImpl.getGroup(groupId))
                 .build();
@@ -36,9 +35,14 @@ public class UserGroupServiceImpl implements UserGroupService {
     }
 
     @Override
-    public List<UserGroup> getUserGroupsByUserId(Long userId) {
+    public List<UserGroup> getUserGroupsByUserId(Long userId, boolean isOwner) {
         return userGroupRepository.findByUsers_Id(userId).stream()
-                .filter(UserGroup::isOwner) // 본인이 생성한 그룹만 조회
+                .filter(userGroup -> userGroup.isOwner() == isOwner)// 본인이 생성한 그룹만 조회
                 .toList();
+    }
+
+    @Override
+    public void deleteBookmark(Long userId, Long groupId) {
+        userGroupRepository.deleteByUsers_IdAndGroups_Id(userId, groupId);
     }
 }

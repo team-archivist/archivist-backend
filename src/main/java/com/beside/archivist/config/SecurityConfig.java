@@ -53,6 +53,7 @@ public class SecurityConfig{
                                 .requestMatchers("/link","/link/{linkId}").authenticated()
                                 .requestMatchers(HttpMethod.GET, "/group/{groupId}").permitAll()
                                 .requestMatchers("/group","/group/{groupId}").authenticated()
+                                .requestMatchers("/bookmark/**").authenticated()
                                 .anyRequest().permitAll()
                 )
                 .csrf().disable()

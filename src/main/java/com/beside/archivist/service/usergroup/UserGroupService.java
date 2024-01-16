@@ -7,7 +7,7 @@ import java.util.List;
 
 @Service
 public interface UserGroupService {
-    void saveUserGroup(Long groupId);
-
-    List<UserGroup> getUserGroupsByUserId(Long userId);
+    void saveUserGroup(Long groupId, boolean isOwner);
+    List<UserGroup> getUserGroupsByUserId(Long userId, boolean isOwner);
+    void deleteBookmark(Long userId, Long groupId);
 }

@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface UserGroupRepository extends JpaRepository<UserGroup, Long> {
     List<UserGroup> findByUsers_Id(Long userId);
+    void deleteByUsers_IdAndGroups_Id(Long userId, Long groupId);
 }
