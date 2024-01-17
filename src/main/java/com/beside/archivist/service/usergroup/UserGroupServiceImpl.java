@@ -1,8 +1,9 @@
 package com.beside.archivist.service.usergroup;
 
 import com.beside.archivist.config.AuditConfig;
-import com.beside.archivist.entity.group.Group;
 import com.beside.archivist.entity.usergroup.UserGroup;
+import com.beside.archivist.exception.common.ExceptionCode;
+import com.beside.archivist.exception.users.MissingAuthenticationException;
 import com.beside.archivist.repository.usergroup.UserGroupRepository;
 import com.beside.archivist.service.group.GroupService;
 import com.beside.archivist.service.users.UserService;
@@ -22,7 +23,7 @@ public class UserGroupServiceImpl implements UserGroupService {
     @Override
     public void saveUserGroup(Long groupId) {
         String userEmail = auditConfig.auditorProvider().getCurrentAuditor()
-                .orElseThrow(RuntimeException::new); // todo: 인증 X, 예외 처리
+                .orElseThrow(()-> new MissingAuthenticationException(ExceptionCode.MISSING_AUTHENTICATION));
 
         UserGroup userGroup = UserGroup.builder()
                 .isOwner(true) // 내가 생성한 그룹
