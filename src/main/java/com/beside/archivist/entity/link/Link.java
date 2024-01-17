@@ -3,12 +3,16 @@ package com.beside.archivist.entity.link;
 
 import com.beside.archivist.dto.link.LinkDto;
 import com.beside.archivist.entity.BaseEntity;
+import com.beside.archivist.entity.group.LinkGroup;
 import com.beside.archivist.entity.users.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity @Table(name = "link")
 @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -31,6 +35,9 @@ public class Link extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "link_img_id")
     private LinkImg linkImg;
+
+    @OneToMany(mappedBy = "link", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LinkGroup> linkGroups = new ArrayList<>();
 
     @Builder
     public Link(String linkUrl, String linkName, String linkDesc, User user, LinkImg linkImg) {
