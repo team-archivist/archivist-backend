@@ -11,12 +11,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity @Table(name = "group_info")
 @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "UPDATE group_info SET is_deleted = true, deleted_at = sysdate() WHERE group_id = ?")
+@Where(clause = "is_deleted = false")
 public class Group extends BaseEntity {
 
     @Id @Column(name = "group_id")

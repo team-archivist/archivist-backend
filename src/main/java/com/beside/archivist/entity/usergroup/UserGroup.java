@@ -1,5 +1,6 @@
 package com.beside.archivist.entity.usergroup;
 
+import com.beside.archivist.entity.BaseEntity;
 import com.beside.archivist.entity.group.Group;
 import com.beside.archivist.entity.users.User;
 import jakarta.persistence.*;
