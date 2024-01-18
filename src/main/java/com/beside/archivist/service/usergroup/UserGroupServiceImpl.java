@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service @Transactional
 @RequiredArgsConstructor
@@ -42,7 +43,10 @@ public class UserGroupServiceImpl implements UserGroupService {
     }
 
     @Override
-    public void deleteBookmark(Long userId, Long groupId) {
-        userGroupRepository.deleteByUsers_IdAndGroups_Id(userId, groupId);
+    public void deleteBookmark(Long userId, Long groupId, boolean isOwner) {
+        UserGroup findUserGroup = userGroupRepository.findByUsers_IdAndGroups_Id(userId, groupId)
+                .filter(userGroup -> userGroup.isOwner() == isOwner)
+                .orElseThrow(); // todo: 예외 처리
+        userGroupRepository.delete(findUserGroup);
     }
 }
