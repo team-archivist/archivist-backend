@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,11 +27,11 @@ public class GroupController {
     private final GroupService groupServiceImpl;
     private final UserGroupService userGroupServiceImpl;
 
-    /** 특정 유저가 생성한 모든 그룹 조회 **/
+    /** 특정 유저가 생성한 모든 그룹 조회 - QueryDsl 써서 조인해서 가져오기 **/
     @GetMapping("/user/group/{userId}")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     public ResponseEntity<List<GroupDto>> getUserGroupList(@PathVariable("userId") Long userId) {
-        List<UserGroup> userGroups = userGroupServiceImpl.getUserGroupsByUserId(userId);
+        List<UserGroup> userGroups = userGroupServiceImpl.getUserGroupsByUserId(userId, true);
         List<GroupDto> groups = groupServiceImpl.getGroupsByUserGroup(userGroups);
         return ResponseEntity.ok().body(groups);
     }
@@ -48,7 +49,7 @@ public class GroupController {
     public ResponseEntity<?> registerGroup(@RequestPart @Valid GroupDto groupDto,
                                               @RequestPart(value = "groupImgFile", required = false) MultipartFile groupImgFile) {
         GroupDto savedGroup = groupServiceImpl.saveGroup(groupDto,groupImgFile);
-        userGroupServiceImpl.saveUserGroup(savedGroup.getGroupId());
+        userGroupServiceImpl.saveUserGroup(savedGroup.getGroupId(),true);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedGroup);
     }
 
