@@ -117,6 +117,16 @@ public class GlobalExceptionController {
         return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
     }
 
+    /** USER_006 토큰 인증 시 요청 헤더에 토큰이 없는 경우 **/
+    @ExceptionHandler(MissingAuthenticationException.class)
+    protected ResponseEntity<ExceptionDto> handlerMissingAuthenticationException(MissingAuthenticationException ex) {
+        final ExceptionDto responseError = ExceptionDto.builder()
+                .statusCode(ex.getExceptionCode().getStatus().value())
+                .message(ex.getExceptionCode().getMessage())
+                .build();
+        return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
+    }
+
     /** CATEGORY_001 정의되지 않은 카테고리 값 체크 **/
     @ExceptionHandler(InvalidCategoryNameException.class)
     protected ResponseEntity<ExceptionDto> handlerInvalidCategoryNameException(InvalidCategoryNameException ex) {

@@ -5,6 +5,7 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
 import lombok.Getter;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -27,5 +28,8 @@ public abstract class BaseEntity extends BaseTimeEntity{
 
     @LastModifiedBy
     private String lastModifiedBy;
+
+    @ColumnDefault("0") //default 0
+    private boolean isDeleted;
 }
 

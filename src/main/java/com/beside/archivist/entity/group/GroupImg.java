@@ -33,4 +33,11 @@ public class GroupImg {
         this.oriImgName = oriImgName;
         this.imgUrl = imgUrl;
     }
+    public static GroupImg initializeDefaultLinkImg() {
+        return GroupImg.builder()
+                .imgName("linkDefaultImg")
+                .oriImgName("linkDefaultImg.png")
+                .imgUrl("/image/linkDefaultImg.png")
+                .build();
+    }
 }

@@ -9,6 +9,7 @@ import com.beside.archivist.entity.users.User;
 
 import com.beside.archivist.exception.common.ExceptionCode;
 import com.beside.archivist.exception.link.LinkNotFoundException;
+import com.beside.archivist.exception.users.MissingAuthenticationException;
 import com.beside.archivist.exception.users.UserNotFoundException;
 import com.beside.archivist.mapper.LinkMapper;
 import com.beside.archivist.repository.link.LinkRepository;
@@ -40,8 +41,8 @@ public class LinkServiceImpl implements LinkService {
 
     @Override
     public LinkDto saveLink(LinkDto linkDto, MultipartFile linkImgFile)  {
-        Optional<String> authentication = auditConfig.auditorProvider().getCurrentAuditor();
-        String email = authentication.get();
+        String email = auditConfig.auditorProvider().getCurrentAuditor().orElseThrow(
+                () ->  new MissingAuthenticationException(ExceptionCode.MISSING_AUTHENTICATION));
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(ExceptionCode.USER_NOT_FOUND));
 
         LinkImg linkImg = null;

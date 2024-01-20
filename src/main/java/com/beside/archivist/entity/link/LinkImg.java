@@ -33,4 +33,11 @@ public class LinkImg {
         this.oriImgName = oriImgName;
         this.imgUrl = imgUrl;
     }
+    public static LinkImg initializeDefaultLinkImg() {
+        return LinkImg.builder()
+                .imgName("linkDefaultImg")
+                .oriImgName("linkDefaultImg.png")
+                .imgUrl("/image/linkDefaultImg.png")
+                .build();
+    }
 }

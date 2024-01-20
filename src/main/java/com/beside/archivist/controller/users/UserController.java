@@ -8,6 +8,7 @@ import com.beside.archivist.entity.users.Category;
 import com.beside.archivist.entity.users.UserImg;
 import com.beside.archivist.exception.common.ExceptionCode;
 import com.beside.archivist.exception.users.EmailTokenMismatchException;
+import com.beside.archivist.exception.users.MissingAuthenticationException;
 import com.beside.archivist.service.users.UserImgService;
 import com.beside.archivist.service.users.UserService;
 import com.beside.archivist.utils.JwtTokenUtil;
@@ -74,6 +75,9 @@ public class UserController {
     @GetMapping("/user")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     public ResponseEntity<?> getUserInfo(Authentication authentication) {
+        if (authentication == null){
+            throw new MissingAuthenticationException(ExceptionCode.MISSING_AUTHENTICATION);
+        }
         UserInfoDto userInfo = userServiceImpl.getUserInfo(authentication.getName());
         return ResponseEntity.ok().body(userInfo);
     }

@@ -10,12 +10,19 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity @Table(name = "link")
 @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "UPDATE link SET is_deleted = true, deleted_at = sysdate() WHERE link_id = ?")
+@Where(clause = "is_deleted = false")
 public class Link extends BaseEntity {
 
     @Id @Column(name = "link_id")
