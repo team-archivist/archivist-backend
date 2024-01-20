@@ -1,6 +1,5 @@
 package com.beside.archivist.entity.group;
 
-import com.beside.archivist.entity.BaseEntity;
 import com.beside.archivist.entity.link.Link;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -10,7 +9,7 @@ import lombok.NoArgsConstructor;
 
 @Entity @Table(name = "link_group")
 @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class LinkGroup extends BaseEntity {
+public class LinkGroup {
 
     @Id @Column(name = "link_group_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
