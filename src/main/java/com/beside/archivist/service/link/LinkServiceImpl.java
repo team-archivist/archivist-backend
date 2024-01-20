@@ -71,7 +71,7 @@ public class LinkServiceImpl implements LinkService {
             if(link.getLinkImg() == null){
                 linkImgService.insertLinkImg(linkImgFile);
             }else{
-                linkImgService.updateLinkImg(link.getLinkImg().getId(), linkImgFile);
+                linkImgService.changeLinkImg(link.getLinkImg().getId(), linkImgFile);
             }
         }
         link.update(linkDto);

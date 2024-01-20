@@ -47,7 +47,7 @@ public class GroupImgServiceImpl implements GroupImgService {
     }
 
     @Override
-    public void updateGroupImg(Long groupImgId, MultipartFile groupImgFile) {
+    public void changeLinkImg(Long groupImgId, MultipartFile groupImgFile) {
         if(groupImgFile != null){
             GroupImg savedGroupImg = groupImgRepository.findById(groupImgId)
                     .orElseThrow(RuntimeException::new); // TO DO : 예외 처리

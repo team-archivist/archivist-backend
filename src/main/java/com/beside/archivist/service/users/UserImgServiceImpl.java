@@ -37,7 +37,7 @@ public class UserImgServiceImpl implements UserImgService{
      * 디폴트 이미지 저장 이후, 모두 update
      * */
     @Override
-    public void updateUserImg(Long userImgId, MultipartFile userImgFile) {
+    public void changeLinkImg(Long userImgId, MultipartFile userImgFile) {
         if(userImgFile != null){
             UserImg savedUserImg = userImgRepository.findById(userImgId)
                     .orElseThrow(RuntimeException::new); // TO DO : 예외 처리

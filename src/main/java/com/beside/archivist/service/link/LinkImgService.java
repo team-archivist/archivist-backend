@@ -10,5 +10,5 @@ public interface LinkImgService {
     LinkImg initializeDefaultImg();
     LinkImg insertLinkImg(MultipartFile linkImgFile);
 
-    void updateLinkImg(Long linkImgId, MultipartFile linkImgFile);
+    void changeLinkImg(Long linkImgId, MultipartFile linkImgFile);
 }
