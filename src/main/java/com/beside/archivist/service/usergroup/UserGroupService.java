@@ -10,4 +10,5 @@ public interface UserGroupService {
     void saveUserGroup(Long groupId, boolean isOwner);
     List<UserGroup> getUserGroupsByUserId(Long userId, boolean isOwner);
     void deleteBookmark(Long userId, Long groupId);
+    void checkDuplicateGroup(Long userId, Long groupId, boolean isOwner);
 }

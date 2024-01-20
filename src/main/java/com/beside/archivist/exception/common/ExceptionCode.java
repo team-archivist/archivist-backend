@@ -27,6 +27,7 @@ public enum ExceptionCode {
 
     GROUP_NOT_FOUND(NOT_FOUND,"GROUP_001","그룹 정보가 존재하지 않습니다."),
     GROUP_IN_BOOKMARK_NOT_FOUND(NOT_FOUND,"GROUP_002","북마크 내 그룹 정보가 존재하지 않습니다."),
+    GROUP_ALREADY_EXISTS(CONFLICT,"GROUP_003", "이미 저장된 그룹입니다."),
     ;
 
     private final HttpStatus status; // HTTP 상태 코드

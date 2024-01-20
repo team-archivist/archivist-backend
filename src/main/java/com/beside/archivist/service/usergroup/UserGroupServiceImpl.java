@@ -1,8 +1,11 @@
 package com.beside.archivist.service.usergroup;
 
 import com.beside.archivist.config.AuditConfig;
+import com.beside.archivist.entity.group.Group;
 import com.beside.archivist.entity.usergroup.UserGroup;
+import com.beside.archivist.entity.users.User;
 import com.beside.archivist.exception.common.ExceptionCode;
+import com.beside.archivist.exception.group.GroupAlreadyExistsException;
 import com.beside.archivist.exception.link.GroupInBookmarkNotFoundException;
 import com.beside.archivist.exception.users.MissingAuthenticationException;
 import com.beside.archivist.repository.usergroup.UserGroupRepository;
@@ -25,6 +28,10 @@ public class UserGroupServiceImpl implements UserGroupService {
     public void saveUserGroup(Long groupId, boolean isOwner) {
         String userEmail = auditConfig.auditorProvider().getCurrentAuditor()
                 .orElseThrow(()-> new MissingAuthenticationException(ExceptionCode.MISSING_AUTHENTICATION));
+        User findUser = userServiceImpl.getUserByEmail(userEmail);
+        Group findGroup = groupServiceImpl.getGroup(groupId);
+
+        checkDuplicateGroup(findUser.getId(), findGroup.getId(), isOwner);
         
         // todo: 내 그룹을 북마크 하는 경우 예외 처리
         UserGroup userGroup = UserGroup.builder()
@@ -36,6 +43,15 @@ public class UserGroupServiceImpl implements UserGroupService {
         userGroup.getUsers().addUserGroup(userGroup);
         userGroup.getGroups().addUserGroup(userGroup);
         userGroupRepository.save(userGroup);
+    }
+
+    @Override
+    public void checkDuplicateGroup(Long userId, Long groupId, boolean isOwner) {
+        userGroupRepository.findByUsers_IdAndGroups_Id(userId, groupId).ifPresent(userGroup -> {
+            if (userGroup.isOwner() || !isOwner) { // 이미 내 그룹으로 저장되어 있거나 북마크 그룹으로 저장하였을 때
+                throw new GroupAlreadyExistsException(ExceptionCode.GROUP_ALREADY_EXISTS);
+            }
+        });
     }
 
     @Override

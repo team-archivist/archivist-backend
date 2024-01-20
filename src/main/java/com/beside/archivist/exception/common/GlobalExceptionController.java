@@ -3,6 +3,7 @@ package com.beside.archivist.exception.common;
 import com.beside.archivist.dto.exception.ExceptionDto;
 import com.beside.archivist.dto.exception.LoginFailureDto;
 import com.beside.archivist.dto.exception.ValidExceptionDto;
+import com.beside.archivist.exception.group.GroupAlreadyExistsException;
 import com.beside.archivist.exception.group.GroupNotFoundException;
 import com.beside.archivist.exception.images.InvalidFileExtensionException;
 import com.beside.archivist.exception.link.GroupInBookmarkNotFoundException;
@@ -171,6 +172,16 @@ public class GlobalExceptionController {
     /** GROUP_002 북마크 그룹 내 그룹 유무 체크 **/
     @ExceptionHandler(GroupInBookmarkNotFoundException.class)
     protected ResponseEntity<ExceptionDto> handlerLinkInGroupNotFoundException(GroupInBookmarkNotFoundException ex) {
+        final ExceptionDto responseError = ExceptionDto.builder()
+                .statusCode(ex.getExceptionCode().getStatus().value())
+                .message(ex.getExceptionCode().getMessage())
+                .build();
+        return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
+    }
+
+    /** GROUP_003 중복 그룹 유무 체크 **/
+    @ExceptionHandler(GroupAlreadyExistsException.class)
+    protected ResponseEntity<ExceptionDto> handlerGroupAlreadyExistsException(GroupAlreadyExistsException ex) {
         final ExceptionDto responseError = ExceptionDto.builder()
                 .statusCode(ex.getExceptionCode().getStatus().value())
                 .message(ex.getExceptionCode().getMessage())
