@@ -5,6 +5,7 @@ import com.beside.archivist.dto.exception.LoginFailureDto;
 import com.beside.archivist.dto.exception.ValidExceptionDto;
 import com.beside.archivist.exception.group.GroupNotFoundException;
 import com.beside.archivist.exception.images.InvalidFileExtensionException;
+import com.beside.archivist.exception.link.GroupInBookmarkNotFoundException;
 import com.beside.archivist.exception.link.LinkNotFoundException;
 import com.beside.archivist.exception.users.*;
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
@@ -160,6 +161,16 @@ public class GlobalExceptionController {
     /** GROUP_001 그룹 유무 체크 **/
     @ExceptionHandler(GroupNotFoundException.class)
     protected ResponseEntity<ExceptionDto> handlerGroupNotFoundException(GroupNotFoundException ex) {
+        final ExceptionDto responseError = ExceptionDto.builder()
+                .statusCode(ex.getExceptionCode().getStatus().value())
+                .message(ex.getExceptionCode().getMessage())
+                .build();
+        return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
+    }
+
+    /** GROUP_002 북마크 그룹 내 그룹 유무 체크 **/
+    @ExceptionHandler(GroupInBookmarkNotFoundException.class)
+    protected ResponseEntity<ExceptionDto> handlerLinkInGroupNotFoundException(GroupInBookmarkNotFoundException ex) {
         final ExceptionDto responseError = ExceptionDto.builder()
                 .statusCode(ex.getExceptionCode().getStatus().value())
                 .message(ex.getExceptionCode().getMessage())

@@ -3,6 +3,7 @@ package com.beside.archivist.service.usergroup;
 import com.beside.archivist.config.AuditConfig;
 import com.beside.archivist.entity.usergroup.UserGroup;
 import com.beside.archivist.exception.common.ExceptionCode;
+import com.beside.archivist.exception.link.GroupInBookmarkNotFoundException;
 import com.beside.archivist.exception.users.MissingAuthenticationException;
 import com.beside.archivist.repository.usergroup.UserGroupRepository;
 import com.beside.archivist.service.group.GroupService;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service @Transactional
 @RequiredArgsConstructor
@@ -25,7 +25,8 @@ public class UserGroupServiceImpl implements UserGroupService {
     public void saveUserGroup(Long groupId, boolean isOwner) {
         String userEmail = auditConfig.auditorProvider().getCurrentAuditor()
                 .orElseThrow(()-> new MissingAuthenticationException(ExceptionCode.MISSING_AUTHENTICATION));
-
+        
+        // todo: 내 그룹을 북마크 하는 경우 예외 처리
         UserGroup userGroup = UserGroup.builder()
                 .isOwner(isOwner) // save / bookmark 그룹 구분
                 .users(userServiceImpl.getUserByEmail(userEmail))
@@ -45,10 +46,12 @@ public class UserGroupServiceImpl implements UserGroupService {
     }
 
     @Override
-    public void deleteBookmark(Long userId, Long groupId, boolean isOwner) {
-        UserGroup findUserGroup = userGroupRepository.findByUsers_IdAndGroups_Id(userId, groupId)
-                .filter(userGroup -> userGroup.isOwner() == isOwner)
-                .orElseThrow(); // todo: 예외 처리
-        userGroupRepository.delete(findUserGroup);
+    public void deleteBookmark(Long userId, Long groupId) {
+        UserGroup userGroup = userGroupRepository.findByUsers_IdAndGroups_Id(userId, groupId)
+                .orElseThrow(() -> new GroupInBookmarkNotFoundException(ExceptionCode.GROUP_IN_BOOKMARK_NOT_FOUND));
+        if(userGroup.isOwner()){
+            throw new GroupInBookmarkNotFoundException(ExceptionCode.GROUP_IN_BOOKMARK_NOT_FOUND);
+        }
+        userGroupRepository.delete(userGroup);
     }
 }
