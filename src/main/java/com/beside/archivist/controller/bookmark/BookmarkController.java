@@ -43,7 +43,7 @@ public class BookmarkController {
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     public ResponseEntity<?> deleteBookmark(@PathVariable("groupId") Long groupId, Authentication authentication) {
         Long userId = userServiceImpl.getUserByEmail(authentication.getName()).getId();
-        userGroupServiceImpl.deleteBookmark(userId, groupId, false);
+        userGroupServiceImpl.deleteBookmark(userId, groupId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
