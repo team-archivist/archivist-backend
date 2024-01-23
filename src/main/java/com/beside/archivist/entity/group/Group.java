@@ -18,6 +18,7 @@ import java.util.List;
 
 @Entity @Table(name = "group_info")
 @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicInsert @DynamicUpdate
 @SQLDelete(sql = "UPDATE group_info SET is_deleted = 'Y', deleted_at = sysdate() WHERE group_id = ?")
 @Where(clause = "is_deleted = 'N'")
 public class Group extends BaseEntity {

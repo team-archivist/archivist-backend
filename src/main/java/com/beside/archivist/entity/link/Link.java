@@ -20,6 +20,7 @@ import java.util.List;
 
 @Entity @Table(name = "link")
 @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicInsert @DynamicUpdate
 @SQLDelete(sql = "UPDATE link SET is_deleted = 'Y', deleted_at = sysdate() WHERE link_id = ?")
 @Where(clause = "is_deleted = 'N'")
 public class Link extends BaseEntity {
