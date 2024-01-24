@@ -41,7 +41,7 @@ public class LinkImgServiceImpl implements LinkImgService {
     }
 
     @Override
-    public void updateLinkImg(Long linkImgId, MultipartFile linkImgFile) {
+    public void changeLinkImg(Long linkImgId, MultipartFile linkImgFile) {
         if(linkImgFile != null){
             LinkImg savedLinkImg = linkImgRepository.findById(linkImgId)
                     .orElseThrow(RuntimeException::new); // TO DO : 예외 처리

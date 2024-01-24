@@ -7,6 +7,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public interface UserImgService {
     UserImg initializeDefaultImg();
-    void updateUserImg(Long userImgId, MultipartFile userImgFile);
+    void changeLinkImg(Long userImgId, MultipartFile userImgFile);
 
 }

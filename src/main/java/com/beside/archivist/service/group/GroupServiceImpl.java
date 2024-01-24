@@ -67,7 +67,7 @@ public class GroupServiceImpl implements GroupService {
             if(group.getGroupImg() == null){
                 groupImgServiceImpl.insertGroupImg(groupImgFile);
             }else{
-                groupImgServiceImpl.updateGroupImg(group.getGroupImg().getId(), groupImgFile);
+                groupImgServiceImpl.changeLinkImg(group.getGroupImg().getId(), groupImgFile);
             }
         }
 
