@@ -5,22 +5,22 @@ import com.beside.archivist.entity.BaseEntity;
 import com.beside.archivist.entity.usergroup.UserGroup;
 import com.beside.archivist.entity.users.Category;
 import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.Formula;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity @Table(name = "group_info")
 @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE group_info SET is_deleted = true, deleted_at = sysdate() WHERE group_id = ?")
-@Where(clause = "is_deleted = false")
+@DynamicInsert @DynamicUpdate
+@SQLDelete(sql = "UPDATE group_info SET is_deleted = 'Y', deleted_at = sysdate() WHERE group_id = ?")
+@Where(clause = "is_deleted = 'N'")
 public class Group extends BaseEntity {
 
     @Id @Column(name = "group_id")
@@ -32,8 +32,8 @@ public class Group extends BaseEntity {
     @Column(columnDefinition = "TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
     private String groupDesc;
     @Column
-    @ColumnDefault("0") //default 0
-    private boolean isGroupPublic;
+    @ColumnDefault("'Y'") //default Y
+    private String isGroupPublic;
     @Column
     private List<Category> categories;
     @Formula("(SELECT COUNT(lg.link_group_id) FROM link_group lg WHERE lg.group_id = group_id)")
@@ -44,14 +44,14 @@ public class Group extends BaseEntity {
     private GroupImg groupImg;
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
-    private List<LinkGroup> links;
+    private List<LinkGroup> links = new ArrayList<>();
 
     @OneToMany(mappedBy = "groups", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserGroup> userGroups = new ArrayList<>();
 
 
     @Builder
-    public Group(String groupName, String groupDesc, Boolean isGroupPublic, List<Category> categories,GroupImg groupImg, Long linkCount, List<LinkGroup> links) {
+    public Group(String groupName, String groupDesc, String isGroupPublic, List<Category> categories,GroupImg groupImg, Long linkCount, List<LinkGroup> links) {
         this.groupName = groupName;
         this.groupDesc = groupDesc;
         this.isGroupPublic = isGroupPublic;

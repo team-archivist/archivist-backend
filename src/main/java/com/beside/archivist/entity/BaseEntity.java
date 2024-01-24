@@ -3,19 +3,13 @@ package com.beside.archivist.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.PrePersist;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 
 @Getter
 @MappedSuperclass
@@ -29,7 +23,8 @@ public abstract class BaseEntity extends BaseTimeEntity{
     @LastModifiedBy
     private String lastModifiedBy;
 
-    @ColumnDefault("0") //default 0
-    private boolean isDeleted;
+    @ColumnDefault("'N'") // default N
+    private String isDeleted;
+
 }
 

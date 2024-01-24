@@ -17,13 +17,13 @@ public class GroupDto {
     private String groupName;           //그룹 이름
     @Size( max = 400, message = "그룹 설명은 400자 이내 이여야 합니다.")
     private String groupDesc;           //그룹 설명
-    private Boolean isGroupPublic;      //그룹 공개 여부
+    private String isGroupPublic;      //그룹 공개 여부
     private List<Category> categories;  //그룹 카테고리
     private String imgUrl;
     private Long linkCount;
 
     @Builder
-    public GroupDto(Long groupId, String groupName, String groupDesc, Boolean isGroupPublic, List<Category> categories, String imgUrl, Long linkCount) {
+    public GroupDto(Long groupId, String groupName, String groupDesc, String isGroupPublic, List<Category> categories, String imgUrl, Long linkCount) {
         this.groupId = groupId;
         this.groupName = groupName.trim();
         this.groupDesc = groupDesc;

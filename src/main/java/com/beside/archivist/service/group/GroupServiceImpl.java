@@ -40,7 +40,7 @@ public class GroupServiceImpl implements GroupService {
         Group group = Group.builder()
                 .groupName(groupDto.getGroupName())
                 .groupDesc(groupDto.getGroupDesc())
-                .isGroupPublic(groupDto.getIsGroupPublic())
+                .isGroupPublic(groupDto.getIsGroupPublic()) // Y or N
                 .categories(groupDto.getCategories())
                 .groupImg(groupImg)
                 .linkCount(0L)
