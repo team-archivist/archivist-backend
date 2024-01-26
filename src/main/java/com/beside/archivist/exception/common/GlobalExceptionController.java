@@ -9,6 +9,7 @@ import com.beside.archivist.exception.images.InvalidFileExtensionException;
 import com.beside.archivist.exception.link.GroupInBookmarkNotFoundException;
 import com.beside.archivist.exception.link.LinkNotFoundException;
 import com.beside.archivist.exception.users.*;
+import io.jsonwebtoken.security.SignatureException;
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -125,6 +126,16 @@ public class GlobalExceptionController {
         final ExceptionDto responseError = ExceptionDto.builder()
                 .statusCode(ex.getExceptionCode().getStatus().value())
                 .message(ex.getExceptionCode().getMessage())
+                .build();
+        return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
+    }
+
+    /** USER_008 JWT 가 잘못된 경우 **/
+    @ExceptionHandler(SignatureException.class)
+    protected ResponseEntity<ExceptionDto> handlerInvalidTokenException() {
+        final ExceptionDto responseError = ExceptionDto.builder()
+                .statusCode(ExceptionCode.INVALID_TOKEN.getStatus().value())
+                .message(ExceptionCode.INVALID_TOKEN.getMessage())
                 .build();
         return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
     }

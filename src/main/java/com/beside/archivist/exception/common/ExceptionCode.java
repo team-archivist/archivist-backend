@@ -19,6 +19,7 @@ public enum ExceptionCode {
     AUTHORIZATION_CODE_EXPIRED(BAD_REQUEST, "USER_005", "인가 코드가 만료되었습니다. 재발급 받아주세요."),
     MISSING_AUTHENTICATION(UNAUTHORIZED, "USER_006", "요청 헤더에 인증 토큰을 포함시켜 주세요."),
     TOKEN_EXPIRED(UNAUTHORIZED, "USER_007", "토큰이 만료되었습니다. 재발급 받아주세요."),
+    INVALID_TOKEN(UNAUTHORIZED, "USER_008","토큰이 잘못되었거나 토큰에 대한 회원 정보가 존재하지 않습니다."),
 
     INVALID_CATEGORY_NAME(BAD_REQUEST,"CATEGORY_001", "정의되지 않은 카테고리 값 입니다."),
   
