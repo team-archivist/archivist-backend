@@ -66,6 +66,21 @@ public class LinkGroupServiceImpl implements LinkGroupService {
     }
 
     @Override
+    public void deleteLinkGroupByLinkId(Long linkId) {
+        List<LinkGroup> linkGroupList = linkGroupRepository.findByLink_Id(linkId);
+
+        for(LinkGroup linkGroup : linkGroupList){
+            boolean existImageCheck = checkGroupLinkImgEquality(linkGroup); // 기존에 저장된 이미지가 삭제하는 링크 이미지인 경우 true
+
+            linkGroupRepository.deleteById(linkGroup.getId());
+
+            if(existImageCheck){ // 이미지 재설정
+                changeGroupImg(linkGroup.getGroup().getId());
+            }
+        }
+    }
+
+    @Override
     public List<LinkGroup> getLinkGroupsByGroupId(Long groupId) {
         return linkGroupRepository.findByGroup_Id(groupId);
     }
