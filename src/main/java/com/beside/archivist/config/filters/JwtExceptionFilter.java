@@ -1,5 +1,8 @@
 package com.beside.archivist.config.filters;
 
+import com.beside.archivist.dto.exception.ExceptionDto;
+import com.beside.archivist.exception.common.ExceptionCode;
+import com.beside.archivist.exception.users.TokenExpiredException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -20,19 +23,20 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         try {
             chain.doFilter(request, response); // go to next filter
-        } catch (JwtException e) {
-            setErrorResponse(HttpStatus.UNAUTHORIZED, response, e);
+        } catch (TokenExpiredException e) {
+            setErrorResponse(HttpStatus.UNAUTHORIZED, response, e.getExceptionCode());
         }
     }
 
-    public void setErrorResponse(HttpStatus status, HttpServletResponse response, Throwable ex) throws IOException {
+    public void setErrorResponse(HttpStatus status, HttpServletResponse response, ExceptionCode exceptionCode) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         response.setStatus(status.value());
         response.setContentType("application/json; charset=UTF-8");
 
-        Map<Integer, String> responseError = new HashMap<>();
-        responseError.put(HttpStatus.UNAUTHORIZED.value(), ex.getMessage());
-        String responseMsg = mapper.writeValueAsString(responseError);
-        response.getWriter().write(responseMsg);
+        final ExceptionDto responseError = ExceptionDto.builder()
+                .statusCode(exceptionCode.getStatus().value())
+                .message(exceptionCode.getMessage())
+                .build();
+        response.getWriter().write(mapper.writeValueAsString(responseError));
     }
 }

@@ -1,10 +1,10 @@
 package com.beside.archivist.config.filters;
 
+import com.beside.archivist.exception.common.ExceptionCode;
+import com.beside.archivist.exception.users.TokenExpiredException;
 import com.beside.archivist.service.users.UserService;
 import com.beside.archivist.utils.JwtTokenUtil;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -55,10 +55,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                                 .setAuthentication(usernamePasswordAuthenticationToken);
                     }
                 }
-            } catch (SignatureException e) {
-                throw new JwtException("잘못된 토큰입니다.");
             } catch (ExpiredJwtException e) {
-                throw new JwtException("토큰이 만료되었습니다.");
+                throw new TokenExpiredException(ExceptionCode.TOKEN_EXPIRED);
             } catch (Exception e) {
                 logger.warn(e.getMessage());
             }
