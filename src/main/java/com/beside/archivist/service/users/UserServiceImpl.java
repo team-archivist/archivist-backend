@@ -95,7 +95,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(Long userId) {
-        userRepository.deleteById(userId);
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(ExceptionCode.USER_NOT_FOUND));
+        // 이메일을 마스킹하고 삭제
+        user.deleteAndMaskEmail(user.getEmail());
+
     }
 
     @Override
