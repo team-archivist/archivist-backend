@@ -98,17 +98,6 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public List<GroupDto> getGroupsByUserGroup(List<UserGroup> userGroups){
-        List<Group> groupList = userGroups.stream()
-                .map(UserGroup::getGroups)
-                .toList();
-
-        return groupList.stream()
-                .map(groupMapperImpl::toDto)
-                .toList();
-    }
-
-    @Override
     public  List<LinkDto> getLinksByGroupId(Long groupId){
         Optional<Group> groupList = groupRepository.findByIdWithLinks(groupId);
 

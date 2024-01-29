@@ -2,7 +2,6 @@ package com.beside.archivist.controller.group;
 
 import com.beside.archivist.dto.group.GroupDto;
 import com.beside.archivist.dto.link.LinkDto;
-import com.beside.archivist.entity.usergroup.UserGroup;
 import com.beside.archivist.service.usergroup.UserGroupService;
 import com.beside.archivist.service.group.GroupService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,12 +25,11 @@ public class GroupController {
     private final GroupService groupServiceImpl;
     private final UserGroupService userGroupServiceImpl;
 
-    /** 특정 유저가 생성한 모든 그룹 조회 - QueryDsl 써서 조인해서 가져오기 **/
+    /** 특정 유저가 생성한 모든 그룹 조회 **/
     @GetMapping("/user/group/{userId}")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     public ResponseEntity<List<GroupDto>> getUserGroupList(@PathVariable("userId") Long userId) {
-        List<UserGroup> userGroups = userGroupServiceImpl.getUserGroupsByUserId(userId, true);
-        List<GroupDto> groups = groupServiceImpl.getGroupsByUserGroup(userGroups);
+        List<GroupDto> groups = userGroupServiceImpl.getGroupDtoByUserId(userId, true);
         return ResponseEntity.ok().body(groups);
     }
 
