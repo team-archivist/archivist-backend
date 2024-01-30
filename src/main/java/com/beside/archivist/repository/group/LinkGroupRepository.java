@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface LinkGroupRepository extends JpaRepository<LinkGroup,Long> {
     List<LinkGroup> findByGroup_Id(Long groupId);
+
+    List<LinkGroup> findByLink_Id(Long linkId);
 }
