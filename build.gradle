@@ -16,6 +16,7 @@ ext {
 	gsonVersion="2.10.1";
 	jwtVersion="0.11.2";
 	mapStructVersion="1.5.5.Final";
+	queryDslVersion="5.0.0";
 }
 
 
@@ -63,6 +64,12 @@ dependencies {
 	// mapstruct 의존성 추가
 	implementation "org.mapstruct:mapstruct:${mapStructVersion}"
 	annotationProcessor "org.mapstruct:mapstruct-processor:${mapStructVersion}"
+
+	// QueryDSL
+	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}:jakarta"
+	annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}:jakarta"
+	annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
+	annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }

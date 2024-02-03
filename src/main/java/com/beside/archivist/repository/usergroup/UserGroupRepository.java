@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserGroupRepository extends JpaRepository<UserGroup, Long> {
-    List<UserGroup> findByUsers_Id(Long userId);
+public interface UserGroupRepository extends JpaRepository<UserGroup, Long>,UserGroupRepositoryCustom {
     Optional<UserGroup> findByUsers_IdAndGroups_Id(Long userId, Long groupId);
 }

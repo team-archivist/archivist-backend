@@ -1,6 +1,7 @@
 package com.beside.archivist.service.usergroup;
 
 import com.beside.archivist.config.AuditConfig;
+import com.beside.archivist.dto.group.GroupDto;
 import com.beside.archivist.entity.group.Group;
 import com.beside.archivist.entity.usergroup.UserGroup;
 import com.beside.archivist.entity.users.User;
@@ -9,6 +10,7 @@ import com.beside.archivist.exception.group.GroupAlreadyExistsException;
 import com.beside.archivist.exception.link.GroupInBookmarkNotFoundException;
 import com.beside.archivist.exception.users.MissingAuthenticationException;
 import com.beside.archivist.repository.usergroup.UserGroupRepository;
+import com.beside.archivist.repository.usergroup.UserGroupRepositoryCustom;
 import com.beside.archivist.service.group.GroupService;
 import com.beside.archivist.service.users.UserService;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +35,6 @@ public class UserGroupServiceImpl implements UserGroupService {
 
         checkDuplicateGroup(findUser.getId(), findGroup.getId(), isOwner);
         
-        // todo: 내 그룹을 북마크 하는 경우 예외 처리
         UserGroup userGroup = UserGroup.builder()
                 .isOwner(isOwner) // save / bookmark 그룹 구분
                 .users(userServiceImpl.getUserByEmail(userEmail))
@@ -55,10 +56,8 @@ public class UserGroupServiceImpl implements UserGroupService {
     }
 
     @Override
-    public List<UserGroup> getUserGroupsByUserId(Long userId, boolean isOwner) {
-        return userGroupRepository.findByUsers_Id(userId).stream()
-                .filter(userGroup -> userGroup.isOwner() == isOwner)// 본인이 생성한 그룹만 조회
-                .toList();
+    public List<GroupDto> getGroupDtoByUserId(Long userId, boolean isOwner) {
+        return userGroupRepository.getGroupsByUserId(userId,isOwner);
     }
 
     @Override

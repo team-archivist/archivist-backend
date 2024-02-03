@@ -1,6 +1,8 @@
 package com.beside.archivist.dto.group;
 
+import com.beside.archivist.entity.group.Group;
 import com.beside.archivist.entity.users.Category;
+import com.querydsl.core.annotations.QueryProjection;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
@@ -31,5 +33,16 @@ public class GroupDto {
         this.categories = categories;
         this.imgUrl = imgUrl;
         this.linkCount = linkCount;
+    }
+
+    @QueryProjection
+    public GroupDto(Group group) {
+        this.groupId = group.getId();
+        this.groupName = group.getGroupName().trim();
+        this.groupDesc = group.getGroupDesc();
+        this.isGroupPublic = group.getIsGroupPublic();
+        this.categories = group.getCategories();
+        this.imgUrl = group.getGroupImg().getImgUrl();
+        this.linkCount = group.getLinkCount();
     }
 }
