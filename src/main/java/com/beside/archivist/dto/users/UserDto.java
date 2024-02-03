@@ -2,6 +2,7 @@ package com.beside.archivist.dto.users;
 
 import com.beside.archivist.entity.users.Category;
 import jakarta.validation.constraints.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -21,4 +22,11 @@ public class UserDto {
 
     @NotEmpty(message = "카테고리는 필수 값입니다.")
     private List<Category> categories;
+
+    @Builder
+    public UserDto(String email, String nickname, List<Category> categories) {
+        this.email = email;
+        this.nickname = nickname;
+        this.categories = categories;
+    }
 }
