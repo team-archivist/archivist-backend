@@ -118,6 +118,6 @@ public class UserServiceImpl implements UserService {
     
     @Override
     public List<String> getNicknames() {
-        return userRepository.findAll().stream().map(User::getNickname).toList();
+        return userRepository.getNicknames();
     }
 }

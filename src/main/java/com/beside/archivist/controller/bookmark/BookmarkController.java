@@ -1,7 +1,6 @@
 package com.beside.archivist.controller.bookmark;
 
 import com.beside.archivist.dto.group.GroupDto;
-import com.beside.archivist.entity.usergroup.UserGroup;
 import com.beside.archivist.service.group.GroupService;
 import com.beside.archivist.service.usergroup.UserGroupService;
 import com.beside.archivist.service.users.UserService;
@@ -29,12 +28,11 @@ public class BookmarkController {
         return ResponseEntity.status(HttpStatus.CREATED).body("북마크가 완료되었습니다.");
     }
 
-    /** 내가 북마크한 그룹 모두 조회하기 - QueryDsl 써서 조인해서 가져오기 **/
+    /** 내가 북마크한 그룹 모두 조회하기 **/
     @GetMapping("/user/bookmark/{userId}")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     public ResponseEntity<?> getBookmarks(@PathVariable("userId") Long userId) {
-        List<UserGroup> userGroups = userGroupServiceImpl.getUserGroupsByUserId(userId, false);
-        List<GroupDto> groups = groupServiceImpl.getGroupsByUserGroup(userGroups);
+        List<GroupDto> groups = userGroupServiceImpl.getGroupDtoByUserId(userId, false);
         return ResponseEntity.ok().body(groups);
     }
 

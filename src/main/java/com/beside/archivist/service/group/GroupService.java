@@ -19,7 +19,6 @@ public interface GroupService {
     GroupDto updateGroup(Long groupId, GroupDto groupDto, MultipartFile groupImgFile);
     Group getGroup(Long groupId);
     void deleteGroup(Long groupId);
-    List<GroupDto> getGroupsByUserGroup(List<UserGroup> userGroups);
     List<LinkDto> getLinksByGroupId(Long groupId);
 
     void changeToLinkImg(Long groupId, LinkImg linkImg);
