@@ -18,6 +18,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.Instant;
 import java.util.*;
 
 @Service
@@ -97,8 +98,9 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(ExceptionCode.USER_NOT_FOUND));
         // 이메일을 마스킹하고 삭제
-        user.deleteAndMaskEmail(user.getEmail());
-
+        user.updateUserEmail(maskEmail(user.getEmail()));
+        user.setIsDeleted("Y");
+        user.setDeletedAt(new Date().toInstant());
     }
 
     @Override
@@ -119,5 +121,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<String> getNicknames() {
         return userRepository.getNicknames();
+    }
+
+    public String maskEmail(String email) {
+        if (email == null || email.length() < 3) {
+            // 이메일이 null이거나 길이가 3 미만인 경우 처리하지 않음
+            return "";
+        }
+        int atIndex = email.indexOf('@');
+        if (atIndex <= 0) {
+            // '@' 기호가 없거나 처음에 나오면 처리하지 않음
+            return "";
+        }
+
+        String maskedPart = new String(new char[atIndex - 3]).replace('\0', '*');
+        return email.charAt(0) + maskedPart + email.substring(atIndex - 2);
     }
 }

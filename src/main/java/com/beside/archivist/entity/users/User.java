@@ -25,24 +25,6 @@ import java.util.List;
 @Where(clause = "is_deleted = 'N'")
 public class User extends BaseEntity {
 
-
-    public void deleteAndMaskEmail(String email) {
-        if (email == null || email.length() < 3) {
-            // 이메일이 null이거나 길이가 3 미만인 경우 처리하지 않음
-            return;
-        }
-        int atIndex = email.indexOf('@');
-        if (atIndex <= 0) {
-            // '@' 기호가 없거나 처음에 나오면 처리하지 않음
-            return;
-        }
-
-        String maskedPart = new String(new char[atIndex - 3]).replace('\0', '*');
-        this.email = email.charAt(0) + maskedPart + email.substring(atIndex - 2);
-
-        setIsDeleted("Y");
-    }
-
     @Id
     @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -81,6 +63,10 @@ public class User extends BaseEntity {
     public void updateUserInfo(String nickname, List<Category> categories) {
         this.nickname = nickname;
         this.categories = categories;
+    }
+
+    public void updateUserEmail(String email) {
+        this.email = email;
     }
 
     public void addLink(Link l){
