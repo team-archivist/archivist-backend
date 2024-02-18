@@ -13,6 +13,10 @@ java {
 
 ext {
 	swaggerVersion="2.2.0";
+	gsonVersion="2.10.1";
+	jwtVersion="0.11.2";
+	mapStructVersion="1.5.5.Final";
+	queryDslVersion="5.0.0";
 }
 
 
@@ -28,8 +32,16 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// 소셜 로그인 관련 설정
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation "com.google.code.gson:gson:${gsonVersion}"
+
+	// jwt 토큰 인증 설정
+	implementation "io.jsonwebtoken:jjwt-api:${jwtVersion}"
+	runtimeOnly "io.jsonwebtoken:jjwt-impl:${jwtVersion}", "io.jsonwebtoken:jjwt-jackson:${jwtVersion}"
 
 	// DB 설정
 	runtimeOnly 'com.h2database:h2'
@@ -39,8 +51,26 @@ dependencies {
 	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${swaggerVersion}"
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
+
+	// validation 체크
+	implementation 'commons-validator:commons-validator:1.7'
+
+	// shutdown endpoint 를 위한 actuator 주입
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	// mapstruct 의존성 추가
+	implementation "org.mapstruct:mapstruct:${mapStructVersion}"
+	annotationProcessor "org.mapstruct:mapstruct-processor:${mapStructVersion}"
+
+	// QueryDSL
+	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}:jakarta"
+	annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}:jakarta"
+	annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
+	annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
