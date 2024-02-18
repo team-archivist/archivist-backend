@@ -123,6 +123,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.getNicknames();
     }
 
+    @Override
     public String maskEmail(String email) {
         if (email == null || email.length() < 3) {
             // 이메일이 null이거나 길이가 3 미만인 경우 처리하지 않음
