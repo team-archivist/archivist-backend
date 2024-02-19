@@ -26,4 +26,6 @@ public interface UserService extends UserDetailsService {
     void checkDuplicateUser(String email);
     void checkInvalidCategory(List<Category> categories);
     List<String> getNicknames();
+
+    String maskEmail(String email);
 }
