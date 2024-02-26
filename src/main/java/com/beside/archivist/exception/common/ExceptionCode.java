@@ -26,6 +26,7 @@ public enum ExceptionCode {
     REQUEST_PART_MISSING(BAD_REQUEST,"VALID_001","필수 값이 누락되었습니다."),
   
     LINK_NOT_FOUND(NOT_FOUND,"LINK_001","링크 정보가 존재하지 않습니다."),
+    LINK_IN_GROUP_NOT_FOUND(NOT_FOUND,"LINK_002","그룹 내 링크 정보가 존재하지 않습니다."),
 
     GROUP_NOT_FOUND(NOT_FOUND,"GROUP_001","그룹 정보가 존재하지 않습니다."),
     GROUP_IN_BOOKMARK_NOT_FOUND(NOT_FOUND,"GROUP_002","북마크 내 그룹 정보가 존재하지 않습니다."),

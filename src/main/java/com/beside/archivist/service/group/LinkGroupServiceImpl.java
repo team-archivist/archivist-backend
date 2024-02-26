@@ -8,6 +8,7 @@ import com.beside.archivist.entity.link.Link;
 import com.beside.archivist.entity.link.LinkImg;
 import com.beside.archivist.exception.common.ExceptionCode;
 import com.beside.archivist.exception.group.GroupNotFoundException;
+import com.beside.archivist.exception.link.LinkInGroupNotFoundException;
 import com.beside.archivist.exception.link.LinkNotFoundException;
 import com.beside.archivist.mapper.LinkGroupMapper;
 import com.beside.archivist.repository.group.GroupRepository;
@@ -36,8 +37,9 @@ public class LinkGroupServiceImpl implements LinkGroupService {
     private final GroupRepository groupRepository; // 서비스 구현체 가져와주세요! ( 비즈니스 로직과 데이터 접근 로직을 분리하기 위함 )
 
     @Override
-    public LinkGroup getLinkGroupById(Long userGroupId) {
-        return linkGroupRepository.findById(userGroupId).orElseThrow(); // todo: 예외 처리
+    public LinkGroup getLinkGroupById(Long linkGroupId) {
+        return linkGroupRepository.findById(linkGroupId).orElseThrow(
+                () -> new LinkInGroupNotFoundException(ExceptionCode.LINK_IN_GROUP_NOT_FOUND));
     }
 
     @Override

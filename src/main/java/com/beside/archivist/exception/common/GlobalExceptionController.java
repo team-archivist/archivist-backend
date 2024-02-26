@@ -6,7 +6,8 @@ import com.beside.archivist.dto.exception.ValidExceptionDto;
 import com.beside.archivist.exception.group.GroupAlreadyExistsException;
 import com.beside.archivist.exception.group.GroupNotFoundException;
 import com.beside.archivist.exception.images.InvalidFileExtensionException;
-import com.beside.archivist.exception.link.GroupInBookmarkNotFoundException;
+import com.beside.archivist.exception.group.GroupInBookmarkNotFoundException;
+import com.beside.archivist.exception.link.LinkInGroupNotFoundException;
 import com.beside.archivist.exception.link.LinkNotFoundException;
 import com.beside.archivist.exception.users.*;
 import io.jsonwebtoken.security.SignatureException;
@@ -163,6 +164,16 @@ public class GlobalExceptionController {
     /** LINK_001 링크 유무 체크 **/
     @ExceptionHandler(LinkNotFoundException.class)
     protected ResponseEntity<ExceptionDto> handlerLinkNotFoundException(LinkNotFoundException ex) {
+        final ExceptionDto responseError = ExceptionDto.builder()
+                .statusCode(ex.getExceptionCode().getStatus().value())
+                .message(ex.getExceptionCode().getMessage())
+                .build();
+        return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
+    }
+
+    /** LINK_002 그룹 내 링크 유무 체크 **/
+    @ExceptionHandler(LinkInGroupNotFoundException.class)
+    protected ResponseEntity<ExceptionDto> handlerLinkInGroupNotFoundException(LinkInGroupNotFoundException ex) {
         final ExceptionDto responseError = ExceptionDto.builder()
                 .statusCode(ex.getExceptionCode().getStatus().value())
                 .message(ex.getExceptionCode().getMessage())
