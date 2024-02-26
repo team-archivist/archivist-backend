@@ -42,6 +42,7 @@ class UserServiceTest {
     UserDto userDto;
     User user;
     UserInfoDto userInfoDto;
+    UserImg userImg;
     private final String EMAIL = "limnj@test.com";
     private final Long USER_ID = 1L;
 
@@ -54,17 +55,18 @@ class UserServiceTest {
                 .categories(categories)
                 .build();
 
+        userImg = UserImg.builder()
+                .imgUrl("imgUrl")
+                .imgName("imgName")
+                .oriImgName("oriImgName")
+                .build();
+
         user = User.builder() // 회원 Entity
                 .email(EMAIL)
                 .password(UUID.randomUUID().toString())
                 .categories(categories)
                 .nickname("limnj")
-                .userImg(
-                        UserImg.builder()
-                                .imgUrl("imgUrl")
-                                .imgName("imgName")
-                                .oriImgName("oriImgName")
-                                .build())
+                .userImg(userImg)
                 .build();
 
         userInfoDto = UserInfoDto.builder() // 회원 정보 저장 후 응답 값
@@ -80,7 +82,7 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("회원 정보 저장 테스트- 성공")
+    @DisplayName("회원 정보를 입력하여 회원가입한다.")
     public void givenUserDtoWhenSaveUserThenUserInfoDto(){
         // given
         given(userRepository.findByEmail(EMAIL)).willReturn(Optional.empty());
@@ -100,7 +102,7 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("회원 정보 조회 테스트- 성공")
+    @DisplayName("이메일로 회원의 정보를 조회한다.")
     public void givenEmailWhenGetUserInfoThenUserInfoDto(){
         // given
         given(userRepository.findByEmail(EMAIL)).willReturn(Optional.of(user));
@@ -116,7 +118,7 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("회원 정보 수정 테스트- 성공")
+    @DisplayName("회원 정보를 수정한다.")
     public void givenUserDtoWhenUpdateUserThenUserInfoDto(){
         // when
         UserInfoDto updateUser = userServiceImpl.updateUser(USER_ID, userDto, null);
@@ -133,7 +135,7 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("회원 탈퇴 테스트- 성공")
+    @DisplayName("서비스를 (회원) 탈퇴한다.")
     public void givenUserIdWhenDeleteUser(){
         // when
         userServiceImpl.deleteUser(USER_ID);
@@ -143,7 +145,7 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("모든 저장되어있는 닉네임 조회 테스트- 성공")
+    @DisplayName("저장되어있는 모든 회원의 닉네임들을 조회한다.")
     public void whenGetNicknamesThenNicknameList(){
         // given
         List<String> expectedNicknames = List.of("limnj1","limnj2","limnj3");
