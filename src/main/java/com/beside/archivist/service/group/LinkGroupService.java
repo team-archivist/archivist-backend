@@ -8,7 +8,7 @@ import java.util.List;
 
 @Service
 public interface LinkGroupService {
-    LinkGroup getLinkGroupById(Long userGroupId);
+    LinkGroup getLinkGroupById(Long linkGroupId);
     LinkGroupDto saveLinkGroup(LinkGroupDto linkGroupDto);
     void deleteLinkGroup(Long groupId);
     void deleteLinkGroupByLinkId(Long linkId);
