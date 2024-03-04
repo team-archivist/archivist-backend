@@ -50,7 +50,7 @@ spring:
     password: 1234
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     database-platform: org.hibernate.dialect.MySQLDialect
 
 # 이미지 경로 설정
@@ -80,4 +80,26 @@ userImgLocation: /mnt/xvdb1/images/users
 linkImgLocation: /mnt/xvdb1/images/links
 groupImgLocation: /mnt/xvdb1/images/groups
 uploadPath: file:///mnt/xvdb1/images/
+defaultImgPath: classpath:/static/default-image/
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test # 환경이름설정
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/archivist?serverTimezone=UTC
+    username: root
+    password: 1234
+  jpa:
+    hibernate:
+      ddl-auto: create
+    database-platform: org.hibernate.dialect.MySQLDialect
+
+# 이미지 경로 설정
+userImgLocation: C:/images/users
+linkImgLocation: C:/images/links
+groupImgLocation: C:/images/groups
+uploadPath: file:///C:/images/
 defaultImgPath: classpath:/static/default-image/
