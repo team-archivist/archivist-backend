@@ -3,162 +3,134 @@ package com.beside.archivist.service.users;
 import com.beside.archivist.dto.users.UserDto;
 import com.beside.archivist.dto.users.UserInfoDto;
 import com.beside.archivist.entity.users.Category;
-import com.beside.archivist.entity.users.User;
-import com.beside.archivist.entity.users.UserImg;
-import com.beside.archivist.mapper.UserMapper;
+import com.beside.archivist.repository.users.UserImgRepository;
 import com.beside.archivist.repository.users.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
 
-@ExtendWith({MockitoExtension.class})
-@MockitoSettings(strictness = Strictness.LENIENT)
+@SpringBootTest
 class UserServiceTest {
 
-    @Mock
+    @Autowired
     UserRepository userRepository;
-    @Mock
-    UserMapper userMapperImpl;
-    @Mock
-    UserImgService userImgServiceImpl;
-    @InjectMocks
-    UserServiceImpl userServiceImpl;
+    @Autowired
+    UserImgRepository userImgRepository;
+    @Autowired
+    UserService userServiceImpl;
 
-    UserDto userDto;
-    User user;
-    UserInfoDto userInfoDto;
-    UserImg userImg;
-    private final String EMAIL = "limnj@test.com";
-    private final Long USER_ID = 1L;
+    @AfterEach
+    void tearDown() {
+        userImgRepository.deleteAll();
+        userRepository.deleteAll();
+    }
 
-    @BeforeEach // given
-    void setUp() {
-        List<Category> categories = List.of(Category.CULTURE, Category.EXERCISE);
-        userDto = UserDto.builder() // 회원 정보 저장 시 요청 값
-                .email(EMAIL)
-                .nickname("limnj")
+    public UserDto createUserRequest(String email, List<Category> categories, String nickname){
+        return UserDto.builder()
+                .email(email)
                 .categories(categories)
+                .nickname(nickname)
                 .build();
-
-        userImg = UserImg.builder()
-                .imgUrl("imgUrl")
-                .imgName("imgName")
-                .oriImgName("oriImgName")
-                .build();
-
-        user = User.builder() // 회원 Entity
-                .email(EMAIL)
-                .password(UUID.randomUUID().toString())
-                .categories(categories)
-                .nickname("limnj")
-                .userImg(userImg)
-                .build();
-
-        userInfoDto = UserInfoDto.builder() // 회원 정보 저장 후 응답 값
-                .userId(USER_ID)
-                .email(EMAIL)
-                .categories(categories)
-                .nickname("limnj")
-                .build();
-
-        given(userRepository.save(any(User.class))).willReturn(user);
-        given(userRepository.findById(USER_ID)).willReturn(Optional.of(user));
-        given(userMapperImpl.toDto(any(User.class))).willReturn(userInfoDto);
     }
 
     @Test
     @DisplayName("회원 정보를 입력하여 회원가입한다.")
-    public void givenUserDtoWhenSaveUserThenUserInfoDto(){
+    public void saveUserTest(){
         // given
-        given(userRepository.findByEmail(EMAIL)).willReturn(Optional.empty());
+        UserDto userRequest = createUserRequest("limnj@test.com",
+                List.of(Category.CULTURE, Category.KNOWLEDGE), "limnj");
 
         // when
-        UserInfoDto savedUser = userServiceImpl.saveUser(userDto,user.getUserImg());
+        UserInfoDto savedUser = userServiceImpl.saveUser(userRequest);
 
         // then
-        assertAll("userInfo",
-                () ->  assertEquals(userInfoDto.getEmail(),savedUser.getEmail()),
-                () -> assertEquals(userInfoDto.getNickname(),savedUser.getNickname()),
-                ()-> assertEquals(userInfoDto.getCategories(),savedUser.getCategories())
+        assertAll("userRequest",
+                () ->  assertEquals(userRequest.getEmail(),savedUser.getEmail()),
+                () -> assertEquals(userRequest.getNickname(),savedUser.getNickname()),
+                ()-> assertEquals(userRequest.getCategories(),savedUser.getCategories())
         );
-
-        verify(userRepository).save(any(User.class));
-        verify(userMapperImpl).toDto(any(User.class));
     }
 
     @Test
     @DisplayName("이메일로 회원의 정보를 조회한다.")
-    public void givenEmailWhenGetUserInfoThenUserInfoDto(){
+    public void getUserInfoTest(){
         // given
-        given(userRepository.findByEmail(EMAIL)).willReturn(Optional.of(user));
+        UserDto userRequest = createUserRequest("limnj@test.com",
+                List.of(Category.CULTURE, Category.KNOWLEDGE), "limnj");
+        UserInfoDto savedUser = userServiceImpl.saveUser(userRequest);
 
         // when
-        UserInfoDto userInfo = userServiceImpl.getUserInfo(user.getEmail());
+        UserInfoDto findUser = userServiceImpl.getUserInfo(userRequest.getEmail());
 
         // then
-        assertEquals(EMAIL, userInfo.getEmail());
-
-        verify(userRepository).findByEmail(any(String.class));
-        verify(userMapperImpl).toDto(any(User.class));
+        assertEquals(userRequest.getEmail(), findUser.getEmail());
+        assertAll("savedUser",
+                () -> assertEquals(savedUser.getUserId(),findUser.getUserId()),
+                () -> assertEquals(savedUser.getEmail(),findUser.getEmail()),
+                () -> assertEquals(savedUser.getNickname(),findUser.getNickname()),
+                () -> assertEquals(savedUser.getCategories(),findUser.getCategories()),
+                () -> assertEquals(savedUser.getImgUrl(),findUser.getImgUrl()) // 초기 디폴트 이미지
+        );
     }
 
     @Test
-    @DisplayName("회원 정보를 수정한다.")
-    public void givenUserDtoWhenUpdateUserThenUserInfoDto(){
+    @DisplayName("회원 닉네임과 카테고리를 수정한다.")
+    public void updateUserTest(){
+        // given
+        UserDto userRequest = createUserRequest("limnj@test.com",
+                List.of(Category.CULTURE, Category.KNOWLEDGE), "limnj");
+        UserInfoDto savedUser = userServiceImpl.saveUser(userRequest);
+        UserDto userDto = createUserRequest(savedUser.getEmail(),
+                List.of(Category.LIFESTYLE,Category.ENTERTAINMENT), "updatedUser");
+
         // when
-        UserInfoDto updateUser = userServiceImpl.updateUser(USER_ID, userDto, null);
+        UserInfoDto updateUser = userServiceImpl.updateUser(savedUser.getUserId(), userDto, null);
 
         // then
-        assertAll("userInfo",
-                () ->  assertEquals(userInfoDto.getEmail(),updateUser.getEmail()),
-                () -> assertEquals(userInfoDto.getNickname(),updateUser.getNickname()),
-                ()-> assertEquals(userInfoDto.getCategories(),updateUser.getCategories())
+        assertAll("userDto",
+                () ->  assertEquals(userDto.getEmail(),updateUser.getEmail()),
+                () -> assertEquals(userDto.getNickname(),updateUser.getNickname()),
+                ()-> assertEquals(userDto.getCategories(),updateUser.getCategories())
         );
-
-        verify(userRepository).findById(USER_ID);
-        verify(userMapperImpl).toDto(any(User.class));
     }
 
     @Test
     @DisplayName("서비스를 (회원) 탈퇴한다.")
     public void givenUserIdWhenDeleteUser(){
+        // given
+        UserDto userRequest = createUserRequest("limnj@test.com",
+                List.of(Category.CULTURE, Category.KNOWLEDGE), "limnj");
+        UserInfoDto savedUser = userServiceImpl.saveUser(userRequest);
+
         // when
-        userServiceImpl.deleteUser(USER_ID);
+        userServiceImpl.deleteUser(savedUser.getUserId());
 
         // then
-        verify(userRepository).findById(USER_ID);
+        assertThat(userRepository.findAll()).hasSize(0);
     }
 
     @Test
     @DisplayName("저장되어있는 모든 회원의 닉네임들을 조회한다.")
     public void whenGetNicknamesThenNicknameList(){
         // given
-        List<String> expectedNicknames = List.of("limnj1","limnj2","limnj3");
-        given(userRepository.getNicknames()).willReturn(expectedNicknames);
+        for (int i = 0; i < 3; i++) {
+            UserDto userRequest = createUserRequest("limnj"+i+"@test.com",
+                    List.of(Category.CULTURE, Category.KNOWLEDGE), "limnj"+i);
+            userServiceImpl.saveUser(userRequest);
+        }
 
         // when
         List<String> actualNicknames = userServiceImpl.getNicknames();
 
         //then
-        assertEquals(expectedNicknames.size(), actualNicknames.size());
-        assertTrue(actualNicknames.containsAll(expectedNicknames));
-
-        verify(userRepository).getNicknames();
+        assertEquals(actualNicknames.size(),3);
+        assertTrue(actualNicknames.containsAll(List.of("limnj0","limnj1","limnj2")));
     }
 
 }
