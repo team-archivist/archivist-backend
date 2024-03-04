@@ -66,8 +66,7 @@ public class UserController {
         if (!emailFromToken.equals(userDto.getEmail())) {
             throw new EmailTokenMismatchException(ExceptionCode.EMAIL_TOKEN_MISMATCH);
         }
-        UserImg userImg = userImgServiceImpl.initializeDefaultImg();
-        UserInfoDto savedUser = userServiceImpl.saveUser(userDto,userImg);
+        UserInfoDto savedUser = userServiceImpl.saveUser(userDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 
