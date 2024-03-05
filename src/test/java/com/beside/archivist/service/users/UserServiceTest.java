@@ -3,6 +3,8 @@ package com.beside.archivist.service.users;
 import com.beside.archivist.dto.users.UserDto;
 import com.beside.archivist.dto.users.UserInfoDto;
 import com.beside.archivist.entity.users.Category;
+import com.beside.archivist.exception.users.UserAlreadyExistsException;
+import com.beside.archivist.exception.users.UserNotFoundException;
 import com.beside.archivist.repository.users.UserImgRepository;
 import com.beside.archivist.repository.users.UserRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -10,12 +12,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@ActiveProfiles("test")
 class UserServiceTest {
 
     @Autowired
@@ -131,6 +136,31 @@ class UserServiceTest {
         //then
         assertEquals(actualNicknames.size(),3);
         assertTrue(actualNicknames.containsAll(List.of("limnj0","limnj1","limnj2")));
+    }
+
+    @Test
+    @DisplayName("찾는 이메일을 가진 회원이 없을 때 예외가 발생한다.")
+    void userNotFoundExceptionTest(){
+        // given
+        UserDto userRequest = createUserRequest("limnj@test.com",
+                List.of(Category.CULTURE, Category.KNOWLEDGE), "limnj");
+
+        // when // then
+        assertThatThrownBy(() -> userServiceImpl.getUserInfo(userRequest.getEmail()))
+                .isInstanceOf(UserNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("이메일은 중복될 수 없다.")
+    void userAlreadyExistsExceptionTest() {
+        // given
+        UserDto userRequest = createUserRequest("limnj@test.com",
+                List.of(Category.CULTURE, Category.KNOWLEDGE), "limnj");
+        userServiceImpl.saveUser(userRequest);
+
+        // when // then
+        assertThatThrownBy(() -> userServiceImpl.saveUser(userRequest))
+                .isInstanceOf(UserAlreadyExistsException.class);
     }
 
 }
