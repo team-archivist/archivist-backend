@@ -21,23 +21,31 @@ public class UserImgServiceImpl implements UserImgService{
     private final FileService fileService;
 
     /**
-     * 초기 무조건 디폴트 이미지 저장
-     * @return UserImg
+     * User 디폴트 이미지 생성
      */
     @Override
     public UserImg initializeDefaultImg() {
-        return userImgRepository.save(UserImg.builder()
+        return UserImg.builder()
                 .oriImgName("userDefaultImg.png")
                 .imgName("userDefaultImg")
                 .imgUrl("/image/userDefaultImg.png")
-                .build());
+                .build();
+    }
+
+    /**
+     * 초기 무조건 디폴트 이미지 저장
+     */
+    @Override
+    public void saveUserImg(UserImg userImg){
+        UserImg savedUserImg = userImgRepository.save(userImg);
+        savedUserImg.getUsers().saveUserImg(savedUserImg);
     }
 
     /**
      * 디폴트 이미지 저장 이후, 모두 update
      * */
     @Override
-    public void changeLinkImg(Long userImgId, MultipartFile userImgFile) {
+    public void changeUserImg(Long userImgId, MultipartFile userImgFile) {
         if(userImgFile != null){
             UserImg savedUserImg = userImgRepository.findById(userImgId)
                     .orElseThrow(RuntimeException::new); // TO DO : 예외 처리

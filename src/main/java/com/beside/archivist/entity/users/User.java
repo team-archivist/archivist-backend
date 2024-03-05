@@ -40,8 +40,7 @@ public class User extends BaseEntity {
     @Column
     private String provider; // kakao or admin
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_img_id")
+    @OneToOne(mappedBy = "users",fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private UserImg userImg;
 
     @OneToMany(mappedBy = "users", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -51,13 +50,12 @@ public class User extends BaseEntity {
     private List<UserGroup> userGroups = new ArrayList<>();
 
     @Builder
-    public User(String email, String password, String nickname, List<Category> categories, UserImg userImg) {
+    public User(String email, String password, String nickname, List<Category> categories) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
         this.categories = categories;
         this.provider = "kakao";
-        this.userImg = userImg;
     }
 
     public void updateUserInfo(String nickname, List<Category> categories) {
@@ -74,5 +72,9 @@ public class User extends BaseEntity {
     }
     public void addUserGroup(UserGroup userGroup) {
         this.userGroups.add(userGroup);
+    }
+
+    public void saveUserImg(UserImg userImg) {
+        this.userImg = userImg;
     }
 }

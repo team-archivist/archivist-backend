@@ -19,7 +19,8 @@ public class UserImg {
     private String oriImgName; // 원본 이미지 파일명
     private String imgUrl; // 이미지 조회 경로
 
-    @OneToOne(mappedBy = "userImg", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User users;
 
     @Builder
@@ -32,5 +33,9 @@ public class UserImg {
         this.imgName = imgName;
         this.oriImgName = oriImgName;
         this.imgUrl = imgUrl;
+    }
+
+    public void saveUser(User user){
+        this.users = user;
     }
 }
