@@ -38,9 +38,10 @@ public class UserImgServiceImpl implements UserImgService{
      * 초기 무조건 디폴트 이미지 저장
      */
     @Override
-    public void saveUserImg(UserImg userImg){
+    public UserImg saveUserImg(UserImg userImg){
         UserImg savedUserImg = userImgRepository.save(userImg);
         savedUserImg.getUsers().saveUserImg(savedUserImg);
+        return savedUserImg;
     }
 
     /**
