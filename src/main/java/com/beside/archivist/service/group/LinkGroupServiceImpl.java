@@ -108,6 +108,13 @@ public class LinkGroupServiceImpl implements LinkGroupService {
         firstLink.ifPresent(link -> groupServiceImpl.changeToLinkImg(groupId, link.getLinkImg()));
     }
 
+    @Override
+    public void changeGroupImgArray(Long[] groupIdArray) {  // 그룹 ID 가 여러 개인 경우
+        for (Long groupId : groupIdArray) {
+            changeGroupImg(groupId);
+        }
+    }
+
     @Override // 그룹 내에서 삭제하는 링크 이미지와 그룹 이미지가 같을 때
     public boolean checkGroupLinkImgEquality(LinkGroup linkGroup) {
         String linkImg = linkGroup.getLink().getLinkImg().getImgUrl();
