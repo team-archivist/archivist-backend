@@ -93,7 +93,9 @@ public class UserServiceImpl implements UserService {
 
         checkInvalidCategory(userDto.getCategories()); // 카테고리 null 값 체크
         user.updateUserInfo(userDto.getNickname(),userDto.getCategories()); // 유저 정보 update
-        userImgServiceImpl.changeUserImg(user.getUserImg().getId(), userImgFile); // 유저 이미지 update
+        if (userImgFile != null){
+            userImgServiceImpl.changeUserImg(user.getUserImg().getId(), userImgFile); // 유저 이미지 update
+        }
 
         return userMapperImpl.toDto(user);
     }

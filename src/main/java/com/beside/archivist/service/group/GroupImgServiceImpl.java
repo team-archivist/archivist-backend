@@ -2,6 +2,8 @@ package com.beside.archivist.service.group;
 
 import com.beside.archivist.entity.group.GroupImg;
 import com.beside.archivist.entity.link.LinkImg;
+import com.beside.archivist.exception.common.ExceptionCode;
+import com.beside.archivist.exception.images.ImageNotFoundException;
 import com.beside.archivist.repository.group.GroupImgRepository;
 import com.beside.archivist.service.util.FileService;
 import lombok.RequiredArgsConstructor;
@@ -50,7 +52,7 @@ public class GroupImgServiceImpl implements GroupImgService {
     public void changeLinkImg(Long groupImgId, MultipartFile groupImgFile) {
         if(groupImgFile != null){
             GroupImg savedGroupImg = groupImgRepository.findById(groupImgId)
-                    .orElseThrow(RuntimeException::new); // TO DO : 예외 처리
+                    .orElseThrow(() -> new ImageNotFoundException(ExceptionCode.IMAGE_NOT_FOUND));
             if(!(StringUtils.isEmpty(savedGroupImg.getImgName()) || StringUtils.isBlank(savedGroupImg.getImgName()))){
                 fileService.deleteFile(groupImgLocation, savedGroupImg.getImgName());
             }

@@ -2,6 +2,8 @@ package com.beside.archivist.service.users;
 
 import com.beside.archivist.entity.users.User;
 import com.beside.archivist.entity.users.UserImg;
+import com.beside.archivist.exception.common.ExceptionCode;
+import com.beside.archivist.exception.images.ImageNotFoundException;
 import com.beside.archivist.repository.users.UserImgRepository;
 import com.beside.archivist.service.util.FileService;
 import lombok.RequiredArgsConstructor;
@@ -36,9 +38,10 @@ public class UserImgServiceImpl implements UserImgService{
      * 초기 무조건 디폴트 이미지 저장
      */
     @Override
-    public void saveUserImg(UserImg userImg){
+    public UserImg saveUserImg(UserImg userImg){
         UserImg savedUserImg = userImgRepository.save(userImg);
         savedUserImg.getUsers().saveUserImg(savedUserImg);
+        return savedUserImg;
     }
 
     /**
@@ -46,17 +49,15 @@ public class UserImgServiceImpl implements UserImgService{
      * */
     @Override
     public void changeUserImg(Long userImgId, MultipartFile userImgFile) {
-        if(userImgFile != null){
-            UserImg savedUserImg = userImgRepository.findById(userImgId)
-                    .orElseThrow(RuntimeException::new); // TO DO : 예외 처리
-            if(!(StringUtils.isEmpty(savedUserImg.getImgName()) || StringUtils.isBlank(savedUserImg.getImgName()))){
-                fileService.deleteFile(userImgLocation, savedUserImg.getImgName());
-            }
-
-            String oriImgName = userImgFile.getOriginalFilename();
-            String imgName = fileService.uploadFile(userImgLocation, userImgFile);
-            String imgUrl = "/images/users/"+imgName;
-            savedUserImg.updateUserImg(imgName,oriImgName,imgUrl);
+        UserImg savedUserImg = userImgRepository.findById(userImgId)
+                .orElseThrow(() -> new ImageNotFoundException(ExceptionCode.IMAGE_NOT_FOUND));
+        if(!(StringUtils.isEmpty(savedUserImg.getImgName()) || StringUtils.isBlank(savedUserImg.getImgName()))){
+            fileService.deleteFile(userImgLocation, savedUserImg.getImgName());
         }
+
+        String oriImgName = userImgFile.getOriginalFilename();
+        String imgName = fileService.uploadFile(userImgLocation, userImgFile);
+        String imgUrl = "/images/users/"+imgName;
+        savedUserImg.updateUserImg(imgName,oriImgName,imgUrl);
     }
 }
