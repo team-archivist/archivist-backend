@@ -39,8 +39,7 @@ public class Group extends BaseEntity {
     @Formula("(SELECT COUNT(lg.link_group_id) FROM link_group lg WHERE lg.group_id = group_id)")
     private Long linkCount;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_img_id")
+    @OneToOne(mappedBy = "group",fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private GroupImg groupImg;
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
@@ -51,12 +50,11 @@ public class Group extends BaseEntity {
 
 
     @Builder
-    public Group(String groupName, String groupDesc, String isGroupPublic, List<Category> categories,GroupImg groupImg, Long linkCount, List<LinkGroup> links) {
+    public Group(String groupName, String groupDesc, String isGroupPublic, List<Category> categories, Long linkCount, List<LinkGroup> links) {
         this.groupName = groupName;
         this.groupDesc = groupDesc;
         this.isGroupPublic = isGroupPublic;
         this.categories = categories;
-        this.groupImg = groupImg;
         this.linkCount = linkCount;
         this.links = links;
     }
@@ -70,5 +68,8 @@ public class Group extends BaseEntity {
 
     public void addUserGroup(UserGroup userGroup) {
         this.userGroups.add(userGroup);
+    }
+    public void saveGroupImg(GroupImg groupImg){
+        this.groupImg = groupImg;
     }
 }
