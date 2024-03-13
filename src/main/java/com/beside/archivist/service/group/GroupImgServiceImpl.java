@@ -52,7 +52,7 @@ public class GroupImgServiceImpl implements GroupImgService {
     }
 
     @Override
-    public void changeLinkImg(Long groupImgId, MultipartFile groupImgFile) {
+    public void changeGroupImg(Long groupImgId, MultipartFile groupImgFile) {
         if(groupImgFile != null){
             GroupImg savedGroupImg = groupImgRepository.findById(groupImgId)
                     .orElseThrow(() -> new ImageNotFoundException(ExceptionCode.IMAGE_NOT_FOUND));

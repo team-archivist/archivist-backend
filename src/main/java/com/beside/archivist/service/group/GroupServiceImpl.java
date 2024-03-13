@@ -71,7 +71,7 @@ public class GroupServiceImpl implements GroupService {
 //            }else{
 //                groupImgServiceImpl.changeLinkImg(group.getGroupImg().getId(), groupImgFile);
 //            }
-            groupImgServiceImpl.changeLinkImg(group.getGroupImg().getId(), groupImgFile);
+            groupImgServiceImpl.changeGroupImg(group.getGroupImg().getId(), groupImgFile);
         }
 
         group.update(GroupDto.builder()

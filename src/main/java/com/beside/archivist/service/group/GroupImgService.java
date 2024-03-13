@@ -11,5 +11,5 @@ public interface GroupImgService {
     GroupImg saveGroupImg(GroupImg groupImg);
     void changeToLinkImg(GroupImg groupImg, LinkImg linkImg);
     GroupImg insertGroupImg(GroupImg groupImg, MultipartFile groupImgFile);
-    void changeLinkImg(Long groupImgId, MultipartFile groupImgFile);
+    void changeGroupImg(Long groupImgId, MultipartFile groupImgFile);
 }
