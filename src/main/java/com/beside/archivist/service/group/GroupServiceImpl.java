@@ -30,27 +30,29 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public GroupDto saveGroup(GroupDto groupDto, MultipartFile groupImgFile)  {
-        GroupImg groupImg;
-        if(groupImgFile == null){ // 그룹 이미지를 넣지 않았을 때 링크 디폴트 이미지로 설정
-            groupImg = groupImgServiceImpl.initializeDefaultLinkImg();
-        }else{
-            groupImg = groupImgServiceImpl.insertGroupImg(groupImgFile);
+
+        Group savedGroup = groupRepository.save(
+                Group.builder()
+                        .groupName(groupDto.getGroupName())
+                        .groupDesc(groupDto.getGroupDesc())
+                        .isGroupPublic(groupDto.getIsGroupPublic()) // Y or N
+                        .categories(groupDto.getCategories())
+                        .linkCount(0L)
+                        .build()
+        );
+
+        GroupImg groupImg = GroupImg.initializeDefaultLinkImg();
+        groupImg.saveGroup(savedGroup);
+
+        if(groupImgFile != null){ // 그룹 이미지를 넣지 않았을 때 링크 디폴트 이미지로 설정
+            groupImgServiceImpl.insertGroupImg(groupImg, groupImgFile);
+        }else {
+            groupImgServiceImpl.saveGroupImg(groupImg);
         }
 
-        Group group = Group.builder()
-                .groupName(groupDto.getGroupName())
-                .groupDesc(groupDto.getGroupDesc())
-                .isGroupPublic(groupDto.getIsGroupPublic()) // Y or N
-                .categories(groupDto.getCategories())
-                .groupImg(groupImg)
-                .linkCount(0L)
-                .build();
-        groupRepository.save(group);
-
-        return groupMapperImpl.toDto(group);
+        return groupMapperImpl.toDto(savedGroup);
     }
 
-    /** 그룹 썸네일을 파라미터로 전달받은 linkImg 로 변경 **/
     @Override
     public void changeToLinkImg(Long groupId, LinkImg linkImg) { // 해당 링크 이미지 삭제했을 떄 다른 이미지로 바꾸는 등의 작업 필요
         GroupImg groupImg = groupRepository.findById(groupId)
@@ -64,11 +66,12 @@ public class GroupServiceImpl implements GroupService {
         Group group = groupRepository.findById(groupId).orElseThrow(() -> new GroupNotFoundException(ExceptionCode.GROUP_NOT_FOUND));
 
         if(groupImgFile != null){
-            if(group.getGroupImg() == null){
-                groupImgServiceImpl.insertGroupImg(groupImgFile);
-            }else{
-                groupImgServiceImpl.changeLinkImg(group.getGroupImg().getId(), groupImgFile);
-            }
+//            if(group.getGroupImg() == null){ // 초기 Group 생성 시 GroupImg 필수 생성 입니다. ( 없으면 오류 )
+//                groupImgServiceImpl.insertGroupImg(groupImgFile);
+//            }else{
+//                groupImgServiceImpl.changeLinkImg(group.getGroupImg().getId(), groupImgFile);
+//            }
+            groupImgServiceImpl.changeLinkImg(group.getGroupImg().getId(), groupImgFile);
         }
 
         group.update(GroupDto.builder()
