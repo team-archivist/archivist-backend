@@ -84,11 +84,6 @@ public class GroupServiceImpl implements GroupService {
         Group group = groupRepository.findById(groupId).orElseThrow(() -> new GroupNotFoundException(ExceptionCode.GROUP_NOT_FOUND));
 
         if(groupImgFile != null){
-//            if(group.getGroupImg() == null){ // 초기 Group 생성 시 GroupImg 필수 생성 입니다. ( 없으면 오류 )
-//                groupImgServiceImpl.insertGroupImg(groupImgFile);
-//            }else{
-//                groupImgServiceImpl.changeLinkImg(group.getGroupImg().getId(), groupImgFile);
-//            }
             groupImgServiceImpl.changeGroupImg(group.getGroupImg().getId(), groupImgFile);
         }
 
