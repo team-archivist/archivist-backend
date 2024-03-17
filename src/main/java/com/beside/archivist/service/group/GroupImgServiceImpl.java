@@ -22,9 +22,16 @@ public class GroupImgServiceImpl implements GroupImgService {
     private final GroupImgRepository groupImgRepository;
     private final FileService fileService;
 
+    /**
+     * 이미지 설정 안했을 때 초기 그룹 이미지는 링크 디폴트 이미지로 저장
+     * @param groupImg
+     * @return
+     */
     @Override
-    public GroupImg initializeDefaultLinkImg() {
-        return groupImgRepository.save(GroupImg.initializeDefaultLinkImg());
+    public GroupImg saveGroupImg(GroupImg groupImg) {
+        GroupImg savedGroupImg = groupImgRepository.save(groupImg);
+        savedGroupImg.getGroup().saveGroupImg(savedGroupImg);
+        return savedGroupImg;
     }
     @Override
     public void changeToLinkImg(GroupImg groupImg, LinkImg linkImg) {
@@ -32,24 +39,20 @@ public class GroupImgServiceImpl implements GroupImgService {
     }
 
     @Override
-    public GroupImg insertGroupImg(MultipartFile groupImgFile) {
-        if(groupImgFile != null){
+    public GroupImg insertGroupImg(GroupImg groupImg, MultipartFile groupImgFile) {
+        String oriImgName = groupImgFile.getOriginalFilename();
+        String imgName = fileService.uploadFile(groupImgLocation, groupImgFile);
+        String imgUrl = "/images/groups/"+imgName;
 
-            String oriImgName = groupImgFile.getOriginalFilename();
-            String imgName = fileService.uploadFile(groupImgLocation, groupImgFile);
-            String imgUrl = "/images/groups/"+imgName;
-            return groupImgRepository.save(GroupImg.builder()
-                    .oriImgName(oriImgName)
-                    .imgName(imgName)
-                    .imgUrl(imgUrl)
-                    .build());
-        }else {
-            return null;
-        }
+        groupImg.updateGroupImg(imgName,oriImgName,imgUrl);
+        GroupImg savedGroupImg = groupImgRepository.save(groupImg);
+        savedGroupImg.getGroup().saveGroupImg(savedGroupImg);
+
+        return savedGroupImg;
     }
 
     @Override
-    public void changeLinkImg(Long groupImgId, MultipartFile groupImgFile) {
+    public void changeGroupImg(Long groupImgId, MultipartFile groupImgFile) {
         if(groupImgFile != null){
             GroupImg savedGroupImg = groupImgRepository.findById(groupImgId)
                     .orElseThrow(() -> new ImageNotFoundException(ExceptionCode.IMAGE_NOT_FOUND));

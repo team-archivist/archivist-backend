@@ -8,8 +8,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public interface GroupImgService {
 
-    GroupImg initializeDefaultLinkImg();
+    GroupImg saveGroupImg(GroupImg groupImg);
     void changeToLinkImg(GroupImg groupImg, LinkImg linkImg);
-    GroupImg insertGroupImg(MultipartFile groupImgFile);
-    void changeLinkImg(Long groupImgId, MultipartFile groupImgFile);
+    GroupImg insertGroupImg(GroupImg groupImg, MultipartFile groupImgFile);
+    void changeGroupImg(Long groupImgId, MultipartFile groupImgFile);
 }
