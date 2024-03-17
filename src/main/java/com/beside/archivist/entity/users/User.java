@@ -2,7 +2,6 @@ package com.beside.archivist.entity.users;
 
 
 import com.beside.archivist.entity.BaseEntity;
-import com.beside.archivist.entity.BaseTimeEntity;
 import com.beside.archivist.entity.usergroup.UserGroup;
 import com.beside.archivist.entity.link.Link;
 import jakarta.persistence.*;
@@ -20,7 +19,6 @@ import java.util.List;
 
 @Entity @Table(name = "users") // user 예약어라 users로 명명
 @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@DynamicInsert @DynamicUpdate
 @SQLDelete(sql = "UPDATE users SET is_deleted = 'Y', deleted_at = sysdate() WHERE user_id = ?")
 @Where(clause = "is_deleted = 'N'")
 public class User extends BaseEntity {
