@@ -3,6 +3,7 @@ package com.beside.archivist.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
@@ -23,8 +24,12 @@ public abstract class BaseEntity extends BaseTimeEntity{
     private String lastModifiedBy;
 
     @Setter
-    @ColumnDefault("'N'") // default N
-    private String isDeleted;
+    private String isDeleted; // default N
 
+    @Override
+    public void prePersist() {
+        super.prePersist();
+        isDeleted = isDeleted == null ? "N" : isDeleted;
+    }
 }
 
