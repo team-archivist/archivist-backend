@@ -31,8 +31,7 @@ public class Group extends BaseEntity {
     @Column(columnDefinition = "TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
     private String groupDesc;
     @Column
-    @ColumnDefault("'Y'") //default Y
-    private String isGroupPublic;
+    private String isGroupPublic; // default: 'Y'
     @Column
     private List<Category> categories;
     @Formula("(SELECT COUNT(lg.link_group_id) FROM link_group lg WHERE lg.group_id = group_id)")
@@ -52,7 +51,7 @@ public class Group extends BaseEntity {
     public Group(String groupName, String groupDesc, String isGroupPublic, List<Category> categories, Long linkCount, List<LinkGroup> links) {
         this.groupName = groupName;
         this.groupDesc = groupDesc;
-        this.isGroupPublic = isGroupPublic;
+        this.isGroupPublic = isGroupPublic == null ? "Y" : "N";
         this.categories = categories;
         this.linkCount = linkCount;
         this.links = links;
