@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public interface UserService extends UserDetailsService {
@@ -26,4 +27,8 @@ public interface UserService extends UserDetailsService {
     void checkDuplicateUser(String email);
     void checkInvalidCategory(List<Category> categories);
     List<String> getNicknames();
+
+    /* 레디스 캐싱 */
+    Optional<User> getUserFromRedis(String email);
+    void saveUserToRedis(User user);
 }

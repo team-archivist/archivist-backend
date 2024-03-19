@@ -74,27 +74,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserInfoDto getUserInfo(String email) {
-        User findUser = getUserFromRedis(email);
-
-        if (findUser == null) {
-            findUser = getUserByEmail(email);
-            saveUserToRedis(findUser);
-        }
+        User findUser = getUserFromRedis(email)
+                .orElseGet(() -> {
+                    User user = getUserByEmail(email);
+                    saveUserToRedis(user);
+                    return user;
+                });
 
         return userMapperImpl.toDto(findUser);
     }
 
-    private User getUserFromRedis(String email) {
+    public Optional<User> getUserFromRedis(String email) {
         // Redis에서 해당 이메일을 키로 하는 사용자 정보 조회
-        Users users = userRedisRepository.findById(email).orElseThrow(RuntimeException::new);
-        if (users != null) {
-            return new User(users.getEmail(), users.getPassword(), users.getNickname(), users.getCategories(), users.getUserImg());
-        } else {
-            return null;
-        }
+        return userRedisRepository.findById(email)
+                .map(users -> new User(users.getEmail(), users.getPassword(), users.getNickname(), users.getCategories(), users.getUserImg()));
     }
 
-    private void saveUserToRedis(User user) {
+    public void saveUserToRedis(User user) {
         // Redis에 사용자 정보 저장
         Users users = new Users(user.getEmail(), user.getNickname(), user.getPassword(), user.getCategories(), user.getUserImg());
         userRedisRepository.save(users);

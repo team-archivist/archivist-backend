@@ -1,0 +1,117 @@
+server:
+  port: 8080
+
+spring:
+  profiles:
+    default: local
+  servlet: # 파일 크기 제한
+    multipart:
+      max-file-size: 10MB
+  jpa: # 로그 설정
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+# shutdown endpoint 설정
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    shutdown:
+      enabled: true
+
+# 로그 레벨 설정
+logging:
+  level:
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql: trace
+
+# 소셜(카카오) 로그인 관련 설정
+kakao:
+  client-id: e23d78bdd0c94ce9fe632bcac07721d3
+  access-token-uri: https://kauth.kakao.com/oauth/token
+  user-info-uri: https://kapi.kakao.com/v2/user/me
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local # 환경이름설정
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/archivist?serverTimezone=UTC
+    username: root
+    password: 1234
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQLDialect
+  redis:
+    host: localhost
+    port: 6379
+    password: beside17
+
+# 이미지 경로 설정
+userImgLocation: C:/images/users
+linkImgLocation: C:/images/links
+groupImgLocation: C:/images/groups
+uploadPath: file:///C:/images/
+defaultImgPath: classpath:/static/default-image/
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod # 환경이름설정
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://223.130.128.93:3306/archivist?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8&characterSetResults=UTF-8
+    username: user
+    password: beside17-7
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQLDialect
+  redis:
+    host: 223.130.128.93
+    port: 6379
+    password: beside17
+
+# 이미지 경로 설정
+userImgLocation: /mnt/xvdb1/images/users
+linkImgLocation: /mnt/xvdb1/images/links
+groupImgLocation: /mnt/xvdb1/images/groups
+uploadPath: file:///mnt/xvdb1/images/
+defaultImgPath: classpath:/static/default-image/
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test # 환경이름설정
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/archivist?serverTimezone=UTC
+    username: root
+    password: 1234
+  jpa:
+    hibernate:
+      ddl-auto: create
+    database-platform: org.hibernate.dialect.MySQLDialect
+  redis:
+    host: 223.130.128.93
+    port: 6379
+    password: beside17
+
+# 이미지 경로 설정
+userImgLocation: C:/images/users
+linkImgLocation: C:/images/links
+groupImgLocation: C:/images/groups
+uploadPath: file:///C:/images/
+defaultImgPath: classpath:/static/default-image/
