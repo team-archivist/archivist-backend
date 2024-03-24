@@ -16,9 +16,9 @@ archivist-backend repo
 이 프로젝트는 [Git Flow](https://nvie.com/posts/a-successful-git-branching-model/) 전략을 사용합니다.
 - `main` : 프로덕션 준비 상태의 코드를 유지.
 - `develop` : 다음 출시에 대해 추가된 모든 개발 변경 사항을 반영.
-- `feature-*` : 새로운 기능 개발. ( 각 기능은 `feature-기능명` 형식으로 명명 )
-- `release-*` : 릴리스(새로 출시하는 버전) 준비. 
-- `hotfix-*` : 운영에서 발생한 긴급한 버그를 수정. 
+- `feature/*` : 새로운 기능 개발. ( 각 기능은 `feature-기능명` 형식으로 명명 )
+- `release/*` : 릴리스(새로 출시하는 버전) 준비. 
+- `hotfix/*` : 운영에서 발생한 긴급한 버그를 수정. 
 
 * * *
 ### 커밋 컨벤션
@@ -43,9 +43,15 @@ archivist-backend repo
     repository
      └─ *Repository
 
+    mapper
+    └─ *mapper
+
     dto
      └─ *Dto
 
     entity
      └─ *
 
+* * *
+### ERD
+![erd](https://github.com/team-archivist/archivist-backend/assets/79985588/fe00b93c-26af-4c87-bbe2-ebdd2b689676)
