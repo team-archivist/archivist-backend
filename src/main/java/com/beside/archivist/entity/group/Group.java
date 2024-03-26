@@ -39,8 +39,7 @@ public class Group extends BaseEntity {
     @Formula("(SELECT COUNT(lg.link_group_id) FROM link_group lg WHERE lg.group_id = group_id)")
     private Long linkCount;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_img_id")
+    @OneToOne(mappedBy = "group", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private GroupImg groupImg;
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)

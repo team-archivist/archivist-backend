@@ -42,8 +42,7 @@ public class Link extends BaseEntity {
     @Column(columnDefinition = "TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
     private String linkDesc;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "link_img_id")
+    @OneToOne(mappedBy = "link", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private LinkImg linkImg;
 
     @OneToMany(mappedBy = "link", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

@@ -19,7 +19,8 @@ public class GroupImg {
     private String oriImgName; // 원본 이미지 파일명
     private String imgUrl; // 이미지 조회 경로
 
-    @OneToOne(mappedBy = "groupImg", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "group_id") // group_id가 외래키로 사용됨
     private Group group;
 
     @Builder
