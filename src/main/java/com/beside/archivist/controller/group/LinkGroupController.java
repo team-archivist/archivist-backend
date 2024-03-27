@@ -34,6 +34,6 @@ public class LinkGroupController {
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     public ResponseEntity<?> deleteLinkGroup(@PathVariable("linkGroupId") Long linkGroupId){
         linkGroupServiceImpl.deleteLinkGroup(linkGroupId);
-        return ResponseEntity.ok().body("그룹 링크 삭제 완료.");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

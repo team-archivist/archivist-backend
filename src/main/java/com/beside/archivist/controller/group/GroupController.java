@@ -65,7 +65,7 @@ public class GroupController {
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     public ResponseEntity<?> deleteGroup(@PathVariable("groupId") Long groupId){
         groupServiceImpl.deleteGroup(groupId);
-        return ResponseEntity.ok().body("그룹 삭제 완료.");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /** 특정 그룹에 속한 링크들 모두 조회 **/

@@ -97,7 +97,7 @@ public class LinkController {
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     public ResponseEntity<?> deleteLink(@PathVariable("linkId") Long linkId){
         linkServiceImpl.deleteLink(linkId);
-        return ResponseEntity.ok().body("링크 삭제 완료.");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }
