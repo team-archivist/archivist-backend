@@ -40,4 +40,8 @@ public class LinkImg {
                 .imgUrl("/image/linkDefaultImg.png")
                 .build();
     }
+
+    public void saveLink(Link link){
+        this.link = link;
+    }
 }
