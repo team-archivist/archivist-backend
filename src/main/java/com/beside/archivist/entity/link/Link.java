@@ -10,16 +10,12 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity @Table(name = "link")
 @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -60,5 +56,9 @@ public class Link extends BaseEntity {
         this.linkUrl = linkDto.getLinkUrl();
         this.linkName = linkDto.getLinkName();
         this.linkDesc = linkDto.getLinkDesc();
+    }
+
+    public void saveLinkImg(LinkImg linkImg){
+        this.linkImg = linkImg;
     }
 }

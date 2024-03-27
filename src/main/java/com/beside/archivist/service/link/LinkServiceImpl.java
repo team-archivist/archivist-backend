@@ -52,21 +52,23 @@ public class LinkServiceImpl implements LinkService {
                 () ->  new MissingAuthenticationException(ExceptionCode.MISSING_AUTHENTICATION));
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(ExceptionCode.USER_NOT_FOUND));
 
-        LinkImg linkImg = null;
-        if(linkImgFile == null){
-            linkImg = linkImgService.initializeDefaultImg();
-        }else{
-            linkImg = linkImgService.insertLinkImg(linkImgFile);
-        }
 
         Link link = Link.builder()
                 .linkUrl(linkDto.getLinkUrl())
                 .linkName(linkDto.getLinkName())
                 .linkDesc(linkDto.getLinkDesc())
                 .user(user)
-                .linkImg(linkImg)
                 .build();
         linkRepository.save(link);
+
+        LinkImg linkImg = LinkImg.initializeDefaultLinkImg();
+        linkImg.saveLink(link);
+
+        if(linkImgFile == null){
+            linkImgService.insertLinkImg(linkImg, linkImgFile);
+        }else{
+            linkImgService.saveLinkImg(linkImg);
+        }
 
         if(groupId != null){
             linkGroupService.deleteLinkGroupByLinkId(link.getId());
@@ -82,12 +84,9 @@ public class LinkServiceImpl implements LinkService {
     @Override
     public LinkDto updateLink(Long linkId, LinkDto linkDto, Long[] groupId, MultipartFile linkImgFile) {
         Link link = linkRepository.findById(linkId).orElseThrow(() -> new LinkNotFoundException(ExceptionCode.LINK_NOT_FOUND));
+
         if(linkImgFile != null){
-            if(link.getLinkImg() == null){
-                linkImgService.insertLinkImg(linkImgFile);
-            }else{
-                linkImgService.changeLinkImg(link.getLinkImg().getId(), linkImgFile);
-            }
+            linkImgService.changeLinkImg(link.getLinkImg().getId(), linkImgFile);
         }
         link.update(linkDto);
 
