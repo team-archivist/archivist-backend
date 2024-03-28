@@ -7,8 +7,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public interface LinkImgService {
 
-    LinkImg initializeDefaultImg();
-    LinkImg insertLinkImg(MultipartFile linkImgFile);
+    LinkImg saveLinkImg(LinkImg linkImg);
+    LinkImg insertLinkImg(LinkImg linkImg,MultipartFile linkImgFile);
 
     void changeLinkImg(Long linkImgId, MultipartFile linkImgFile);
 }

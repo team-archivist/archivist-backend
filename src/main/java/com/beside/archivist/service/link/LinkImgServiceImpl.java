@@ -1,5 +1,6 @@
 package com.beside.archivist.service.link;
 
+import com.beside.archivist.entity.group.GroupImg;
 import com.beside.archivist.entity.link.LinkImg;
 import com.beside.archivist.exception.common.ExceptionCode;
 import com.beside.archivist.exception.images.ImageNotFoundException;
@@ -22,11 +23,13 @@ public class LinkImgServiceImpl implements LinkImgService {
     private final FileService fileService;
 
     @Override
-    public LinkImg initializeDefaultImg() {
-        return linkImgRepository.save(LinkImg.initializeDefaultLinkImg());
+    public LinkImg saveLinkImg(LinkImg linkImg) {
+        LinkImg savedLinkImg = linkImgRepository.save(linkImg);
+        savedLinkImg.getLink().saveLinkImg(savedLinkImg);
+        return savedLinkImg;
     }
 
-    public LinkImg insertLinkImg(MultipartFile linkImgFile) {
+    public LinkImg insertLinkImg(LinkImg linkImg,MultipartFile linkImgFile) {
         if(linkImgFile != null){
 
             String oriImgName = linkImgFile.getOriginalFilename();
