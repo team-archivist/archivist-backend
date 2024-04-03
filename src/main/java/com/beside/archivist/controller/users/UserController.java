@@ -66,8 +66,7 @@ public class UserController {
         if (!emailFromToken.equals(userDto.getEmail())) {
             throw new EmailTokenMismatchException(ExceptionCode.EMAIL_TOKEN_MISMATCH);
         }
-        UserImg userImg = userImgServiceImpl.initializeDefaultImg();
-        UserInfoDto savedUser = userServiceImpl.saveUser(userDto,userImg);
+        UserInfoDto savedUser = userServiceImpl.saveUser(userDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 
@@ -97,7 +96,7 @@ public class UserController {
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     public ResponseEntity<?> deleteUser(@PathVariable("userId") Long userId){
         userServiceImpl.deleteUser(userId);
-        return ResponseEntity.ok().body("회원 탈퇴가 완료되었습니다.");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /** 카테고리 모든 값 조회 **/

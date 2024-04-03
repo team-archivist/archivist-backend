@@ -10,20 +10,15 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity @Table(name = "link")
 @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@DynamicInsert @DynamicUpdate
 @SQLDelete(sql = "UPDATE link SET is_deleted = 'Y', deleted_at = sysdate() WHERE link_id = ?")
 @Where(clause = "is_deleted = 'N'")
 public class Link extends BaseEntity {
@@ -42,8 +37,7 @@ public class Link extends BaseEntity {
     @Column(columnDefinition = "TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
     private String linkDesc;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "link_img_id")
+    @OneToOne(mappedBy = "link", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private LinkImg linkImg;
 
     @OneToMany(mappedBy = "link", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -61,5 +55,9 @@ public class Link extends BaseEntity {
         this.linkUrl = linkDto.getLinkUrl();
         this.linkName = linkDto.getLinkName();
         this.linkDesc = linkDto.getLinkDesc();
+    }
+
+    public void saveLinkImg(LinkImg linkImg){
+        this.linkImg = linkImg;
     }
 }

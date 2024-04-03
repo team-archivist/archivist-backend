@@ -32,6 +32,13 @@ logging:
           descriptor:
             sql: trace
 
+
+# p6spy 설정
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
+
 # 소셜(카카오) 로그인 관련 설정
 kakao:
   client-id: e23d78bdd0c94ce9fe632bcac07721d3
@@ -52,6 +59,7 @@ spring:
     hibernate:
       ddl-auto: update
     database-platform: org.hibernate.dialect.MySQLDialect
+
   redis:
     host: localhost
     port: 6379

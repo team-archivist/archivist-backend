@@ -1,10 +1,10 @@
-package com.beside.archivist.exception.link;
+package com.beside.archivist.exception.images;
 
 import com.beside.archivist.exception.common.ExceptionCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter @AllArgsConstructor
-public class GroupInBookmarkNotFoundException extends RuntimeException{
+public class ImageNotFoundException extends RuntimeException{
     private final ExceptionCode exceptionCode;
 }

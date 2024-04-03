@@ -20,6 +20,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.Instant;
 import java.util.*;
 
 @Service
@@ -55,7 +56,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserInfoDto saveUser(UserDto userDto, UserImg userImg) {
+    public UserInfoDto saveUser(UserDto userDto) {
         checkDuplicateUser(userDto.getEmail()); // 중복 회원 체크
         checkInvalidCategory(userDto.getCategories()); // 카테고리 null 값 체크
 
@@ -65,9 +66,13 @@ public class UserServiceImpl implements UserService {
                         .password(UUID.randomUUID().toString())
                         .categories(userDto.getCategories())
                         .nickname(userDto.getNickname())
-                        .userImg(userImg) // 초기 디폴트 이미지 저장
                         .build()
         );
+
+        /* 초기 디폴트 이미지 저장 */
+        UserImg userImg = userImgServiceImpl.initializeDefaultImg();
+        userImg.saveUser(savedUser);
+        userImgServiceImpl.saveUserImg(userImg);
 
         return userMapperImpl.toDto(savedUser);
     }
@@ -103,13 +108,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserInfoDto updateUser(Long userId, UserDto userDto,MultipartFile userImgFile) {
+    public UserInfoDto updateUser(Long userId, UserDto userDto, MultipartFile userImgFile) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException(ExceptionCode.USER_NOT_FOUND));
 
         checkInvalidCategory(userDto.getCategories()); // 카테고리 null 값 체크
         user.updateUserInfo(userDto.getNickname(),userDto.getCategories()); // 유저 정보 update
-        userImgServiceImpl.changeLinkImg(user.getUserImg().getId(), userImgFile); // 유저 이미지 update
+        if (userImgFile != null){
+            userImgServiceImpl.changeUserImg(user.getUserImg().getId(), userImgFile); // 유저 이미지 update
+        }
 
         return userMapperImpl.toDto(user);
     }
@@ -118,8 +125,9 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(ExceptionCode.USER_NOT_FOUND));
         // 이메일을 마스킹하고 삭제
-        user.deleteAndMaskEmail(user.getEmail());
-
+        user.updateUserEmail(maskEmail(user.getEmail()));
+        user.setIsDeleted("Y");
+        user.setDeletedAt(new Date().toInstant());
     }
 
     @Override
@@ -140,5 +148,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<String> getNicknames() {
         return userRepository.getNicknames();
+    }
+
+    @Override
+    public String maskEmail(String email) {
+        if (email == null || email.length() < 3) {
+            // 이메일이 null이거나 길이가 3 미만인 경우 처리하지 않음
+            return "";
+        }
+        int atIndex = email.indexOf('@');
+        if (atIndex <= 0) {
+            // '@' 기호가 없거나 처음에 나오면 처리하지 않음
+            return "";
+        }
+
+        String maskedPart = new String(new char[atIndex - 3]).replace('\0', '*');
+        return email.charAt(0) + maskedPart + email.substring(atIndex - 2);
     }
 }

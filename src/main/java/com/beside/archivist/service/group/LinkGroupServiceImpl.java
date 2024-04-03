@@ -8,6 +8,7 @@ import com.beside.archivist.entity.link.Link;
 import com.beside.archivist.entity.link.LinkImg;
 import com.beside.archivist.exception.common.ExceptionCode;
 import com.beside.archivist.exception.group.GroupNotFoundException;
+import com.beside.archivist.exception.link.LinkInGroupNotFoundException;
 import com.beside.archivist.exception.link.LinkNotFoundException;
 import com.beside.archivist.mapper.LinkGroupMapper;
 import com.beside.archivist.repository.group.GroupRepository;
@@ -36,8 +37,9 @@ public class LinkGroupServiceImpl implements LinkGroupService {
     private final GroupRepository groupRepository; // 서비스 구현체 가져와주세요! ( 비즈니스 로직과 데이터 접근 로직을 분리하기 위함 )
 
     @Override
-    public LinkGroup getLinkGroupById(Long userGroupId) {
-        return linkGroupRepository.findById(userGroupId).orElseThrow(); // todo: 예외 처리
+    public LinkGroup getLinkGroupById(Long linkGroupId) {
+        return linkGroupRepository.findById(linkGroupId).orElseThrow(
+                () -> new LinkInGroupNotFoundException(ExceptionCode.LINK_IN_GROUP_NOT_FOUND));
     }
 
     @Override
@@ -104,6 +106,13 @@ public class LinkGroupServiceImpl implements LinkGroupService {
                 .findFirst(); // 디폴트 이미지가 아닌 것 중 첫번째 Link return
 
         firstLink.ifPresent(link -> groupServiceImpl.changeToLinkImg(groupId, link.getLinkImg()));
+    }
+
+    @Override
+    public void changeGroupImgArray(Long[] groupIdArray) {  // 그룹 ID 가 여러 개인 경우
+        for (Long groupId : groupIdArray) {
+            changeGroupImg(groupId);
+        }
     }
 
     @Override // 그룹 내에서 삭제하는 링크 이미지와 그룹 이미지가 같을 때
