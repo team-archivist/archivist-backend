@@ -19,7 +19,8 @@ public class LinkImg {
     private String oriImgName; // 원본 이미지 파일명
     private String imgUrl; // 이미지 조회 경로
 
-    @OneToOne(mappedBy = "linkImg", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "link_id")
     private Link link;
 
     @Builder
