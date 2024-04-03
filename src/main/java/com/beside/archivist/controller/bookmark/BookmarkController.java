@@ -1,6 +1,9 @@
 package com.beside.archivist.controller.bookmark;
 
+import com.beside.archivist.config.AuditConfig;
 import com.beside.archivist.dto.group.GroupDto;
+import com.beside.archivist.exception.common.ExceptionCode;
+import com.beside.archivist.exception.users.MissingAuthenticationException;
 import com.beside.archivist.service.group.GroupService;
 import com.beside.archivist.service.usergroup.UserGroupService;
 import com.beside.archivist.service.users.UserService;
@@ -17,14 +20,16 @@ import java.util.List;
 @RestController @RequiredArgsConstructor
 public class BookmarkController {
     private final UserGroupService userGroupServiceImpl;
-    private final GroupService groupServiceImpl;
     private final UserService userServiceImpl;
+    private final AuditConfig auditConfig;
 
     /** 다른 회원의 그룹 북마크 하기 **/
     @PostMapping("/bookmark/{groupId}")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     public ResponseEntity<?> bookmarkGroup(@PathVariable("groupId") Long groupId) {
-        userGroupServiceImpl.saveUserGroup(groupId,false);
+        String userEmail = auditConfig.auditorProvider().getCurrentAuditor()
+                .orElseThrow(()-> new MissingAuthenticationException(ExceptionCode.MISSING_AUTHENTICATION));
+        userGroupServiceImpl.saveUserGroup(groupId,userEmail,false);
         return ResponseEntity.status(HttpStatus.CREATED).body("북마크가 완료되었습니다.");
     }
 

@@ -1,6 +1,5 @@
 package com.beside.archivist.service.usergroup;
 
-import com.beside.archivist.config.AuditConfig;
 import com.beside.archivist.dto.group.GroupDto;
 import com.beside.archivist.entity.group.Group;
 import com.beside.archivist.entity.usergroup.UserGroup;
@@ -24,11 +23,8 @@ public class UserGroupServiceImpl implements UserGroupService {
     private final UserGroupRepository userGroupRepository;
     private final UserService userServiceImpl;
     private final GroupService groupServiceImpl;
-    private final AuditConfig auditConfig;
     @Override
-    public void saveUserGroup(Long groupId, boolean isOwner) {
-        String userEmail = auditConfig.auditorProvider().getCurrentAuditor()
-                .orElseThrow(()-> new MissingAuthenticationException(ExceptionCode.MISSING_AUTHENTICATION));
+    public void saveUserGroup(Long groupId,String userEmail, boolean isOwner) {
         User findUser = userServiceImpl.getUserByEmail(userEmail);
         Group findGroup = groupServiceImpl.getGroup(groupId);
 

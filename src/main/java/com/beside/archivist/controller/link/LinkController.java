@@ -1,8 +1,11 @@
 package com.beside.archivist.controller.link;
 
+import com.beside.archivist.config.AuditConfig;
 import com.beside.archivist.dto.link.LinkDto;
 import com.beside.archivist.dto.link.LinkInfoDto;
 import com.beside.archivist.entity.group.Group;
+import com.beside.archivist.exception.common.ExceptionCode;
+import com.beside.archivist.exception.users.MissingAuthenticationException;
 import com.beside.archivist.service.group.LinkGroupService;
 import com.beside.archivist.service.link.LinkService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,6 +30,7 @@ public class LinkController {
 
     private final LinkService linkServiceImpl;
     private final LinkGroupService linkGroupServiceImpl;
+    private final AuditConfig auditConfig;
 
     /** 회원이 저장한 링크 모두 조회 **/
     @GetMapping("/user/link/{userId}")
@@ -75,8 +79,10 @@ public class LinkController {
     public ResponseEntity<?> registerLink(@RequestPart @Valid LinkDto linkDto,
                                           @RequestPart(value = "groupId", required = false) Long[] groupId,
                                           @RequestPart(value = "linkImgFile", required = false) MultipartFile linkImgFile) {
+        String userEmail = auditConfig.auditorProvider().getCurrentAuditor()
+                .orElseThrow(()-> new MissingAuthenticationException(ExceptionCode.MISSING_AUTHENTICATION));
 
-        LinkDto savedLink = linkServiceImpl.saveLink(linkDto,groupId,linkImgFile);
+        LinkDto savedLink = linkServiceImpl.saveLink(linkDto,groupId,userEmail,linkImgFile);
         linkGroupServiceImpl.changeGroupImgArray(groupId); // 그룹 이미지 업데이트
         return ResponseEntity.status(HttpStatus.CREATED).body(savedLink);
     }

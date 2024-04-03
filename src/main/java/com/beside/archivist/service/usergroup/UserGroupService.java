@@ -7,7 +7,7 @@ import java.util.List;
 
 @Service
 public interface UserGroupService {
-    void saveUserGroup(Long groupId, boolean isOwner);
+    void saveUserGroup(Long groupId,String userEmail, boolean isOwner);
     List<GroupDto> getGroupDtoByUserId(Long userId, boolean isOwner);
     void deleteBookmark(Long userId, Long groupId);
     void checkDuplicateGroup(Long userId, Long groupId, boolean isOwner);
