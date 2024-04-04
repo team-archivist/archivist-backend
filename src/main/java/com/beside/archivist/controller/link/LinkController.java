@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -77,12 +78,14 @@ public class LinkController {
     @PostMapping("/link")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     public ResponseEntity<?> registerLink(@RequestPart @Valid LinkDto linkDto,
+                                          Authentication authentication,
                                           @RequestPart(value = "groupId", required = false) Long[] groupId,
                                           @RequestPart(value = "linkImgFile", required = false) MultipartFile linkImgFile) {
-        String userEmail = auditConfig.auditorProvider().getCurrentAuditor()
-                .orElseThrow(()-> new MissingAuthenticationException(ExceptionCode.MISSING_AUTHENTICATION));
+        if (authentication == null){
+            throw new MissingAuthenticationException(ExceptionCode.MISSING_AUTHENTICATION);
+        }
 
-        LinkDto savedLink = linkServiceImpl.saveLink(linkDto,groupId,userEmail,linkImgFile);
+        LinkDto savedLink = linkServiceImpl.saveLink(linkDto,groupId,authentication.getName(),linkImgFile);
         linkGroupServiceImpl.changeGroupImgArray(groupId); // 그룹 이미지 업데이트
         return ResponseEntity.status(HttpStatus.CREATED).body(savedLink);
     }

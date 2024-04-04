@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -47,13 +48,14 @@ public class GroupController {
     /** 그룹 생성 **/
     @PostMapping("/group")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
-    public ResponseEntity<?> registerGroup(@RequestPart @Valid GroupDto groupDto,
+    public ResponseEntity<?> registerGroup(@RequestPart @Valid GroupDto groupDto, Authentication authentication,
                                               @RequestPart(value = "groupImgFile", required = false) MultipartFile groupImgFile) {
-        String userEmail = auditConfig.auditorProvider().getCurrentAuditor()
-                .orElseThrow(() -> new MissingAuthenticationException(ExceptionCode.MISSING_AUTHENTICATION));
+        if (authentication == null){
+            throw new MissingAuthenticationException(ExceptionCode.MISSING_AUTHENTICATION);
+        }
 
         GroupDto savedGroup = groupServiceImpl.saveGroup(groupDto,groupImgFile);
-        userGroupServiceImpl.saveUserGroup(savedGroup.getGroupId(),userEmail,true);
+        userGroupServiceImpl.saveUserGroup(savedGroup.getGroupId(),authentication.getName(),true);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedGroup);
     }
 

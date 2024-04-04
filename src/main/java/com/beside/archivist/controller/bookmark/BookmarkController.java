@@ -26,10 +26,11 @@ public class BookmarkController {
     /** 다른 회원의 그룹 북마크 하기 **/
     @PostMapping("/bookmark/{groupId}")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
-    public ResponseEntity<?> bookmarkGroup(@PathVariable("groupId") Long groupId) {
-        String userEmail = auditConfig.auditorProvider().getCurrentAuditor()
-                .orElseThrow(()-> new MissingAuthenticationException(ExceptionCode.MISSING_AUTHENTICATION));
-        userGroupServiceImpl.saveUserGroup(groupId,userEmail,false);
+    public ResponseEntity<?> bookmarkGroup(@PathVariable("groupId") Long groupId,Authentication authentication) {
+        if (authentication == null){
+            throw new MissingAuthenticationException(ExceptionCode.MISSING_AUTHENTICATION);
+        }
+        userGroupServiceImpl.saveUserGroup(groupId,authentication.getName(),false);
         return ResponseEntity.status(HttpStatus.CREATED).body("북마크가 완료되었습니다.");
     }
 
