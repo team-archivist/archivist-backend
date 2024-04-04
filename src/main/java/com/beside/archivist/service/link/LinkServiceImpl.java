@@ -64,7 +64,7 @@ public class LinkServiceImpl implements LinkService {
         LinkImg linkImg = LinkImg.initializeDefaultLinkImg();
         linkImg.saveLink(link);
 
-        if(linkImgFile == null){
+        if(linkImgFile != null){
             linkImgService.insertLinkImg(linkImg, linkImgFile);
         }else{
             linkImgService.saveLinkImg(linkImg);
