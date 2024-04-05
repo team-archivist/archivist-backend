@@ -1,6 +1,5 @@
 package com.beside.archivist.controller.link;
 
-import com.beside.archivist.config.AuditConfig;
 import com.beside.archivist.dto.link.LinkDto;
 import com.beside.archivist.dto.link.LinkInfoDto;
 import com.beside.archivist.entity.group.Group;
@@ -31,7 +30,6 @@ public class LinkController {
 
     private final LinkService linkServiceImpl;
     private final LinkGroupService linkGroupServiceImpl;
-    private final AuditConfig auditConfig;
 
     /** 회원이 저장한 링크 모두 조회 **/
     @GetMapping("/user/link/{userId}")
