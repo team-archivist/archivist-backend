@@ -1,6 +1,5 @@
 package com.beside.archivist.controller.bookmark;
 
-import com.beside.archivist.config.AuditConfig;
 import com.beside.archivist.dto.group.GroupDto;
 import com.beside.archivist.exception.common.ExceptionCode;
 import com.beside.archivist.exception.users.MissingAuthenticationException;
@@ -21,7 +20,6 @@ import java.util.List;
 public class BookmarkController {
     private final UserGroupService userGroupServiceImpl;
     private final UserService userServiceImpl;
-    private final AuditConfig auditConfig;
 
     /** 다른 회원의 그룹 북마크 하기 **/
     @PostMapping("/bookmark/{groupId}")
