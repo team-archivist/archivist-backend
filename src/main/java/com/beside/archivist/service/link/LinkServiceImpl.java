@@ -52,17 +52,16 @@ public class LinkServiceImpl implements LinkService {
                 () ->  new MissingAuthenticationException(ExceptionCode.MISSING_AUTHENTICATION));
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(ExceptionCode.USER_NOT_FOUND));
 
-
-        Link link = Link.builder()
-                .linkUrl(linkDto.getLinkUrl())
-                .linkName(linkDto.getLinkName())
-                .linkDesc(linkDto.getLinkDesc())
-                .user(user)
-                .build();
-        linkRepository.save(link);
+        Link savedLink = linkRepository.save(
+                Link.builder()
+                        .linkUrl(linkDto.getLinkUrl())
+                        .linkName(linkDto.getLinkName())
+                        .linkDesc(linkDto.getLinkDesc())
+                        .user(user)
+                        .build());
 
         LinkImg linkImg = LinkImg.initializeDefaultLinkImg();
-        linkImg.saveLink(link);
+        linkImg.saveLink(savedLink);
 
         if(linkImgFile != null){
             linkImgService.insertLinkImg(linkImg, linkImgFile);
@@ -71,14 +70,14 @@ public class LinkServiceImpl implements LinkService {
         }
 
         if(groupId != null){
-            linkGroupService.deleteLinkGroupByLinkId(link.getId());
+            linkGroupService.deleteLinkGroupByLinkId(savedLink.getId());
             for(Long id : groupId){
-                LinkGroupDto linkGroupDto = LinkGroupDto.builder().groupId(id).linkId(link.getId()).build();
+                LinkGroupDto linkGroupDto = LinkGroupDto.builder().groupId(id).linkId(savedLink.getId()).build();
                 linkGroupService.saveLinkGroup(linkGroupDto);
             }
         }
 
-        return linkMapperImpl.toDto(link);
+        return linkMapperImpl.toDto(savedLink);
     }
 
     @Override
