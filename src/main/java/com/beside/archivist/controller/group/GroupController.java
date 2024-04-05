@@ -1,6 +1,5 @@
 package com.beside.archivist.controller.group;
 
-import com.beside.archivist.config.AuditConfig;
 import com.beside.archivist.dto.group.GroupDto;
 import com.beside.archivist.dto.link.LinkDto;
 import com.beside.archivist.exception.common.ExceptionCode;
@@ -28,7 +27,6 @@ public class GroupController {
 
     private final GroupService groupServiceImpl;
     private final UserGroupService userGroupServiceImpl;
-    private final AuditConfig auditConfig;
 
     /** 특정 유저가 생성한 모든 그룹 조회 **/
     @GetMapping("/user/group/{userId}")
