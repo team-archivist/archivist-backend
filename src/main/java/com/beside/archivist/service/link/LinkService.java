@@ -9,7 +9,7 @@ import java.util.List;
 
 @Service
 public interface LinkService {
-    LinkDto saveLink(LinkDto linkDto,Long[] groupId, MultipartFile linkImgFile);
+    LinkDto saveLink(LinkDto linkDto,Long[] groupId,String email, MultipartFile linkImgFile);
     LinkDto updateLink(Long linkId, LinkDto linkDto, Long[] groupId, MultipartFile linkImgFile);
     void deleteLink(Long linkId);
 

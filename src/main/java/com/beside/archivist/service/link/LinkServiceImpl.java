@@ -1,6 +1,5 @@
 package com.beside.archivist.service.link;
 
-import com.beside.archivist.config.AuditConfig;
 import com.beside.archivist.dto.group.LinkGroupDto;
 import com.beside.archivist.dto.link.LinkDto;
 import com.beside.archivist.entity.group.Group;
@@ -42,14 +41,10 @@ public class LinkServiceImpl implements LinkService {
 
     private final LinkGroupService linkGroupService;
 
-    private final AuditConfig auditConfig;
-
     private final UserRepository userRepository;
 
     @Override
-    public LinkDto saveLink(LinkDto linkDto, Long[] groupId, MultipartFile linkImgFile)  {
-        String email = auditConfig.auditorProvider().getCurrentAuditor().orElseThrow(
-                () ->  new MissingAuthenticationException(ExceptionCode.MISSING_AUTHENTICATION));
+    public LinkDto saveLink(LinkDto linkDto, Long[] groupId,String email, MultipartFile linkImgFile)  {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(ExceptionCode.USER_NOT_FOUND));
 
 
