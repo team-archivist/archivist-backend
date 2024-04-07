@@ -24,15 +24,15 @@ public class UserGroupServiceImpl implements UserGroupService {
     private final UserService userServiceImpl;
     private final GroupService groupServiceImpl;
     @Override
-    public void saveUserGroup(Long groupId,String userEmail, boolean isOwner) {
-        User findUser = userServiceImpl.getUserByEmail(userEmail);
+    public void saveUserGroup(Long groupId,String email, boolean isOwner) {
+        User findUser = userServiceImpl.getUserByEmail(email);
         Group findGroup = groupServiceImpl.getGroup(groupId);
 
         checkDuplicateGroup(findUser.getId(), findGroup.getId(), isOwner);
         
         UserGroup userGroup = UserGroup.builder()
                 .isOwner(isOwner) // save / bookmark 그룹 구분
-                .users(userServiceImpl.getUserByEmail(userEmail))
+                .users(userServiceImpl.getUserByEmail(email))
                 .groups(groupServiceImpl.getGroup(groupId))
                 .build();
 
