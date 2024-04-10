@@ -24,9 +24,7 @@ public class LinkImgServiceImpl implements LinkImgService {
 
     @Override
     public LinkImg saveLinkImg(LinkImg linkImg) {
-        LinkImg savedLinkImg = linkImgRepository.save(linkImg);
-        savedLinkImg.getLink().saveLinkImg(savedLinkImg);
-        return savedLinkImg;
+        return linkImgRepository.save(linkImg);
     }
 
     public LinkImg insertLinkImg(LinkImg linkImg,MultipartFile linkImgFile) {
@@ -39,6 +37,7 @@ public class LinkImgServiceImpl implements LinkImgService {
                     .oriImgName(oriImgName)
                     .imgName(imgName)
                     .imgUrl(imgUrl)
+                    .link(linkImg.getLink())
                     .build());
         }else {
             return null;
