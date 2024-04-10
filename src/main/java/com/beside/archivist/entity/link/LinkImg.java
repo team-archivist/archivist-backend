@@ -24,10 +24,11 @@ public class LinkImg {
     private Link link;
 
     @Builder
-    public LinkImg(String imgName, String oriImgName, String imgUrl) {
+    public LinkImg(String imgName, String oriImgName, String imgUrl,Link link) {
         this.imgName = imgName;
         this.oriImgName = oriImgName;
         this.imgUrl = imgUrl;
+        this.link = link;
     }
     public void updateLinkImg(String imgName, String oriImgName, String imgUrl) {
         this.imgName = imgName;
