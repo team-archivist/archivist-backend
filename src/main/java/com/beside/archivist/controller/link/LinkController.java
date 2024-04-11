@@ -84,7 +84,9 @@ public class LinkController {
         }
 
         LinkDto savedLink = linkServiceImpl.saveLink(linkDto,groupId,authentication.getName(),linkImgFile);
-        linkGroupServiceImpl.changeGroupImgArray(groupId); // 그룹 이미지 업데이트
+        if (groupId != null){ // group 에 해당 링크 추가했을 때 그룹 이미지 업데이트
+            linkGroupServiceImpl.changeGroupImgArray(groupId);
+        }
         return ResponseEntity.status(HttpStatus.CREATED).body(savedLink);
     }
 
