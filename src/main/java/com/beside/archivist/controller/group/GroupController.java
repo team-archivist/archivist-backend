@@ -2,6 +2,8 @@ package com.beside.archivist.controller.group;
 
 import com.beside.archivist.dto.group.GroupDto;
 import com.beside.archivist.dto.link.LinkDto;
+import com.beside.archivist.exception.common.ExceptionCode;
+import com.beside.archivist.exception.users.MissingAuthenticationException;
 import com.beside.archivist.service.usergroup.UserGroupService;
 import com.beside.archivist.service.group.GroupService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -43,10 +46,14 @@ public class GroupController {
     /** 그룹 생성 **/
     @PostMapping("/group")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
-    public ResponseEntity<?> registerGroup(@RequestPart @Valid GroupDto groupDto,
+    public ResponseEntity<?> registerGroup(@RequestPart @Valid GroupDto groupDto, Authentication authentication,
                                               @RequestPart(value = "groupImgFile", required = false) MultipartFile groupImgFile) {
+        if (authentication == null){
+            throw new MissingAuthenticationException(ExceptionCode.MISSING_AUTHENTICATION);
+        }
+
         GroupDto savedGroup = groupServiceImpl.saveGroup(groupDto,groupImgFile);
-        userGroupServiceImpl.saveUserGroup(savedGroup.getGroupId(),true);
+        userGroupServiceImpl.saveUserGroup(savedGroup.getGroupId(),authentication.getName(),true);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedGroup);
     }
 
@@ -65,7 +72,7 @@ public class GroupController {
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     public ResponseEntity<?> deleteGroup(@PathVariable("groupId") Long groupId){
         groupServiceImpl.deleteGroup(groupId);
-        return ResponseEntity.ok().body("그룹 삭제 완료.");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /** 특정 그룹에 속한 링크들 모두 조회 **/

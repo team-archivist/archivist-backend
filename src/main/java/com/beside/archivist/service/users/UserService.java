@@ -16,7 +16,7 @@ public interface UserService extends UserDetailsService {
 
     /* 회원 CRUD */
     void adminLogin(String email, String password);
-    UserInfoDto saveUser(UserDto userDto, UserImg userImg);
+    UserInfoDto saveUser(UserDto userDto);
     UserInfoDto getUserInfo(String email);
     UserInfoDto updateUser(Long userId, UserDto userDto, MultipartFile userImgFile);
     User getUserByEmail(String email);

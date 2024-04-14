@@ -8,11 +8,12 @@ import java.util.List;
 
 @Service
 public interface LinkGroupService {
-    LinkGroup getLinkGroupById(Long userGroupId);
+    LinkGroup getLinkGroupById(Long linkGroupId);
     LinkGroupDto saveLinkGroup(LinkGroupDto linkGroupDto);
     void deleteLinkGroup(Long groupId);
     void deleteLinkGroupByLinkId(Long linkId);
     List<LinkGroup> getLinkGroupsByGroupId(Long groupId);
     void changeGroupImg(Long groupId);
+    void changeGroupImgArray(Long[] groupIdArray);
     boolean checkGroupLinkImgEquality(LinkGroup linkGroup);
 }

@@ -1,6 +1,9 @@
 package com.beside.archivist.service.link;
 
+import com.beside.archivist.entity.group.GroupImg;
 import com.beside.archivist.entity.link.LinkImg;
+import com.beside.archivist.exception.common.ExceptionCode;
+import com.beside.archivist.exception.images.ImageNotFoundException;
 import com.beside.archivist.repository.link.LinkImgRepository;
 import com.beside.archivist.service.util.FileService;
 import lombok.RequiredArgsConstructor;
@@ -20,11 +23,11 @@ public class LinkImgServiceImpl implements LinkImgService {
     private final FileService fileService;
 
     @Override
-    public LinkImg initializeDefaultImg() {
-        return linkImgRepository.save(LinkImg.initializeDefaultLinkImg());
+    public LinkImg saveLinkImg(LinkImg linkImg) {
+        return linkImgRepository.save(linkImg);
     }
 
-    public LinkImg insertLinkImg(MultipartFile linkImgFile) {
+    public LinkImg insertLinkImg(LinkImg linkImg,MultipartFile linkImgFile) {
         if(linkImgFile != null){
 
             String oriImgName = linkImgFile.getOriginalFilename();
@@ -34,6 +37,7 @@ public class LinkImgServiceImpl implements LinkImgService {
                     .oriImgName(oriImgName)
                     .imgName(imgName)
                     .imgUrl(imgUrl)
+                    .link(linkImg.getLink())
                     .build());
         }else {
             return null;
@@ -44,7 +48,7 @@ public class LinkImgServiceImpl implements LinkImgService {
     public void changeLinkImg(Long linkImgId, MultipartFile linkImgFile) {
         if(linkImgFile != null){
             LinkImg savedLinkImg = linkImgRepository.findById(linkImgId)
-                    .orElseThrow(RuntimeException::new); // TO DO : 예외 처리
+                    .orElseThrow(() -> new ImageNotFoundException(ExceptionCode.IMAGE_NOT_FOUND));
             if(!(StringUtils.isEmpty(savedLinkImg.getImgName()) || StringUtils.isBlank(savedLinkImg.getImgName()))){
                 fileService.deleteFile(linkImgLocation, savedLinkImg.getImgName());
             }

@@ -1,6 +1,5 @@
 package com.beside.archivist.service.link;
 
-import com.beside.archivist.config.AuditConfig;
 import com.beside.archivist.dto.group.LinkGroupDto;
 import com.beside.archivist.dto.link.LinkDto;
 import com.beside.archivist.entity.group.Group;
@@ -42,52 +41,46 @@ public class LinkServiceImpl implements LinkService {
 
     private final LinkGroupService linkGroupService;
 
-    private final AuditConfig auditConfig;
-
     private final UserRepository userRepository;
 
     @Override
-    public LinkDto saveLink(LinkDto linkDto, Long[] groupId, MultipartFile linkImgFile)  {
-        String email = auditConfig.auditorProvider().getCurrentAuditor().orElseThrow(
-                () ->  new MissingAuthenticationException(ExceptionCode.MISSING_AUTHENTICATION));
+    public LinkDto saveLink(LinkDto linkDto, Long[] groupId,String email, MultipartFile linkImgFile)  {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(ExceptionCode.USER_NOT_FOUND));
 
-        LinkImg linkImg = null;
-        if(linkImgFile == null){
-            linkImg = linkImgService.initializeDefaultImg();
+        Link savedLink = linkRepository.save(
+                Link.builder()
+                        .linkUrl(linkDto.getLinkUrl())
+                        .linkName(linkDto.getLinkName())
+                        .linkDesc(linkDto.getLinkDesc())
+                        .user(user)
+                        .build());
+
+        LinkImg linkImg = LinkImg.initializeDefaultLinkImg();
+        linkImg.saveLink(savedLink);
+
+        if(linkImgFile != null){
+            linkImgService.insertLinkImg(linkImg, linkImgFile);
         }else{
-            linkImg = linkImgService.insertLinkImg(linkImgFile);
+            linkImgService.saveLinkImg(linkImg);
         }
 
-        Link link = Link.builder()
-                .linkUrl(linkDto.getLinkUrl())
-                .linkName(linkDto.getLinkName())
-                .linkDesc(linkDto.getLinkDesc())
-                .user(user)
-                .linkImg(linkImg)
-                .build();
-        linkRepository.save(link);
-
         if(groupId != null){
-            linkGroupService.deleteLinkGroupByLinkId(link.getId());
+            linkGroupService.deleteLinkGroupByLinkId(savedLink.getId());
             for(Long id : groupId){
-                LinkGroupDto linkGroupDto = LinkGroupDto.builder().groupId(id).linkId(link.getId()).build();
+                LinkGroupDto linkGroupDto = LinkGroupDto.builder().groupId(id).linkId(savedLink.getId()).build();
                 linkGroupService.saveLinkGroup(linkGroupDto);
             }
         }
 
-        return linkMapperImpl.toDto(link);
+        return linkMapperImpl.toDto(savedLink);
     }
 
     @Override
     public LinkDto updateLink(Long linkId, LinkDto linkDto, Long[] groupId, MultipartFile linkImgFile) {
         Link link = linkRepository.findById(linkId).orElseThrow(() -> new LinkNotFoundException(ExceptionCode.LINK_NOT_FOUND));
+
         if(linkImgFile != null){
-            if(link.getLinkImg() == null){
-                linkImgService.insertLinkImg(linkImgFile);
-            }else{
-                linkImgService.changeLinkImg(link.getLinkImg().getId(), linkImgFile);
-            }
+            linkImgService.changeLinkImg(link.getLinkImg().getId(), linkImgFile);
         }
         link.update(linkDto);
 

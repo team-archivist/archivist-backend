@@ -1,16 +1,14 @@
 package com.beside.archivist.service.usergroup;
 
-import com.beside.archivist.config.AuditConfig;
 import com.beside.archivist.dto.group.GroupDto;
 import com.beside.archivist.entity.group.Group;
 import com.beside.archivist.entity.usergroup.UserGroup;
 import com.beside.archivist.entity.users.User;
 import com.beside.archivist.exception.common.ExceptionCode;
 import com.beside.archivist.exception.group.GroupAlreadyExistsException;
-import com.beside.archivist.exception.link.GroupInBookmarkNotFoundException;
+import com.beside.archivist.exception.group.GroupInBookmarkNotFoundException;
 import com.beside.archivist.exception.users.MissingAuthenticationException;
 import com.beside.archivist.repository.usergroup.UserGroupRepository;
-import com.beside.archivist.repository.usergroup.UserGroupRepositoryCustom;
 import com.beside.archivist.service.group.GroupService;
 import com.beside.archivist.service.users.UserService;
 import lombok.RequiredArgsConstructor;
@@ -25,19 +23,16 @@ public class UserGroupServiceImpl implements UserGroupService {
     private final UserGroupRepository userGroupRepository;
     private final UserService userServiceImpl;
     private final GroupService groupServiceImpl;
-    private final AuditConfig auditConfig;
     @Override
-    public void saveUserGroup(Long groupId, boolean isOwner) {
-        String userEmail = auditConfig.auditorProvider().getCurrentAuditor()
-                .orElseThrow(()-> new MissingAuthenticationException(ExceptionCode.MISSING_AUTHENTICATION));
-        User findUser = userServiceImpl.getUserByEmail(userEmail);
+    public void saveUserGroup(Long groupId,String email, boolean isOwner) {
+        User findUser = userServiceImpl.getUserByEmail(email);
         Group findGroup = groupServiceImpl.getGroup(groupId);
 
         checkDuplicateGroup(findUser.getId(), findGroup.getId(), isOwner);
         
         UserGroup userGroup = UserGroup.builder()
                 .isOwner(isOwner) // save / bookmark 그룹 구분
-                .users(userServiceImpl.getUserByEmail(userEmail))
+                .users(userServiceImpl.getUserByEmail(email))
                 .groups(groupServiceImpl.getGroup(groupId))
                 .build();
 

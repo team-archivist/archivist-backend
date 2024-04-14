@@ -3,6 +3,9 @@ package com.beside.archivist.controller.link;
 import com.beside.archivist.dto.link.LinkDto;
 import com.beside.archivist.dto.link.LinkInfoDto;
 import com.beside.archivist.entity.group.Group;
+import com.beside.archivist.exception.common.ExceptionCode;
+import com.beside.archivist.exception.users.MissingAuthenticationException;
+import com.beside.archivist.service.group.LinkGroupService;
 import com.beside.archivist.service.link.LinkService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -11,12 +14,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import org.apache.commons.validator.routines.UrlValidator;
 
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -26,6 +29,7 @@ import java.util.List;
 public class LinkController {
 
     private final LinkService linkServiceImpl;
+    private final LinkGroupService linkGroupServiceImpl;
 
     /** 회원이 저장한 링크 모두 조회 **/
     @GetMapping("/user/link/{userId}")
@@ -72,10 +76,15 @@ public class LinkController {
     @PostMapping("/link")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     public ResponseEntity<?> registerLink(@RequestPart @Valid LinkDto linkDto,
+                                          Authentication authentication,
                                           @RequestPart(value = "groupId", required = false) Long[] groupId,
                                           @RequestPart(value = "linkImgFile", required = false) MultipartFile linkImgFile) {
+        if (authentication == null){
+            throw new MissingAuthenticationException(ExceptionCode.MISSING_AUTHENTICATION);
+        }
 
-        LinkDto savedLink = linkServiceImpl.saveLink(linkDto,groupId,linkImgFile);
+        LinkDto savedLink = linkServiceImpl.saveLink(linkDto,groupId,authentication.getName(),linkImgFile);
+        linkGroupServiceImpl.changeGroupImgArray(groupId); // 그룹 이미지 업데이트
         return ResponseEntity.status(HttpStatus.CREATED).body(savedLink);
     }
 
@@ -95,7 +104,7 @@ public class LinkController {
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     public ResponseEntity<?> deleteLink(@PathVariable("linkId") Long linkId){
         linkServiceImpl.deleteLink(linkId);
-        return ResponseEntity.ok().body("링크 삭제 완료.");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }

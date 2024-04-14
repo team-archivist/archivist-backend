@@ -5,8 +5,10 @@ import com.beside.archivist.dto.exception.LoginFailureDto;
 import com.beside.archivist.dto.exception.ValidExceptionDto;
 import com.beside.archivist.exception.group.GroupAlreadyExistsException;
 import com.beside.archivist.exception.group.GroupNotFoundException;
+import com.beside.archivist.exception.images.ImageNotFoundException;
 import com.beside.archivist.exception.images.InvalidFileExtensionException;
-import com.beside.archivist.exception.link.GroupInBookmarkNotFoundException;
+import com.beside.archivist.exception.group.GroupInBookmarkNotFoundException;
+import com.beside.archivist.exception.link.LinkInGroupNotFoundException;
 import com.beside.archivist.exception.link.LinkNotFoundException;
 import com.beside.archivist.exception.users.*;
 import io.jsonwebtoken.security.SignatureException;
@@ -43,7 +45,7 @@ public class GlobalExceptionController {
         return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
     }
 
-    /** 이미지 확장자 체크 **/
+    /** IMAGE_001 이미지 확장자 체크 **/
     @ExceptionHandler(InvalidFileExtensionException.class)
     protected ResponseEntity<ExceptionDto> handlerInvalidFileExtensionException(InvalidFileExtensionException ex) {
         final ExceptionDto responseError = ExceptionDto.builder()
@@ -53,7 +55,7 @@ public class GlobalExceptionController {
         return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
     }
 
-    /** 이미지 크기 체크 **/
+    /** IMAGE_002 이미지 크기 체크 **/
     @ExceptionHandler(FileSizeLimitExceededException.class)
     public ResponseEntity<ExceptionDto> handleMaxSizeExceededException() {
         final ExceptionDto responseError = ExceptionDto.builder()
@@ -63,6 +65,15 @@ public class GlobalExceptionController {
         return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
     }
 
+    /** IMAGE_003 이미지 유무 체크 **/
+    @ExceptionHandler(ImageNotFoundException.class)
+    protected ResponseEntity<ExceptionDto> handlerImageNotFoundException(ImageNotFoundException ex) {
+        final ExceptionDto responseError = ExceptionDto.builder()
+                .statusCode(ex.getExceptionCode().getStatus().value())
+                .message(ex.getExceptionCode().getMessage())
+                .build();
+        return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
+    }
 
     /** USER_001 중복 회원 체크 **/
     @ExceptionHandler(UserAlreadyExistsException.class)
@@ -163,6 +174,16 @@ public class GlobalExceptionController {
     /** LINK_001 링크 유무 체크 **/
     @ExceptionHandler(LinkNotFoundException.class)
     protected ResponseEntity<ExceptionDto> handlerLinkNotFoundException(LinkNotFoundException ex) {
+        final ExceptionDto responseError = ExceptionDto.builder()
+                .statusCode(ex.getExceptionCode().getStatus().value())
+                .message(ex.getExceptionCode().getMessage())
+                .build();
+        return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
+    }
+
+    /** LINK_002 그룹 내 링크 유무 체크 **/
+    @ExceptionHandler(LinkInGroupNotFoundException.class)
+    protected ResponseEntity<ExceptionDto> handlerLinkInGroupNotFoundException(LinkInGroupNotFoundException ex) {
         final ExceptionDto responseError = ExceptionDto.builder()
                 .statusCode(ex.getExceptionCode().getStatus().value())
                 .message(ex.getExceptionCode().getMessage())

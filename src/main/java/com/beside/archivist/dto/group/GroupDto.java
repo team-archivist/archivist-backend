@@ -11,7 +11,7 @@ import lombok.ToString;
 
 import java.util.List;
 
-@Getter @ToString
+@Getter
 public class GroupDto {
     private Long groupId;
     @NotBlank(message = "그룹 이름은 공백일 수 없습니다.")
@@ -27,7 +27,7 @@ public class GroupDto {
     @Builder
     public GroupDto(Long groupId, String groupName, String groupDesc, String isGroupPublic, List<Category> categories, String imgUrl, Long linkCount) {
         this.groupId = groupId;
-        this.groupName = groupName.trim();
+        this.groupName = groupName != null ? groupName.trim() : groupName;
         this.groupDesc = groupDesc;
         this.isGroupPublic = isGroupPublic;
         this.categories = categories;

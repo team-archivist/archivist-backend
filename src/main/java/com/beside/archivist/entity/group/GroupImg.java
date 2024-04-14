@@ -19,7 +19,8 @@ public class GroupImg {
     private String oriImgName; // 원본 이미지 파일명
     private String imgUrl; // 이미지 조회 경로
 
-    @OneToOne(mappedBy = "groupImg", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "group_id")
     private Group group;
 
     @Builder
@@ -39,5 +40,8 @@ public class GroupImg {
                 .oriImgName("linkDefaultImg.png")
                 .imgUrl("/image/linkDefaultImg.png")
                 .build();
+    }
+    public void saveGroup(Group group) {
+        this.group = group;
     }
 }

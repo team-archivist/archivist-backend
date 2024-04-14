@@ -19,14 +19,16 @@ public class LinkImg {
     private String oriImgName; // 원본 이미지 파일명
     private String imgUrl; // 이미지 조회 경로
 
-    @OneToOne(mappedBy = "linkImg", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "link_id")
     private Link link;
 
     @Builder
-    public LinkImg(String imgName, String oriImgName, String imgUrl) {
+    public LinkImg(String imgName, String oriImgName, String imgUrl,Link link) {
         this.imgName = imgName;
         this.oriImgName = oriImgName;
         this.imgUrl = imgUrl;
+        this.link = link;
     }
     public void updateLinkImg(String imgName, String oriImgName, String imgUrl) {
         this.imgName = imgName;
@@ -39,5 +41,9 @@ public class LinkImg {
                 .oriImgName("linkDefaultImg.png")
                 .imgUrl("/image/linkDefaultImg.png")
                 .build();
+    }
+
+    public void saveLink(Link link){
+        this.link = link;
     }
 }
