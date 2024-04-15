@@ -44,7 +44,7 @@ public class LinkServiceImpl implements LinkService {
     private final UserRepository userRepository;
 
     @Override
-    public LinkDto saveLink(LinkDto linkDto, Long[] groupId,String email, MultipartFile linkImgFile)  {
+    public LinkDto saveLink(LinkDto linkDto, Long[] groupIds, String email, MultipartFile linkImgFile)  {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(ExceptionCode.USER_NOT_FOUND));
 
         Link savedLink = linkRepository.save(
@@ -64,10 +64,10 @@ public class LinkServiceImpl implements LinkService {
             linkImgService.saveLinkImg(linkImg);
         }
 
-        if(groupId != null){
+        if(groupIds != null){
             linkGroupService.deleteLinkGroupByLinkId(savedLink.getId());
-            for(Long id : groupId){
-                LinkGroupDto linkGroupDto = LinkGroupDto.builder().groupId(id).linkId(savedLink.getId()).build();
+            for(Long groupId : groupIds){
+                LinkGroupDto linkGroupDto = LinkGroupDto.builder().groupId(groupId).linkId(savedLink.getId()).build();
                 linkGroupService.saveLinkGroup(linkGroupDto);
             }
         }
@@ -76,7 +76,7 @@ public class LinkServiceImpl implements LinkService {
     }
 
     @Override
-    public LinkDto updateLink(Long linkId, LinkDto linkDto, Long[] groupId, MultipartFile linkImgFile) {
+    public LinkDto updateLink(Long linkId, LinkDto linkDto, Long[] groupIds, MultipartFile linkImgFile) {
         Link link = linkRepository.findById(linkId).orElseThrow(() -> new LinkNotFoundException(ExceptionCode.LINK_NOT_FOUND));
 
         if(linkImgFile != null){
@@ -84,10 +84,10 @@ public class LinkServiceImpl implements LinkService {
         }
         link.update(linkDto);
 
-        if(groupId != null){
+        if(groupIds != null){
             linkGroupService.deleteLinkGroupByLinkId(link.getId());
-            for(Long id : groupId){
-                LinkGroupDto linkGroupDto = LinkGroupDto.builder().groupId(id).linkId(link.getId()).build();
+            for(Long groupId : groupIds){
+                LinkGroupDto linkGroupDto = LinkGroupDto.builder().groupId(groupId).linkId(link.getId()).build();
                 linkGroupService.saveLinkGroup(linkGroupDto);
             }
         }
@@ -99,14 +99,14 @@ public class LinkServiceImpl implements LinkService {
     public void deleteLink(Long linkId) {
         linkRepository.deleteById(linkId);
     }
-
-    public LinkDto findLinkById(Long id){
+    @Override
+    public LinkDto findLinkById(Long linkId){
         // 특정 북마크 ID에 해당하는 북마크 조회
-        Link link = linkRepository.findById(id).orElseThrow(() -> new LinkNotFoundException(ExceptionCode.LINK_NOT_FOUND));
+        Link link = linkRepository.findById(linkId).orElseThrow(() -> new LinkNotFoundException(ExceptionCode.LINK_NOT_FOUND));
 
         return linkMapperImpl.toDto(link);
     }
-
+    @Override
     public List<LinkDto> getLinksByUserId(Long userId){
         // 특정 사용자 ID에 해당하는 북마크 목록 조회
         List<Link> linkList = linkRepository.findByUsers_Id(userId);
@@ -115,11 +115,11 @@ public class LinkServiceImpl implements LinkService {
                 .map(linkMapperImpl::toDto)
                 .collect(Collectors.toList());
     }
-
+    @Override
     public List<Group> getGroupsByLinkId(Long linkId) {
-        Link link = linkRepository.findById(linkId).orElse(null);
-        if (link != null) {
-            List<LinkGroup> linkGroups = link.getLinkGroups();
+        Optional<Link> link = linkRepository.findById(linkId);
+        if(link.isPresent()) {
+            List<LinkGroup> linkGroups = link.get().getLinkGroups();
             return linkGroups.stream().map(LinkGroup::getGroup).collect(Collectors.toList());
         }
         return Collections.emptyList();
