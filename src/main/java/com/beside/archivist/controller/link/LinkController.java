@@ -77,16 +77,15 @@ public class LinkController {
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     public ResponseEntity<?> registerLink(@RequestPart @Valid LinkDto linkDto,
                                           Authentication authentication,
-                                          @RequestPart(value = "groupId", required = false) Long[] groupId,
+                                          @RequestPart(value = "groupId") Long[] groupIds,
                                           @RequestPart(value = "linkImgFile", required = false) MultipartFile linkImgFile) {
         if (authentication == null){
             throw new MissingAuthenticationException(ExceptionCode.MISSING_AUTHENTICATION);
         }
 
-        LinkDto savedLink = linkServiceImpl.saveLink(linkDto,groupId,authentication.getName(),linkImgFile);
-        if (groupId != null){ // group 에 해당 링크 추가했을 때 그룹 이미지 업데이트
-            linkGroupServiceImpl.changeGroupImgArray(groupId);
-        }
+        LinkDto savedLink = linkServiceImpl.saveLink(linkDto,groupIds,authentication.getName(),linkImgFile);
+        linkGroupServiceImpl.changeGroupImgArray(groupIds);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(savedLink);
     }
 
@@ -95,9 +94,9 @@ public class LinkController {
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     public ResponseEntity<?> updateLink(@PathVariable("linkId") Long linkId,
                                             @RequestPart @Valid LinkDto linkDto,
-                                            @RequestPart(value = "groupId", required = false) Long[] groupId,
+                                            @RequestPart(value = "groupId") Long[] groupIds,
                                             @RequestPart(value = "linkImgFile", required = false) MultipartFile linkImgFile) {
-        LinkDto updatedLink = linkServiceImpl.updateLink(linkId, linkDto, groupId, linkImgFile);
+        LinkDto updatedLink = linkServiceImpl.updateLink(linkId, linkDto, groupIds, linkImgFile);
         return ResponseEntity.ok().body(updatedLink);
     }
 

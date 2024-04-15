@@ -64,12 +64,10 @@ public class LinkServiceImpl implements LinkService {
             linkImgService.saveLinkImg(linkImg);
         }
 
-        if(groupIds != null){
-            linkGroupService.deleteLinkGroupByLinkId(savedLink.getId());
-            for(Long groupId : groupIds){
-                LinkGroupDto linkGroupDto = LinkGroupDto.builder().groupId(groupId).linkId(savedLink.getId()).build();
-                linkGroupService.saveLinkGroup(linkGroupDto);
-            }
+//        linkGroupService.deleteLinkGroupByLinkId(savedLink.getId());
+        for(Long groupId : groupIds){
+            LinkGroupDto linkGroupDto = LinkGroupDto.builder().groupId(groupId).linkId(savedLink.getId()).build();
+            linkGroupService.saveLinkGroup(linkGroupDto);
         }
 
         return linkMapperImpl.toDto(savedLink);
@@ -84,12 +82,11 @@ public class LinkServiceImpl implements LinkService {
         }
         link.update(linkDto);
 
-        if(groupIds != null){
-            linkGroupService.deleteLinkGroupByLinkId(link.getId());
-            for(Long groupId : groupIds){
-                LinkGroupDto linkGroupDto = LinkGroupDto.builder().groupId(groupId).linkId(link.getId()).build();
-                linkGroupService.saveLinkGroup(linkGroupDto);
-            }
+        // 링크와 연결된 그룹 모두 삭제 후 재저장 작업
+        linkGroupService.deleteLinkGroupByLinkId(link.getId());
+        for(Long groupId : groupIds){
+            LinkGroupDto linkGroupDto = LinkGroupDto.builder().groupId(groupId).linkId(link.getId()).build();
+            linkGroupService.saveLinkGroup(linkGroupDto);
         }
 
         return linkMapperImpl.toDto(link);
