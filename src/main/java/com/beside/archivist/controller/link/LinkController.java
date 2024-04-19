@@ -41,17 +41,19 @@ public class LinkController {
 
     /** 특정 링크 상세 조회 **/
     @GetMapping("/link/{linkId}")
-    public ResponseEntity<?> findLinkById(@PathVariable("linkId") Long id) {
-        LinkDto link = linkServiceImpl.findLinkById(id);
-        List<Group> groupList = linkServiceImpl.getGroupsByLinkId(id);
+    public ResponseEntity<?> findLinkById(@PathVariable("linkId") Long linkId) {
+        LinkDto link = linkServiceImpl.findLinkById(linkId);
+        List<Group> groupList = linkServiceImpl.getGroupsByLinkId(linkId);
 
+        // todo: LinkDto 와 용도 구분 혹은 정리 필요 (#199)
         LinkInfoDto linkInfoDto = LinkInfoDto.builder()
                 .linkId(link.getLinkId())
                 .linkUrl(link.getLinkUrl())
                 .linkName(link.getLinkName())
                 .linkDesc(link.getLinkDesc())
-                .imgUrl(link.getLinkUrl())
-                .groupList(groupList)
+                .imgUrl(link.getImgUrl())
+                .userId(link.getUserId())
+                .groupList(groupList) // todo: 양방향 순환 참조로 예외 발생 (#200)
                 .build();
 
         return ResponseEntity.ok().body(linkInfoDto);
