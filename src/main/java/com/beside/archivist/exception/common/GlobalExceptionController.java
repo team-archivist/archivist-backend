@@ -163,10 +163,10 @@ public class GlobalExceptionController {
   
     /** VALID_001 필수 값 체크 **/
     @ExceptionHandler(MissingServletRequestPartException.class)
-    protected ResponseEntity<ExceptionDto> handlerRequestPartMissingException() {
+    protected ResponseEntity<ExceptionDto> handlerRequestPartMissingException(MissingServletRequestPartException e) {
         final ExceptionDto responseError = ExceptionDto.builder()
                 .statusCode(ExceptionCode.REQUEST_PART_MISSING.getStatus().value())
-                .message(ExceptionCode.REQUEST_PART_MISSING.getMessage())
+                .message(ExceptionCode.REQUEST_PART_MISSING.getMessageWithParameter(e.getRequestPartName()))
                 .build();
         return ResponseEntity.status(responseError.getStatusCode()).body(responseError);
     }
