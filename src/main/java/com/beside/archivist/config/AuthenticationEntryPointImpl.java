@@ -15,6 +15,13 @@ import java.io.IOException;
 @Component
 public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
 
+    /**
+     * 인증을 요구하는 API 에서 토큰이 없거나 JWT 가 아닌 경우
+     * @param request that resulted in an <code>AuthenticationException</code>
+     * @param response so that the user agent can begin authentication
+     * @param authException that caused the invocation
+     * @throws IOException
+     */
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
@@ -22,8 +29,8 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
         response.setContentType("application/json; charset=UTF-8");
 
         final ExceptionDto exceptionDto = ExceptionDto.builder()
-                .statusCode(ExceptionCode.INVALID_TOKEN.getStatus().value())
-                .message(ExceptionCode.INVALID_TOKEN.getMessage())
+                .statusCode(ExceptionCode.MISSING_AUTHENTICATION.getStatus().value())
+                .message(ExceptionCode.MISSING_AUTHENTICATION.getMessage())
                 .build();
 
         response.getWriter().write(mapper.writeValueAsString(exceptionDto));
