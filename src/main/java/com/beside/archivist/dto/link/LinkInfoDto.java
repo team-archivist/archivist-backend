@@ -21,10 +21,10 @@ public class LinkInfoDto {
     private String imgUrl;
     private Long userId;
 
-    private List<Group> groupList;
+    private List<Long> groupList;
 
     @Builder
-    public LinkInfoDto(Long linkId, String linkUrl, String linkName, String linkDesc, String imgUrl, Long userId,List<Group> groupList) {
+    public LinkInfoDto(Long linkId, String linkUrl, String linkName, String linkDesc, String imgUrl, Long userId,List<Long> groupList) {
         this.linkId = linkId;
         this.linkUrl = linkUrl;
         this.linkName = linkName.trim();
