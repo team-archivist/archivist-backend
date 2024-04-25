@@ -34,7 +34,6 @@ public class UserController {
 
     private final KakaoService kakaoServiceImpl;
     private final UserService userServiceImpl;
-    private final UserImgService userImgServiceImpl;
     private final JwtTokenUtil jwtTokenUtil;
 
     /** 카카오 로그인 - JWT 발급 */
@@ -74,9 +73,6 @@ public class UserController {
     @GetMapping("/user")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     public ResponseEntity<?> getUserInfo(Authentication authentication) {
-        if (authentication == null){
-            throw new MissingAuthenticationException(ExceptionCode.MISSING_AUTHENTICATION);
-        }
         UserInfoDto userInfo = userServiceImpl.getUserInfo(authentication.getName());
         return ResponseEntity.ok().body(userInfo);
     }
