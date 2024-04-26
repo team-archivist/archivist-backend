@@ -71,20 +71,29 @@ class LinkControllerTest {
         User savedUser = createUser("gudwls@test.com");
         String token = jwtTokenUtil.generateToken(savedUser.getEmail());
         LinkDto linkDto = createLinkRequest("www.naver.com","링크명", "링크설명");
-        Long[] groupIds = {1L, 2L};
+
+        Long[] groupIds = {};
 
         // 요청 값이 @RequestPart 로 설정되어있기 때문에 MockMultipartFile 로 요청
         MockMultipartFile linkDtoFile = new MockMultipartFile(
                 "linkDto",
-                "123",
+                "",
                 "application/json",
                 objectMapper.writeValueAsBytes(linkDto)
+        );
+
+        // 요청 값이 @RequestPart 로 설정되어있기 때문에 MockMultipartFile 로 요청
+        MockMultipartFile groupIdFile = new MockMultipartFile(
+                "groupId",
+                "",
+                "application/json",
+                objectMapper.writeValueAsBytes(groupIds)
         );
 
         // when // then
         mockMvc.perform(MockMvcRequestBuilders.multipart("/link")
                         .file(linkDtoFile)
-                        .param("groupId", "1", "2") // groupId 파라미터 추가
+                        .file(groupIdFile)
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andDo(MockMvcResultHandlers.print())
@@ -97,5 +106,41 @@ class LinkControllerTest {
         ;
     }
 
+    @Test
+    @DisplayName("유효한 링크URL 이어야 한다.")
+    void registerInvalidUrlLinkTest() throws Exception {
+        // given
+        User savedUser = createUser("gudwls@test.com");
+        String token = jwtTokenUtil.generateToken(savedUser.getEmail());
+
+
+        // when // then
+        mockMvc.perform(MockMvcRequestBuilders.get("/link/valid")
+                        .param("url","www.naver.sdfcom" )
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(jsonPath("$").value("Invalid URL"))
+
+        ;
+    }
+
+    @Test
+    @DisplayName("링크 상세정보를 조회한다.")
+    void retrieveLinkTest() throws Exception {
+        // given
+        User savedUser = createUser("gudwls@test.com");
+        String token = jwtTokenUtil.generateToken(savedUser.getEmail());
+
+
+        // when // then
+        mockMvc.perform(MockMvcRequestBuilders.get("/link/{linkId}",3)
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.linkId").exists())
+        ;
+    }
 
 }
