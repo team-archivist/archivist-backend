@@ -24,24 +24,19 @@ public class LinkImgServiceImpl implements LinkImgService {
 
     @Override
     public LinkImg saveLinkImg(LinkImg linkImg) {
-        return linkImgRepository.save(linkImg);
+        LinkImg savedLinkImg = linkImgRepository.save(linkImg);
+        savedLinkImg.getLink().saveLinkImg(savedLinkImg);
+        return savedLinkImg;
     }
 
+    @Override
     public LinkImg insertLinkImg(LinkImg linkImg,MultipartFile linkImgFile) {
-        if(linkImgFile != null){
+        String oriImgName = linkImgFile.getOriginalFilename();
+        String imgName = fileService.uploadFile(linkImgLocation, linkImgFile);
+        String imgUrl = "/images/links/"+imgName;
+        linkImg.updateLinkImg(imgName,oriImgName,imgUrl);
 
-            String oriImgName = linkImgFile.getOriginalFilename();
-            String imgName = fileService.uploadFile(linkImgLocation, linkImgFile);
-            String imgUrl = "/images/links/"+imgName;
-            return linkImgRepository.save(LinkImg.builder()
-                    .oriImgName(oriImgName)
-                    .imgName(imgName)
-                    .imgUrl(imgUrl)
-                    .link(linkImg.getLink())
-                    .build());
-        }else {
-            return null;
-        }
+        return saveLinkImg(linkImg);
     }
 
     @Override

@@ -1,14 +1,17 @@
 package com.beside.archivist.config.filters;
 
 import com.beside.archivist.exception.common.ExceptionCode;
+import com.beside.archivist.exception.users.InvalidTokenException;
 import com.beside.archivist.exception.users.TokenExpiredException;
 import com.beside.archivist.service.users.UserService;
 import com.beside.archivist.utils.JwtTokenUtil;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,6 +25,7 @@ import java.io.IOException;
 import java.util.Collections;
 
 @Component
+@Slf4j
 public class JwtRequestFilter extends OncePerRequestFilter {
     private final UserService userServiceImpl;
     private final JwtTokenUtil jwtTokenUtil;
@@ -56,12 +60,16 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     }
                 }
             } catch (ExpiredJwtException e) {
+                log.warn("토큰이 만료되었습니다.");
                 throw new TokenExpiredException(ExceptionCode.TOKEN_EXPIRED);
+            } catch (SignatureException e){
+                log.warn("토큰에 대한 회원 정보가 존재하지 않습니다.");
+                throw new InvalidTokenException(ExceptionCode.INVALID_TOKEN);
             } catch (Exception e) {
-                logger.warn(e.getMessage());
+                log.warn(e.getMessage());
             }
         } else {
-            logger.warn("JWT Token does not begin with Bearer String");
+            log.warn("JWT Token does not begin with Bearer String");
         }
         chain.doFilter(request,response);
     }

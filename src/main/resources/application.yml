@@ -32,6 +32,7 @@ logging:
           descriptor:
             sql: trace
 
+
 # p6spy 설정
 decorator:
   datasource:
@@ -59,6 +60,11 @@ spring:
       ddl-auto: update
     database-platform: org.hibernate.dialect.MySQLDialect
 
+  redis:
+    host: localhost
+    port: 6379
+    password: beside17
+
 # 이미지 경로 설정
 userImgLocation: C:/images/users
 linkImgLocation: C:/images/links
@@ -80,6 +86,10 @@ spring:
     hibernate:
       ddl-auto: update
     database-platform: org.hibernate.dialect.MySQLDialect
+  redis:
+    host: 223.130.128.93
+    port: 6379
+    password: beside17
 
 # 이미지 경로 설정
 userImgLocation: /mnt/xvdb1/images/users
@@ -102,6 +112,11 @@ spring:
     hibernate:
       ddl-auto: create
     database-platform: org.hibernate.dialect.MySQLDialect
+  redis:
+    host: 223.130.128.93
+    port: 6379
+    password: beside17
+
 # 이미지 경로 설정
 userImgLocation: C:/images/users
 linkImgLocation: C:/images/links
