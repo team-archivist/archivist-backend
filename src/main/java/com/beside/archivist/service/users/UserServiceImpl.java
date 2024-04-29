@@ -92,7 +92,7 @@ public class UserServiceImpl implements UserService {
     public Optional<User> getUserFromRedis(String email) {
         // Redis에서 해당 이메일을 키로 하는 사용자 정보 조회
         return userRedisRepository.findById(email)
-                .map(users -> new User(users.getEmail(), users.getPassword(), users.getNickname(), users.getCategories(), users.getUserImg()));
+                .map(users -> new User(users.getEmail(), users.getPassword(), users.getNickname(), users.getCategories()));
     }
 
     public void saveUserToRedis(User user) {

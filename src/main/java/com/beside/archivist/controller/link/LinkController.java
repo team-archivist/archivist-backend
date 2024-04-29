@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.apache.commons.validator.routines.UrlValidator;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -45,7 +46,6 @@ public class LinkController {
         LinkDto link = linkServiceImpl.findLinkById(linkId);
         List<Group> groupList = linkServiceImpl.getGroupsByLinkId(linkId);
 
-        // todo: LinkDto 와 용도 구분 혹은 정리 필요 (#199)
         LinkInfoDto linkInfoDto = LinkInfoDto.builder()
                 .linkId(link.getLinkId())
                 .linkUrl(link.getLinkUrl())
@@ -53,7 +53,7 @@ public class LinkController {
                 .linkDesc(link.getLinkDesc())
                 .imgUrl(link.getImgUrl())
                 .userId(link.getUserId())
-                .groupList(groupList) // todo: 양방향 순환 참조로 예외 발생 (#200)
+                .groupList(groupList.stream().map(Group::getId).collect(Collectors.toList()))
                 .build();
 
         return ResponseEntity.ok().body(linkInfoDto);
