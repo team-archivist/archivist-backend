@@ -51,7 +51,7 @@ public class Group extends BaseEntity {
     public Group(String groupName, String groupDesc, String isGroupPublic, List<Category> categories, Long linkCount, List<LinkGroup> links) {
         this.groupName = groupName;
         this.groupDesc = groupDesc;
-        this.isGroupPublic = isGroupPublic == null ? "Y" : "N";
+        this.isGroupPublic = isGroupPublic == null ? "Y" : isGroupPublic;
         this.categories = categories;
         this.linkCount = linkCount;
         this.links = links;
