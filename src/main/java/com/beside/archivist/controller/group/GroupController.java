@@ -1,7 +1,7 @@
 package com.beside.archivist.controller.group;
 
 import com.beside.archivist.dto.group.GroupDto;
-import com.beside.archivist.dto.link.LinkDto;
+import com.beside.archivist.dto.link.LinkInfoDto;
 import com.beside.archivist.exception.common.ExceptionCode;
 import com.beside.archivist.exception.users.MissingAuthenticationException;
 import com.beside.archivist.service.usergroup.UserGroupService;
@@ -78,7 +78,7 @@ public class GroupController {
     /** 특정 그룹에 속한 링크들 모두 조회 **/
     @GetMapping("/group/link/{groupId}")
     public ResponseEntity<?> getLinksByGroupId(@PathVariable("groupId") Long id) {
-        List<LinkDto> group = groupServiceImpl.getLinksByGroupId(id);
+        List<LinkInfoDto> group = groupServiceImpl.getLinksByGroupId(id);
         return ResponseEntity.ok().body(group);
     }
 }

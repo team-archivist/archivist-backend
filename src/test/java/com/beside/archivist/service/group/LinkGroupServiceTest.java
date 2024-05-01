@@ -2,6 +2,7 @@ package com.beside.archivist.service.group;
 
 import com.beside.archivist.dto.group.GroupDto;
 import com.beside.archivist.dto.link.LinkDto;
+import com.beside.archivist.dto.link.LinkInfoDto;
 import com.beside.archivist.entity.group.Group;
 import com.beside.archivist.entity.link.Link;
 import com.beside.archivist.entity.users.Category;
@@ -96,7 +97,7 @@ class LinkGroupServiceTest {
                 String.valueOf(MediaType.IMAGE_JPEG),
                 "Spring!".getBytes()
         );
-        LinkDto savedLinkDto = linkServiceImpl.saveLink(createLinkDto(),
+        LinkInfoDto savedLinkDto = linkServiceImpl.saveLink(createLinkDto(),
                 new Long[]{savedGroupDto.getGroupId()}, savedUser.getEmail(),linkImg);
 
         // when
