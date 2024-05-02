@@ -12,6 +12,6 @@ import java.util.Optional;
 @Repository
 public interface GroupRepository extends JpaRepository<Group,Long> {
 
-    @Query("SELECT g FROM Group g LEFT JOIN FETCH g.links WHERE g.id = :groupId")
+    @Query("SELECT g FROM Group g LEFT JOIN FETCH g.linkGroups WHERE g.id = :groupId")
     Optional<Group> findByIdWithLinks(@Param("groupId") Long groupId);
 }

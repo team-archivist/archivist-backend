@@ -28,13 +28,10 @@ import java.util.Optional;
 public class LinkGroupServiceImpl implements LinkGroupService {
 
     private final LinkGroupRepository linkGroupRepository;
-
+    private final LinkRepository linkRepository;
+    private final GroupRepository groupRepository;
     private final LinkGroupMapper linkGroupMapperImpl;
     private final GroupService groupServiceImpl;
-
-    private final LinkRepository linkRepository; // 서비스 구현체 가져와주세요! ( 비즈니스 로직과 데이터 접근 로직을 분리하기 위함 )
-
-    private final GroupRepository groupRepository; // 서비스 구현체 가져와주세요! ( 비즈니스 로직과 데이터 접근 로직을 분리하기 위함 )
 
     @Override
     public LinkGroup getLinkGroupById(Long linkGroupId) {
@@ -44,15 +41,22 @@ public class LinkGroupServiceImpl implements LinkGroupService {
 
     @Override
     public LinkGroupDto saveLinkGroup(LinkGroupDto linkGroupDto)  {
-        Optional<Link> link = linkRepository.findById(linkGroupDto.getLinkId());
-        Optional<Group> group = groupRepository.findById(linkGroupDto.getGroupId());
+        Link link = linkRepository.findById(linkGroupDto.getLinkId()).orElseThrow(
+                () -> new LinkInGroupNotFoundException(ExceptionCode.LINK_NOT_FOUND));
+        Group group = groupRepository.findById(linkGroupDto.getGroupId()).orElseThrow(
+                () -> new LinkInGroupNotFoundException(ExceptionCode.GROUP_NOT_FOUND));
 
         LinkGroup linkGroup = LinkGroup.builder()
-                .link(link.orElseThrow(() -> new LinkNotFoundException(ExceptionCode.LINK_NOT_FOUND)))
-                .group(group.orElseThrow(() -> new GroupNotFoundException(ExceptionCode.GROUP_NOT_FOUND)))
+                .link(link)
+                .group(group)
                 .build();
-        linkGroupRepository.save(linkGroup);
-        return linkGroupMapperImpl.toDto(linkGroup);
+
+        // 양방향 저장
+        LinkGroup savedLinkGroup = linkGroupRepository.save(linkGroup);
+        savedLinkGroup.getGroup().addLinkGroup(savedLinkGroup);
+        savedLinkGroup.getLink().addLinkGroup(savedLinkGroup);
+
+        return linkGroupMapperImpl.toDto(savedLinkGroup);
     }
 
     @Override

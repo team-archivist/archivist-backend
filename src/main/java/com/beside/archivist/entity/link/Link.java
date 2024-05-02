@@ -60,4 +60,7 @@ public class Link extends BaseEntity {
     public void saveLinkImg(LinkImg linkImg){
         this.linkImg = linkImg;
     }
+    public void addLinkGroup(LinkGroup linkGroup) {
+        this.linkGroups.add(linkGroup);
+    }
 }
