@@ -20,7 +20,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.Instant;
 import java.util.*;
 
 @Service
@@ -79,25 +78,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserInfoDto getUserInfo(String email) {
-        User findUser = getUserFromRedis(email)
+
+        return getUserFromRedis(email)
                 .orElseGet(() -> {
                     User user = getUserByEmail(email);
                     saveUserToRedis(user);
-                    return user;
+                    return userMapperImpl.toDto(user);
                 });
-
-        return userMapperImpl.toDto(findUser);
     }
 
-    public Optional<User> getUserFromRedis(String email) {
+    public Optional<UserInfoDto> getUserFromRedis(String email) {
         // Redis에서 해당 이메일을 키로 하는 사용자 정보 조회
         return userRedisRepository.findById(email)
-                .map(users -> new User(users.getEmail(), users.getPassword(), users.getNickname(), users.getCategories(), users.getUserImg()));
+                .map(users -> UserInfoDto.builder().email(users.getEmail()).nickname(users.getNickname()).categories(users.getCategories()).imgUrl(users.getImgUrl()).userId(users.getUserId()).build());
     }
 
     public void saveUserToRedis(User user) {
         // Redis에 사용자 정보 저장
-        Users users = new Users(user.getEmail(), user.getNickname(), user.getPassword(), user.getCategories(), user.getUserImg());
+        Users users = new Users(user.getEmail(), user.getNickname(), user.getPassword(), user.getCategories(), user.getUserImg().getImgUrl(), user.getId());
         userRedisRepository.save(users);
     }
 
