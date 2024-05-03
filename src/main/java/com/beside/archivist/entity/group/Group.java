@@ -41,20 +41,20 @@ public class Group extends BaseEntity {
     private GroupImg groupImg;
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
-    private List<LinkGroup> links = new ArrayList<>();
+    private List<LinkGroup> linkGroups = new ArrayList<>();
 
     @OneToMany(mappedBy = "groups", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserGroup> userGroups = new ArrayList<>();
 
 
     @Builder
-    public Group(String groupName, String groupDesc, String isGroupPublic, List<Category> categories, Long linkCount, List<LinkGroup> links) {
+    public Group(String groupName, String groupDesc, String isGroupPublic, List<Category> categories, Long linkCount, List<LinkGroup> linkGroups) {
         this.groupName = groupName;
         this.groupDesc = groupDesc;
         this.isGroupPublic = isGroupPublic == null ? "Y" : isGroupPublic;
         this.categories = categories;
         this.linkCount = linkCount;
-        this.links = links;
+        this.linkGroups = linkGroups;
     }
     public void update(GroupDto groupDto) {
         this.groupName = groupDto.getGroupName();
@@ -66,6 +66,9 @@ public class Group extends BaseEntity {
 
     public void addUserGroup(UserGroup userGroup) {
         this.userGroups.add(userGroup);
+    }
+    public void addLinkGroup(LinkGroup linkGroup) {
+        this.linkGroups.add(linkGroup);
     }
     public void saveGroupImg(GroupImg groupImg){
         this.groupImg = groupImg;
