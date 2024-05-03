@@ -4,7 +4,6 @@ import com.beside.archivist.dto.users.UserDto;
 import com.beside.archivist.dto.users.UserInfoDto;
 import com.beside.archivist.entity.users.Category;
 import com.beside.archivist.entity.users.User;
-import com.beside.archivist.entity.users.UserImg;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,7 +28,7 @@ public interface UserService extends UserDetailsService {
     List<String> getNicknames();
 
     /* 레디스 캐싱 */
-    Optional<User> getUserFromRedis(String email);
+    Optional<UserInfoDto> getUserFromRedis(String email);
     void saveUserToRedis(User user);
 
     String maskEmail(String email);

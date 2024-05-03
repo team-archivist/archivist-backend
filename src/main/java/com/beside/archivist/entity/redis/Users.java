@@ -18,14 +18,16 @@ public class Users {
     private String nickname; // 변경 가능
     private String password; // 임의 지정
     List<Category> categories;
-    UserImg userImg;
+    private String imgUrl;
+    private Long userId;
 
 
-    public Users(String email, String nickname, String password, List<Category> categories, UserImg userImg) {
+    public Users(String email, String nickname, String password, List<Category> categories, String imgUrl, Long userId) {
         this.email = email;
         this.nickname = nickname;
         this.password = password;
         this.categories = categories;
-        this.userImg = userImg;
+        this.imgUrl = imgUrl;
+        this.userId = userId;
     }
 }
