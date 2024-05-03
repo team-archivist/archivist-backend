@@ -3,10 +3,7 @@ package com.beside.archivist.config;
 import com.beside.archivist.config.filters.JwtExceptionFilter;
 import com.beside.archivist.config.filters.JwtRequestFilter;
 import com.beside.archivist.service.users.UserService;
-import com.beside.archivist.utils.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -46,7 +43,7 @@ public class SecurityConfig{
         http
                 .authorizeHttpRequests(
                         request -> request
-                                .requestMatchers("/user").permitAll() // Controller 에서 인증
+                                .requestMatchers(HttpMethod.POST, "/user").permitAll() // Controller 에서 인증
                                 .requestMatchers("/user/**").authenticated()
                                 .requestMatchers(HttpMethod.GET, "/link/{linkId}").permitAll()
                                 .requestMatchers("/link","/link/{linkId}").authenticated()
