@@ -2,6 +2,7 @@ package com.beside.archivist.service.group;
 
 import com.beside.archivist.dto.group.GroupDto;
 import com.beside.archivist.dto.link.LinkDto;
+import com.beside.archivist.dto.link.LinkInfoDto;
 import com.beside.archivist.entity.group.Group;
 import com.beside.archivist.entity.group.GroupImg;
 import com.beside.archivist.entity.link.LinkImg;
@@ -132,17 +133,19 @@ public class GroupServiceImpl implements GroupService {
      * @return List<LinkDto>
      */
     @Override
-    public List<LinkDto> getLinksByGroupId(Long groupId){
-        Optional<Group> groupList = groupRepository.findByIdWithLinks(groupId);
-
-        return groupList.orElseThrow(() -> new GroupNotFoundException(ExceptionCode.GROUP_NOT_FOUND))
-                .getLinks().stream()
-                .map(m-> new LinkDto(m.getLink().getId(),
-                        m.getLink().getLinkUrl(),
-                        m.getLink().getLinkName(),
-                        m.getLink().getLinkDesc(),
-                        m.getLink().getLinkImg().getImgUrl(),
-                        m.getLink().getUsers().getId())
+    public List<LinkInfoDto> getLinksByGroupId(Long groupId){
+        Group findGroup = groupRepository.findByIdWithLinks(groupId)
+                .orElseThrow(() -> new GroupNotFoundException(ExceptionCode.GROUP_NOT_FOUND));
+        return findGroup.getLinkGroups()
+                .stream()
+                .map(m-> LinkInfoDto.builder()
+                            .linkId(m.getLink().getId())
+                            .linkName(m.getLink().getLinkName())
+                            .linkDesc(m.getLink().getLinkDesc())
+                            .linkUrl(m.getLink().getLinkUrl())
+                            .imgUrl(m.getLink().getLinkImg().getImgUrl())
+                            .userId(m.getLink().getUsers().getId())
+                            .build()
                 ).toList();
     }
 }

@@ -2,7 +2,6 @@ package com.beside.archivist.controller.link;
 
 import com.beside.archivist.dto.link.LinkDto;
 import com.beside.archivist.dto.link.LinkInfoDto;
-import com.beside.archivist.entity.group.Group;
 import com.beside.archivist.exception.common.ExceptionCode;
 import com.beside.archivist.exception.users.MissingAuthenticationException;
 import com.beside.archivist.service.group.LinkGroupService;
@@ -21,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.apache.commons.validator.routines.UrlValidator;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @RestController
@@ -35,27 +33,15 @@ public class LinkController {
     /** 회원이 저장한 링크 모두 조회 **/
     @GetMapping("/user/link/{userId}")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
-    public ResponseEntity<List<LinkDto>> getUserLinkList(@PathVariable("userId") Long userId) {
-        List<LinkDto> links = linkServiceImpl.getLinksByUserId(userId);
+    public ResponseEntity<List<LinkInfoDto>> getUserLinkList(@PathVariable("userId") Long userId) {
+        List<LinkInfoDto> links = linkServiceImpl.getLinksByUserId(userId);
         return ResponseEntity.ok().body(links);
     }
 
     /** 특정 링크 상세 조회 **/
     @GetMapping("/link/{linkId}")
     public ResponseEntity<?> findLinkById(@PathVariable("linkId") Long linkId) {
-        LinkDto link = linkServiceImpl.findLinkById(linkId);
-        List<Group> groupList = linkServiceImpl.getGroupsByLinkId(linkId);
-
-        LinkInfoDto linkInfoDto = LinkInfoDto.builder()
-                .linkId(link.getLinkId())
-                .linkUrl(link.getLinkUrl())
-                .linkName(link.getLinkName())
-                .linkDesc(link.getLinkDesc())
-                .imgUrl(link.getImgUrl())
-                .userId(link.getUserId())
-                .groupList(groupList.stream().map(Group::getId).collect(Collectors.toList()))
-                .build();
-
+        LinkInfoDto linkInfoDto = linkServiceImpl.findLinkById(linkId);
         return ResponseEntity.ok().body(linkInfoDto);
     }
 
@@ -85,7 +71,7 @@ public class LinkController {
             throw new MissingAuthenticationException(ExceptionCode.MISSING_AUTHENTICATION);
         }
 
-        LinkDto savedLink = linkServiceImpl.saveLink(linkDto,groupIds,authentication.getName(),linkImgFile);
+        LinkInfoDto savedLink = linkServiceImpl.saveLink(linkDto,groupIds,authentication.getName(),linkImgFile);
         linkGroupServiceImpl.changeGroupImgArray(groupIds);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(savedLink);
@@ -98,7 +84,7 @@ public class LinkController {
                                             @RequestPart @Valid LinkDto linkDto,
                                             @RequestPart(value = "groupId") Long[] groupIds,
                                             @RequestPart(value = "linkImgFile", required = false) MultipartFile linkImgFile) {
-        LinkDto updatedLink = linkServiceImpl.updateLink(linkId, linkDto, groupIds, linkImgFile);
+        LinkInfoDto updatedLink = linkServiceImpl.updateLink(linkId, linkDto, groupIds, linkImgFile);
         return ResponseEntity.ok().body(updatedLink);
     }
 

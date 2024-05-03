@@ -1,10 +1,9 @@
 package com.beside.archivist.service.group;
 
 import com.beside.archivist.dto.group.GroupDto;
-import com.beside.archivist.dto.link.LinkDto;
+import com.beside.archivist.dto.link.LinkInfoDto;
 import com.beside.archivist.entity.group.Group;
 import com.beside.archivist.entity.link.LinkImg;
-import com.beside.archivist.entity.usergroup.UserGroup;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,7 +18,7 @@ public interface GroupService {
     GroupDto updateGroup(Long groupId, GroupDto groupDto, MultipartFile groupImgFile);
     Group getGroup(Long groupId);
     void deleteGroup(Long groupId);
-    List<LinkDto> getLinksByGroupId(Long groupId);
+    List<LinkInfoDto> getLinksByGroupId(Long groupId);
 
     void changeToLinkImg(Long groupId, LinkImg linkImg);
 }

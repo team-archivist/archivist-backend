@@ -2,6 +2,7 @@ package com.beside.archivist.service.link;
 
 import com.beside.archivist.dto.group.LinkGroupDto;
 import com.beside.archivist.dto.link.LinkDto;
+import com.beside.archivist.dto.link.LinkInfoDto;
 import com.beside.archivist.entity.group.Group;
 import com.beside.archivist.entity.group.LinkGroup;
 import com.beside.archivist.entity.link.Link;
@@ -44,7 +45,7 @@ public class LinkServiceImpl implements LinkService {
     private final UserRepository userRepository;
 
     @Override
-    public LinkDto saveLink(LinkDto linkDto, Long[] groupIds, String email, MultipartFile linkImgFile)  {
+    public LinkInfoDto saveLink(LinkDto linkDto, Long[] groupIds, String email, MultipartFile linkImgFile)  {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(ExceptionCode.USER_NOT_FOUND));
 
         Link savedLink = linkRepository.save(
@@ -64,7 +65,7 @@ public class LinkServiceImpl implements LinkService {
             linkImgService.saveLinkImg(linkImg);
         }
 
-//        linkGroupService.deleteLinkGroupByLinkId(savedLink.getId());
+        // 요청 받은 그룹에 모두 링크 연결
         for(Long groupId : groupIds){
             LinkGroupDto linkGroupDto = LinkGroupDto.builder().groupId(groupId).linkId(savedLink.getId()).build();
             linkGroupService.saveLinkGroup(linkGroupDto);
@@ -74,7 +75,7 @@ public class LinkServiceImpl implements LinkService {
     }
 
     @Override
-    public LinkDto updateLink(Long linkId, LinkDto linkDto, Long[] groupIds, MultipartFile linkImgFile) {
+    public LinkInfoDto updateLink(Long linkId, LinkDto linkDto, Long[] groupIds, MultipartFile linkImgFile) {
         Link link = linkRepository.findById(linkId).orElseThrow(() -> new LinkNotFoundException(ExceptionCode.LINK_NOT_FOUND));
 
         if(linkImgFile != null){
@@ -97,14 +98,14 @@ public class LinkServiceImpl implements LinkService {
         linkRepository.deleteById(linkId);
     }
     @Override
-    public LinkDto findLinkById(Long linkId){
+    public LinkInfoDto findLinkById(Long linkId){
         // 특정 북마크 ID에 해당하는 북마크 조회
         Link link = linkRepository.findById(linkId).orElseThrow(() -> new LinkNotFoundException(ExceptionCode.LINK_NOT_FOUND));
 
         return linkMapperImpl.toDto(link);
     }
     @Override
-    public List<LinkDto> getLinksByUserId(Long userId){
+    public List<LinkInfoDto> getLinksByUserId(Long userId){
         // 특정 사용자 ID에 해당하는 북마크 목록 조회
         List<Link> linkList = linkRepository.findByUsers_Id(userId);
 
