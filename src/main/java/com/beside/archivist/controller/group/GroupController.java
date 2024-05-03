@@ -28,24 +28,22 @@ public class GroupController {
     private final GroupService groupServiceImpl;
     private final UserGroupService userGroupServiceImpl;
 
-    /** 특정 유저가 생성한 모든 그룹 조회 **/
     @GetMapping("/user/group/{userId}")
-    @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
+    @Operation(security = { @SecurityRequirement(name = "bearerAuth") }, summary = "해당 유저의 모든 그룹 조회 API")
     public ResponseEntity<List<GroupDto>> getUserGroupList(@PathVariable("userId") Long userId) {
         List<GroupDto> groups = userGroupServiceImpl.getGroupDtoByUserId(userId, true);
         return ResponseEntity.ok().body(groups);
     }
 
-    /** 특정 그룹 상세 조회 **/
     @GetMapping("/group/{groupId}")
+    @Operation(summary = "특정 그룹 상세 조회 API")
     public ResponseEntity<?> findGroupById(@PathVariable("groupId") Long id) {
         GroupDto group = groupServiceImpl.findGroupById(id);
         return ResponseEntity.ok().body(group);
     }
 
-    /** 그룹 생성 **/
     @PostMapping("/group")
-    @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
+    @Operation(security = { @SecurityRequirement(name = "bearerAuth") }, summary = "그룹 생성 API")
     public ResponseEntity<?> registerGroup(@RequestPart @Valid GroupDto groupDto, Authentication authentication,
                                               @RequestPart(value = "groupImgFile", required = false) MultipartFile groupImgFile) {
         if (authentication == null){
@@ -57,9 +55,8 @@ public class GroupController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedGroup);
     }
 
-    /** 그룹 수정 **/
     @PatchMapping ("/group/{groupId}")
-    @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
+    @Operation(security = { @SecurityRequirement(name = "bearerAuth") }, summary = "그룹 수정 API")
     public ResponseEntity<?> updateGroup(@PathVariable("groupId") Long groupId,
                                             @RequestPart @Valid GroupDto groupDto,
                                             @RequestPart(value = "groupImgFile", required = false) MultipartFile groupImgFile) {
@@ -67,16 +64,15 @@ public class GroupController {
         return ResponseEntity.ok().body(updatedGroup);
     }
 
-    /** 그룹 삭제 **/
     @DeleteMapping("/group/{groupId}")
-    @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
+    @Operation(security = { @SecurityRequirement(name = "bearerAuth") }, summary = "그룹 삭제 API")
     public ResponseEntity<?> deleteGroup(@PathVariable("groupId") Long groupId){
         groupServiceImpl.deleteGroup(groupId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    /** 특정 그룹에 속한 링크들 모두 조회 **/
     @GetMapping("/group/link/{groupId}")
+    @Operation(summary = "특정 그룹에 속한 링크들 모두 조회 API")
     public ResponseEntity<?> getLinksByGroupId(@PathVariable("groupId") Long id) {
         List<LinkInfoDto> group = groupServiceImpl.getLinksByGroupId(id);
         return ResponseEntity.ok().body(group);

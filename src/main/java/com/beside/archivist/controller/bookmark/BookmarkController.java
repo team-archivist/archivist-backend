@@ -21,9 +21,8 @@ public class BookmarkController {
     private final UserGroupService userGroupServiceImpl;
     private final UserService userServiceImpl;
 
-    /** 다른 회원의 그룹 북마크 하기 **/
     @PostMapping("/bookmark/{groupId}")
-    @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
+    @Operation(security = { @SecurityRequirement(name = "bearerAuth") },summary = "다른 회원의 그룹 북마크 API")
     public ResponseEntity<?> bookmarkGroup(@PathVariable("groupId") Long groupId,Authentication authentication) {
         if (authentication == null){
             throw new MissingAuthenticationException(ExceptionCode.MISSING_AUTHENTICATION);
@@ -32,17 +31,15 @@ public class BookmarkController {
         return ResponseEntity.status(HttpStatus.CREATED).body("북마크가 완료되었습니다.");
     }
 
-    /** 내가 북마크한 그룹 모두 조회하기 **/
     @GetMapping("/user/bookmark/{userId}")
-    @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
+    @Operation(security = { @SecurityRequirement(name = "bearerAuth")}, summary = "내가 북마크한 그룹 모두 조회 API")
     public ResponseEntity<?> getBookmarks(@PathVariable("userId") Long userId) {
         List<GroupDto> groups = userGroupServiceImpl.getGroupDtoByUserId(userId, false);
         return ResponseEntity.ok().body(groups);
     }
 
-    /** 내가 북마크한 그룹에서 제거하기 **/
     @DeleteMapping("/bookmark/{groupId}")
-    @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
+    @Operation(security = { @SecurityRequirement(name = "bearerAuth") }, summary = "내가 북마크한 그룹에서 제거 API")
     public ResponseEntity<?> deleteBookmark(@PathVariable("groupId") Long groupId, Authentication authentication) {
         Long userId = userServiceImpl.getUserByEmail(authentication.getName()).getId();
         userGroupServiceImpl.deleteBookmark(userId, groupId);
