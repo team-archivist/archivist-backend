@@ -36,8 +36,8 @@ public class UserController {
     private final UserService userServiceImpl;
     private final JwtTokenUtil jwtTokenUtil;
 
-    /** 카카오 로그인 - JWT 발급 */
     @PostMapping("/login/kakao")
+    @Operation(summary = "JWT 발급 API", description = "카카오 로그인 후 성공 시 JWT 을 발급합니다.")
     public ResponseEntity<?> callback(@RequestParam("code") String code){
         String accessToken = kakaoServiceImpl.getAccessTokenFromKakao(code);
         KakaoLoginDto response = kakaoServiceImpl.getUserInfo(accessToken);
@@ -56,9 +56,8 @@ public class UserController {
         return ResponseEntity.ok().body("BE로 문의 주세요");
     }
 
-    /** 회원 정보 저장 **/
     @PostMapping("/user")
-    @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
+    @Operation(security = { @SecurityRequirement(name = "bearerAuth") }, summary = "회원 정보 저장 API")
     public ResponseEntity<?> registerUser(@RequestBody @Valid UserDto userDto, @RequestHeader("Authorization") String tokenHeader) {
         // 토큰에서 추출한 이메일과 요청받은 이메일이 다를 경우 예외 발생
         String emailFromToken = jwtTokenUtil.getUsernameFromToken(tokenHeader.substring(7));
@@ -69,17 +68,15 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 
-    /** 회원 정보 조회 **/
     @GetMapping("/user")
-    @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
+    @Operation(security = { @SecurityRequirement(name = "bearerAuth") }, summary = "회원 정보 조회 API")
     public ResponseEntity<?> getUserInfo(Authentication authentication) {
         UserInfoDto userInfo = userServiceImpl.getUserInfo(authentication.getName());
         return ResponseEntity.ok().body(userInfo);
     }
 
-    /** 회원 정보 수정 **/
     @PatchMapping("/user/{userId}")
-    @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
+    @Operation(security = { @SecurityRequirement(name = "bearerAuth") }, summary = "회원 정보 수정 API")
     public ResponseEntity<?> updateUser(@PathVariable("userId") Long userId,
                                         @RequestPart("userDto") @Valid UserDto userDto,
                                         @RequestPart(value = "userImgFile", required = false) MultipartFile userImgFile) {
@@ -87,22 +84,21 @@ public class UserController {
         return ResponseEntity.ok().body(updatedUser);
     }
 
-    /** 회원 탈퇴 **/
     @DeleteMapping("/user/{userId}")
-    @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
+    @Operation(security = { @SecurityRequirement(name = "bearerAuth") }, summary = "회원 탈퇴 API")
     public ResponseEntity<?> deleteUser(@PathVariable("userId") Long userId){
         userServiceImpl.deleteUser(userId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    /** 카테고리 모든 값 조회 **/
     @GetMapping("/categories")
+    @Operation(summary = "카테고리 모든 값 조회 API")
     public ResponseEntity<?> getCategories() {
         return ResponseEntity.ok().body(Category.values());
     }
 
-    /** 정의되어있는 모든 닉네임 조회 **/
     @GetMapping("/nicknames")
+    @Operation(summary = "저장되어있는 사용자의 모든 닉네임 조회 API")
     public ResponseEntity<?> getNicknames() {
         List<String> nicknames = userServiceImpl.getNicknames();
         return ResponseEntity.ok().body(nicknames);

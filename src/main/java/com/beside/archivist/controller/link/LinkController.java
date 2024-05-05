@@ -30,23 +30,22 @@ public class LinkController {
     private final LinkService linkServiceImpl;
     private final LinkGroupService linkGroupServiceImpl;
 
-    /** 회원이 저장한 링크 모두 조회 **/
     @GetMapping("/user/link/{userId}")
-    @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
+    @Operation(security = { @SecurityRequirement(name = "bearerAuth") }, summary = "회원이 저장한 링크 모두 조회 API")
     public ResponseEntity<List<LinkInfoDto>> getUserLinkList(@PathVariable("userId") Long userId) {
         List<LinkInfoDto> links = linkServiceImpl.getLinksByUserId(userId);
         return ResponseEntity.ok().body(links);
     }
 
-    /** 특정 링크 상세 조회 **/
     @GetMapping("/link/{linkId}")
+    @Operation(summary = "특정 링크 상세 조회 API")
     public ResponseEntity<?> findLinkById(@PathVariable("linkId") Long linkId) {
         LinkInfoDto linkInfoDto = linkServiceImpl.findLinkById(linkId);
         return ResponseEntity.ok().body(linkInfoDto);
     }
 
-    /** URL 유효성 검증 **/
     @GetMapping("/link/valid")
+    @Operation(summary = "URL 유효성 검증 API")
     public ResponseEntity<?> urlValidation(@RequestParam String url) {
         String[] schemes = {"http", "https"};
         UrlValidator urlValidator = new UrlValidator(schemes);
@@ -60,9 +59,8 @@ public class LinkController {
         return ResponseEntity.ok().body(validAt);
     }
 
-    /** 외부 웹에서 링크 저장 **/
     @PostMapping("/link")
-    @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
+    @Operation(security = { @SecurityRequirement(name = "bearerAuth") }, summary = "웹 링크 저장 API")
     public ResponseEntity<?> registerLink(@RequestPart @Valid LinkDto linkDto,
                                           Authentication authentication,
                                           @RequestPart(value = "groupId") Long[] groupIds,
@@ -77,9 +75,8 @@ public class LinkController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedLink);
     }
 
-    /** 링크 수정 **/
     @PatchMapping ("/link/{linkId}")
-    @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
+    @Operation(security = { @SecurityRequirement(name = "bearerAuth") }, summary = "링크 수정 API")
     public ResponseEntity<?> updateLink(@PathVariable("linkId") Long linkId,
                                             @RequestPart @Valid LinkDto linkDto,
                                             @RequestPart(value = "groupId") Long[] groupIds,
@@ -88,9 +85,8 @@ public class LinkController {
         return ResponseEntity.ok().body(updatedLink);
     }
 
-    /** 링크 삭제 **/
     @DeleteMapping("/link/{linkId}")
-    @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
+    @Operation(security = { @SecurityRequirement(name = "bearerAuth") }, summary = "링크 삭제 API")
     public ResponseEntity<?> deleteLink(@PathVariable("linkId") Long linkId){
         linkServiceImpl.deleteLink(linkId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
