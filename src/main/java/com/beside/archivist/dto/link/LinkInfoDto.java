@@ -9,18 +9,14 @@ import lombok.ToString;
 
 import java.util.List;
 
-@Getter @ToString
+@Getter
 public class LinkInfoDto {
     private Long linkId;
     private String linkUrl;    //북마크 경로
-    @NotBlank(message = "link 이름은 공백일 수 없습니다.")
-    @Size(min = 1, max = 100, message = "link 이름은 1자에서 100자 사이 여야 합니다.")
     private String linkName;   //북마크 이름
-    @Size( max = 400, message = "link 설명은 400자 이내 이여야 합니다.")
     private String linkDesc;   //북마크 설명
     private String imgUrl;
     private Long userId;
-
     private List<Long> groupList;
 
     @Builder

@@ -2,7 +2,6 @@ package com.beside.archivist.controller.link;
 
 import com.beside.archivist.dto.link.LinkDto;
 import com.beside.archivist.dto.link.LinkInfoDto;
-import com.beside.archivist.entity.group.Group;
 import com.beside.archivist.exception.common.ExceptionCode;
 import com.beside.archivist.exception.users.MissingAuthenticationException;
 import com.beside.archivist.service.group.LinkGroupService;
@@ -21,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.apache.commons.validator.routines.UrlValidator;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @RestController
@@ -32,35 +30,22 @@ public class LinkController {
     private final LinkService linkServiceImpl;
     private final LinkGroupService linkGroupServiceImpl;
 
-    /** 회원이 저장한 링크 모두 조회 **/
     @GetMapping("/user/link/{userId}")
-    @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
-    public ResponseEntity<List<LinkDto>> getUserLinkList(@PathVariable("userId") Long userId) {
-        List<LinkDto> links = linkServiceImpl.getLinksByUserId(userId);
+    @Operation(security = { @SecurityRequirement(name = "bearerAuth") }, summary = "회원이 저장한 링크 모두 조회 API")
+    public ResponseEntity<List<LinkInfoDto>> getUserLinkList(@PathVariable("userId") Long userId) {
+        List<LinkInfoDto> links = linkServiceImpl.getLinksByUserId(userId);
         return ResponseEntity.ok().body(links);
     }
 
-    /** 특정 링크 상세 조회 **/
     @GetMapping("/link/{linkId}")
+    @Operation(summary = "특정 링크 상세 조회 API")
     public ResponseEntity<?> findLinkById(@PathVariable("linkId") Long linkId) {
-        LinkDto link = linkServiceImpl.findLinkById(linkId);
-        List<Group> groupList = linkServiceImpl.getGroupsByLinkId(linkId);
-
-        LinkInfoDto linkInfoDto = LinkInfoDto.builder()
-                .linkId(link.getLinkId())
-                .linkUrl(link.getLinkUrl())
-                .linkName(link.getLinkName())
-                .linkDesc(link.getLinkDesc())
-                .imgUrl(link.getImgUrl())
-                .userId(link.getUserId())
-                .groupList(groupList.stream().map(Group::getId).collect(Collectors.toList()))
-                .build();
-
+        LinkInfoDto linkInfoDto = linkServiceImpl.findLinkById(linkId);
         return ResponseEntity.ok().body(linkInfoDto);
     }
 
-    /** URL 유효성 검증 **/
     @GetMapping("/link/valid")
+    @Operation(summary = "URL 유효성 검증 API")
     public ResponseEntity<?> urlValidation(@RequestParam String url) {
         String[] schemes = {"http", "https"};
         UrlValidator urlValidator = new UrlValidator(schemes);
@@ -74,9 +59,8 @@ public class LinkController {
         return ResponseEntity.ok().body(validAt);
     }
 
-    /** 외부 웹에서 링크 저장 **/
     @PostMapping("/link")
-    @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
+    @Operation(security = { @SecurityRequirement(name = "bearerAuth") }, summary = "웹 링크 저장 API")
     public ResponseEntity<?> registerLink(@RequestPart @Valid LinkDto linkDto,
                                           Authentication authentication,
                                           @RequestPart(value = "groupId") Long[] groupIds,
@@ -85,26 +69,24 @@ public class LinkController {
             throw new MissingAuthenticationException(ExceptionCode.MISSING_AUTHENTICATION);
         }
 
-        LinkDto savedLink = linkServiceImpl.saveLink(linkDto,groupIds,authentication.getName(),linkImgFile);
+        LinkInfoDto savedLink = linkServiceImpl.saveLink(linkDto,groupIds,authentication.getName(),linkImgFile);
         linkGroupServiceImpl.changeGroupImgArray(groupIds);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(savedLink);
     }
 
-    /** 링크 수정 **/
     @PatchMapping ("/link/{linkId}")
-    @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
+    @Operation(security = { @SecurityRequirement(name = "bearerAuth") }, summary = "링크 수정 API")
     public ResponseEntity<?> updateLink(@PathVariable("linkId") Long linkId,
                                             @RequestPart @Valid LinkDto linkDto,
                                             @RequestPart(value = "groupId") Long[] groupIds,
                                             @RequestPart(value = "linkImgFile", required = false) MultipartFile linkImgFile) {
-        LinkDto updatedLink = linkServiceImpl.updateLink(linkId, linkDto, groupIds, linkImgFile);
+        LinkInfoDto updatedLink = linkServiceImpl.updateLink(linkId, linkDto, groupIds, linkImgFile);
         return ResponseEntity.ok().body(updatedLink);
     }
 
-    /** 링크 삭제 **/
     @DeleteMapping("/link/{linkId}")
-    @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
+    @Operation(security = { @SecurityRequirement(name = "bearerAuth") }, summary = "링크 삭제 API")
     public ResponseEntity<?> deleteLink(@PathVariable("linkId") Long linkId){
         linkServiceImpl.deleteLink(linkId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
