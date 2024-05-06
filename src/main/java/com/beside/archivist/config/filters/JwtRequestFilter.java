@@ -45,13 +45,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 if (StringUtils.isNoneEmpty(username) && null == SecurityContextHolder.getContext().getAuthentication()) {
                     UserDetails userDetails = userServiceImpl.loadUserByUsername(username);
                     if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
-                        String role = "USER"; // Default role
-                        if ("gudwls215@naver.com".equals(username)) {
-                            role = "ADMIN";
-                        }
-
                         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                                new UsernamePasswordAuthenticationToken(userDetails, null, Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role)));
+                                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
                         usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
