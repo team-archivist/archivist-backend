@@ -1,6 +1,7 @@
 package com.beside.archivist.controller.bookmark;
 
 import com.beside.archivist.dto.group.GroupDto;
+import com.beside.archivist.dto.group.GroupInfoDto;
 import com.beside.archivist.exception.common.ExceptionCode;
 import com.beside.archivist.exception.users.MissingAuthenticationException;
 import com.beside.archivist.service.group.GroupService;
