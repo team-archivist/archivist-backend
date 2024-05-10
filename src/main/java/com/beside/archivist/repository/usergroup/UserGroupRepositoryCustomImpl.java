@@ -1,7 +1,7 @@
 package com.beside.archivist.repository.usergroup;
 
-import com.beside.archivist.dto.group.GroupDto;
-import com.beside.archivist.dto.group.QGroupDto;
+import com.beside.archivist.dto.group.GroupInfoDto;
+import com.beside.archivist.dto.group.QGroupInfoDto;
 import com.beside.archivist.entity.group.QGroup;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -18,8 +18,8 @@ public class UserGroupRepositoryCustomImpl implements UserGroupRepositoryCustom 
     }
 
     @Override
-    public List<GroupDto> getGroupsByUserId(Long userId, boolean isOwner) {
-        return queryFactory.select(new QGroupDto(QGroup.group))
+    public List<GroupInfoDto> getGroupsByUserId(Long userId, boolean isOwner) {
+        return queryFactory.select(new QGroupInfoDto(QGroup.group))
                 .from(userGroup)
                 .leftJoin(userGroup.groups, QGroup.group)
                 .where(userGroup.users.id.eq(userId),

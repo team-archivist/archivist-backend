@@ -2,7 +2,6 @@ package com.beside.archivist.controller.group;
 
 import com.beside.archivist.dto.group.GroupDto;
 import com.beside.archivist.dto.group.GroupInfoDto;
-import com.beside.archivist.dto.link.LinkDto;
 import com.beside.archivist.dto.link.LinkInfoDto;
 import com.beside.archivist.exception.common.ExceptionCode;
 import com.beside.archivist.exception.users.MissingAuthenticationException;
@@ -32,8 +31,8 @@ public class GroupController {
 
     @GetMapping("/user/group/{userId}")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") }, summary = "해당 유저의 모든 그룹 조회 API")
-    public ResponseEntity<List<GroupDto>> getUserGroupList(@PathVariable("userId") Long userId) {
-        List<GroupDto> groups = userGroupServiceImpl.getGroupDtoByUserId(userId, true);
+    public ResponseEntity<List<GroupInfoDto>> getUserGroupList(@PathVariable("userId") Long userId) {
+        List<GroupInfoDto> groups = userGroupServiceImpl.getGroupDtoByUserId(userId, true);
         return ResponseEntity.ok().body(groups);
     }
 
