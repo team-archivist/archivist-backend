@@ -1,12 +1,11 @@
 package com.beside.archivist.service.group;
 
 import com.beside.archivist.dto.group.GroupDto;
-import com.beside.archivist.dto.link.LinkDto;
+import com.beside.archivist.dto.group.GroupInfoDto;
 import com.beside.archivist.dto.link.LinkInfoDto;
 import com.beside.archivist.entity.group.Group;
 import com.beside.archivist.entity.group.GroupImg;
 import com.beside.archivist.entity.link.LinkImg;
-import com.beside.archivist.entity.usergroup.UserGroup;
 import com.beside.archivist.exception.common.ExceptionCode;
 import com.beside.archivist.exception.group.GroupNotFoundException;
 import com.beside.archivist.mapper.GroupMapper;
@@ -17,8 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
-
 
 @Service
 @Transactional
@@ -36,7 +33,7 @@ public class GroupServiceImpl implements GroupService {
      * @return GroupDto
      */
     @Override
-    public GroupDto saveGroup(GroupDto groupDto, MultipartFile groupImgFile)  {
+    public GroupInfoDto saveGroup(GroupDto groupDto, MultipartFile groupImgFile)  {
 
         Group savedGroup = groupRepository.save(
                 Group.builder()
@@ -81,7 +78,7 @@ public class GroupServiceImpl implements GroupService {
      * @return GroupDto
      */
     @Override
-    public GroupDto updateGroup(Long groupId, GroupDto groupDto, MultipartFile groupImgFile) {
+    public GroupInfoDto updateGroup(Long groupId, GroupDto groupDto, MultipartFile groupImgFile) {
         Group group = groupRepository.findById(groupId).orElseThrow(() -> new GroupNotFoundException(ExceptionCode.GROUP_NOT_FOUND));
 
         if(groupImgFile != null){
@@ -122,7 +119,7 @@ public class GroupServiceImpl implements GroupService {
      * @return GroupDto
      */
     @Override
-    public GroupDto findGroupById(Long id){
+    public GroupInfoDto findGroupById(Long id){
         Group group = groupRepository.findById(id).orElseThrow(() -> new GroupNotFoundException(ExceptionCode.GROUP_NOT_FOUND));
         return groupMapperImpl.toDto(group);
     }

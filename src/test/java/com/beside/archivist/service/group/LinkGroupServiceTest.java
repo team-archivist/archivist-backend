@@ -1,6 +1,7 @@
 package com.beside.archivist.service.group;
 
 import com.beside.archivist.dto.group.GroupDto;
+import com.beside.archivist.dto.group.GroupInfoDto;
 import com.beside.archivist.dto.link.LinkDto;
 import com.beside.archivist.dto.link.LinkInfoDto;
 import com.beside.archivist.entity.group.Group;
@@ -89,7 +90,7 @@ class LinkGroupServiceTest {
         // 1. 이미지 없이 그룹 생성
         GroupDto groupDto = createGroupDto("group1","group1 description",
                 "Y", List.of(Category.LIFESTYLE,Category.KNOWLEDGE));
-        GroupDto savedGroupDto = groupServiceImpl.saveGroup(groupDto, null);
+        GroupInfoDto savedGroupDto = groupServiceImpl.saveGroup(groupDto, null);
         // 2. 링크 생성 + 그룹에 링크 저장
         MockMultipartFile linkImg = new MockMultipartFile(
                 "봄이다",
@@ -123,7 +124,7 @@ class LinkGroupServiceTest {
         // 1. 이미지 없이 그룹 생성
         GroupDto groupDto = createGroupDto("group1","group1 description",
                 "Y", List.of(Category.LIFESTYLE,Category.KNOWLEDGE));
-        GroupDto savedGroupDto = groupServiceImpl.saveGroup(groupDto, null);
+        GroupInfoDto savedGroupDto = groupServiceImpl.saveGroup(groupDto, null);
         // 2. 링크 생성
         MockMultipartFile linkImg = new MockMultipartFile(
                 "봄이다",

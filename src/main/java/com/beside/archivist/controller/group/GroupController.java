@@ -1,6 +1,7 @@
 package com.beside.archivist.controller.group;
 
 import com.beside.archivist.dto.group.GroupDto;
+import com.beside.archivist.dto.group.GroupInfoDto;
 import com.beside.archivist.dto.link.LinkInfoDto;
 import com.beside.archivist.exception.common.ExceptionCode;
 import com.beside.archivist.exception.users.MissingAuthenticationException;
@@ -30,15 +31,15 @@ public class GroupController {
 
     @GetMapping("/user/group/{userId}")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") }, summary = "해당 유저의 모든 그룹 조회 API")
-    public ResponseEntity<List<GroupDto>> getUserGroupList(@PathVariable("userId") Long userId) {
-        List<GroupDto> groups = userGroupServiceImpl.getGroupDtoByUserId(userId, true);
+    public ResponseEntity<List<GroupInfoDto>> getUserGroupList(@PathVariable("userId") Long userId) {
+        List<GroupInfoDto> groups = userGroupServiceImpl.getGroupDtoByUserId(userId, true);
         return ResponseEntity.ok().body(groups);
     }
 
     @GetMapping("/group/{groupId}")
     @Operation(summary = "특정 그룹 상세 조회 API")
     public ResponseEntity<?> findGroupById(@PathVariable("groupId") Long id) {
-        GroupDto group = groupServiceImpl.findGroupById(id);
+        GroupInfoDto group = groupServiceImpl.findGroupById(id);
         return ResponseEntity.ok().body(group);
     }
 
@@ -50,7 +51,7 @@ public class GroupController {
             throw new MissingAuthenticationException(ExceptionCode.MISSING_AUTHENTICATION);
         }
 
-        GroupDto savedGroup = groupServiceImpl.saveGroup(groupDto,groupImgFile);
+        GroupInfoDto savedGroup = groupServiceImpl.saveGroup(groupDto,groupImgFile);
         userGroupServiceImpl.saveUserGroup(savedGroup.getGroupId(),authentication.getName(),true);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedGroup);
     }
@@ -60,7 +61,7 @@ public class GroupController {
     public ResponseEntity<?> updateGroup(@PathVariable("groupId") Long groupId,
                                             @RequestPart @Valid GroupDto groupDto,
                                             @RequestPart(value = "groupImgFile", required = false) MultipartFile groupImgFile) {
-        GroupDto updatedGroup = groupServiceImpl.updateGroup(groupId, groupDto, groupImgFile);
+        GroupInfoDto updatedGroup = groupServiceImpl.updateGroup(groupId, groupDto, groupImgFile);
         return ResponseEntity.ok().body(updatedGroup);
     }
 
