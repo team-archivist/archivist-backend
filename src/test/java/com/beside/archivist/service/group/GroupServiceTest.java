@@ -1,6 +1,7 @@
 package com.beside.archivist.service.group;
 
 import com.beside.archivist.dto.group.GroupDto;
+import com.beside.archivist.dto.group.GroupInfoDto;
 import com.beside.archivist.entity.group.Group;
 import com.beside.archivist.entity.users.Category;
 import com.beside.archivist.exception.group.GroupNotFoundException;
@@ -53,7 +54,7 @@ class GroupServiceTest {
                 List.of(Category.LIFESTYLE,Category.KNOWLEDGE));
 
         // when
-        GroupDto savedGroupDto = groupServiceImpl.saveGroup(groupDto, null);
+        GroupInfoDto savedGroupDto = groupServiceImpl.saveGroup(groupDto, null);
 
         // then
         Group savedGroup = groupRepository.findById(savedGroupDto.getGroupId()).orElseThrow();
@@ -71,10 +72,10 @@ class GroupServiceTest {
         // given
         GroupDto groupDto = createGroupDto("group1","group1 description","Y",
                 List.of(Category.LIFESTYLE,Category.KNOWLEDGE));
-        GroupDto savedGroupDto = groupServiceImpl.saveGroup(groupDto, null);
+        GroupInfoDto savedGroupDto = groupServiceImpl.saveGroup(groupDto, null);
 
         // when
-        GroupDto findGroup = groupServiceImpl.findGroupById(savedGroupDto.getGroupId());
+        GroupInfoDto findGroup = groupServiceImpl.findGroupById(savedGroupDto.getGroupId());
 
         // then
         assertAll("findGroup",
@@ -91,7 +92,7 @@ class GroupServiceTest {
         //given
         GroupDto groupDto = createGroupDto("group1","group1 description",
                 "Y", List.of(Category.LIFESTYLE,Category.KNOWLEDGE));
-        GroupDto savedGroupDto = groupServiceImpl.saveGroup(groupDto, null);
+        GroupInfoDto savedGroupDto = groupServiceImpl.saveGroup(groupDto, null);
         GroupDto updateRequest = createGroupDto("updatedGroup", "Group is Updated",
                 "Y", List.of(Category.EXERCISE));
 
@@ -114,7 +115,7 @@ class GroupServiceTest {
         // given
         GroupDto groupDto = createGroupDto("group1","group1 description",
                 "Y", List.of(Category.LIFESTYLE,Category.KNOWLEDGE));
-        GroupDto savedGroupDto = groupServiceImpl.saveGroup(groupDto, null);
+        GroupInfoDto savedGroupDto = groupServiceImpl.saveGroup(groupDto, null);
 
         // when
         groupServiceImpl.deleteGroup(savedGroupDto.getGroupId());

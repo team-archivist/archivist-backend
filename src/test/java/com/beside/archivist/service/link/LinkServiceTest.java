@@ -1,6 +1,7 @@
 package com.beside.archivist.service.link;
 
 import com.beside.archivist.dto.link.LinkDto;
+import com.beside.archivist.dto.link.LinkInfoDto;
 import com.beside.archivist.entity.group.Group;
 import com.beside.archivist.entity.link.Link;
 import com.beside.archivist.entity.link.LinkImg;
@@ -90,7 +91,7 @@ class LinkServiceTest {
         LinkDto linkDto = createLinkDto("깃허브 홈페이지","github.com","깃허브 홈페이지 설명");
 
         // when
-        LinkDto savedLink =
+        LinkInfoDto savedLink =
                 linkServiceImpl.saveLink(linkDto, new Long[]{savedGroup.getId()}, savedUser.getEmail(), null);
 
         // then
@@ -116,7 +117,7 @@ class LinkServiceTest {
         linkImgRepository.save(linkImg);
 
         // when
-        LinkDto findLink = linkServiceImpl.findLinkById(savedLink.getId());
+        LinkInfoDto findLink = linkServiceImpl.findLinkById(savedLink.getId());
 
         // then
         assertAll("findLink",
@@ -145,7 +146,7 @@ class LinkServiceTest {
         LinkDto updateLinkDto =  createLinkDto("우리 홈페이지","arcave.com","우리 홈페이지 설명");
 
         // when
-        LinkDto updatedLink =
+        LinkInfoDto updatedLink =
                 linkServiceImpl.updateLink(link.getId(), updateLinkDto, new Long[]{savedGroup.getId()}, null);
 
         // then
