@@ -77,8 +77,8 @@ public class HomeFeedServiceImpl implements HomeFeedService{
      */
     private Object fetchData(HomeFeed homeFeed) {
         return switch (homeFeed.getType()){
-            case GROUP -> groupServiceImpl.findGroupById(homeFeed.getId());
-            case LINK -> linkServiceImpl.findLinkById(homeFeed.getId());
+            case GROUP -> groupServiceImpl.findGroupById(homeFeed.getObjectId());
+            case LINK -> linkServiceImpl.findLinkById(homeFeed.getObjectId());
         };
     }
 }
