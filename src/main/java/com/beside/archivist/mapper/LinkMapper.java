@@ -20,6 +20,12 @@ public interface LinkMapper {
     LinkInfoDto toDto(Link link);
     Link toEntity(LinkDto linkDto);
 
+    @Mapping(target = "linkId", source = "id")
+    @Mapping(target = "userId", source = "users.id")
+    @Mapping(target = "imgUrl", source = "linkImg.imgUrl")
+    @Mapping(target = "groupList", source = "linkGroups", qualifiedByName = "mapLinkGroupsToGroupList")
+    List<LinkInfoDto> toDtoList(List<Link> links);
+
     @Named("mapLinkGroupsToGroupList")
     default List<Long> mapLinkGroupsToGroupList(List<LinkGroup> linkGroups) {
         return linkGroups.stream()

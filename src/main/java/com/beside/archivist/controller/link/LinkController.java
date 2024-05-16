@@ -92,5 +92,12 @@ public class LinkController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @GetMapping("/links")
+    @Operation(summary = "모든 링크 조회 API")
+    public ResponseEntity<List<LinkInfoDto>> getAllLinks() {
+        List<LinkInfoDto> links = linkServiceImpl.getAllLinks();
+        return ResponseEntity.ok().body(links);
+    }
+
 }
 

@@ -49,13 +49,6 @@ public class UserController {
         return ResponseEntity.ok().headers(headers).body(response);
     }
 
-    /** 관리자용 엔드 포인트 구현 **/
-    @GetMapping("/api/admin")
-    public ResponseEntity<?> adminLogin(@RequestParam String email, @RequestParam String password) {
-        userServiceImpl.adminLogin(email,password);
-        return ResponseEntity.ok().body("BE로 문의 주세요");
-    }
-
     @PostMapping("/user")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth") }, summary = "회원 정보 저장 API")
     public ResponseEntity<?> registerUser(@RequestBody @Valid UserDto userDto, @RequestHeader("Authorization") String tokenHeader) {

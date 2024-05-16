@@ -19,4 +19,6 @@ public interface LinkService {
     List<LinkInfoDto>  getLinksByUserId(Long userId);
 
     List<Group> getGroupsByLinkId(Long linkId);
+
+    List<LinkInfoDto> getAllLinks();
 }

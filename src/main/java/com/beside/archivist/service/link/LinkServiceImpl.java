@@ -122,4 +122,10 @@ public class LinkServiceImpl implements LinkService {
         }
         return Collections.emptyList();
     }
+
+    @Override
+    public List<LinkInfoDto> getAllLinks() {
+        List<Link> links = linkRepository.findAll();
+        return linkMapperImpl.toDtoList(links);
+    }
 }

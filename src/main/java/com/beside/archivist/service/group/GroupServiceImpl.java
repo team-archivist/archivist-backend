@@ -145,4 +145,17 @@ public class GroupServiceImpl implements GroupService {
                             .build()
                 ).toList();
     }
+
+    /**
+     * 공개된 모든 그룹 조회
+     * @return
+     */
+    @Override
+    public List<GroupInfoDto> getAllGroups() {
+        List<Group> groups = groupRepository.findAll()
+                .stream()
+                .filter(group -> group.getIsGroupPublic().equals("Y"))
+                .toList();
+        return groupMapperImpl.toDtoList(groups);
+    }
 }

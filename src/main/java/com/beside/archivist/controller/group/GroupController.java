@@ -78,5 +78,12 @@ public class GroupController {
         List<LinkInfoDto> group = groupServiceImpl.getLinksByGroupId(id);
         return ResponseEntity.ok().body(group);
     }
+
+    @GetMapping("/groups")
+    @Operation(summary = "공개된 그룹 모두 조회 API")
+    public ResponseEntity<List<GroupInfoDto>> getAllGroups() {
+        List<GroupInfoDto> groups = groupServiceImpl.getAllGroups();
+        return ResponseEntity.ok().body(groups);
+    }
 }
 
