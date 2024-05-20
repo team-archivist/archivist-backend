@@ -61,7 +61,6 @@ public class Group extends BaseEntity {
         this.groupDesc = groupDto.getGroupDesc();
         this.isGroupPublic = groupDto.getIsGroupPublic();
         this.categories = groupDto.getCategories();
-        this.linkCount = groupDto.getLinkCount();
     }
 
     public void addUserGroup(UserGroup userGroup) {

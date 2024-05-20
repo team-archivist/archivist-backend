@@ -1,9 +1,8 @@
 package com.beside.archivist.controller.bookmark;
 
-import com.beside.archivist.dto.group.GroupDto;
+import com.beside.archivist.dto.group.GroupInfoDto;
 import com.beside.archivist.exception.common.ExceptionCode;
 import com.beside.archivist.exception.users.MissingAuthenticationException;
-import com.beside.archivist.service.group.GroupService;
 import com.beside.archivist.service.usergroup.UserGroupService;
 import com.beside.archivist.service.users.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,7 +33,7 @@ public class BookmarkController {
     @GetMapping("/user/bookmark/{userId}")
     @Operation(security = { @SecurityRequirement(name = "bearerAuth")}, summary = "내가 북마크한 그룹 모두 조회 API")
     public ResponseEntity<?> getBookmarks(@PathVariable("userId") Long userId) {
-        List<GroupDto> groups = userGroupServiceImpl.getGroupDtoByUserId(userId, false);
+        List<GroupInfoDto> groups = userGroupServiceImpl.getGroupDtoByUserId(userId, false);
         return ResponseEntity.ok().body(groups);
     }
 

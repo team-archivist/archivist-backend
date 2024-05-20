@@ -1,13 +1,12 @@
 package com.beside.archivist.service.usergroup;
 
-import com.beside.archivist.dto.group.GroupDto;
+import com.beside.archivist.dto.group.GroupInfoDto;
 import com.beside.archivist.entity.group.Group;
 import com.beside.archivist.entity.usergroup.UserGroup;
 import com.beside.archivist.entity.users.User;
 import com.beside.archivist.exception.common.ExceptionCode;
 import com.beside.archivist.exception.group.GroupAlreadyExistsException;
 import com.beside.archivist.exception.group.GroupInBookmarkNotFoundException;
-import com.beside.archivist.exception.users.MissingAuthenticationException;
 import com.beside.archivist.repository.usergroup.UserGroupRepository;
 import com.beside.archivist.service.group.GroupService;
 import com.beside.archivist.service.users.UserService;
@@ -51,7 +50,7 @@ public class UserGroupServiceImpl implements UserGroupService {
     }
 
     @Override
-    public List<GroupDto> getGroupDtoByUserId(Long userId, boolean isOwner) {
+    public List<GroupInfoDto> getGroupDtoByUserId(Long userId, boolean isOwner) {
         return userGroupRepository.getGroupsByUserId(userId,isOwner);
     }
 
