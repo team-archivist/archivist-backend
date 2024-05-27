@@ -11,4 +11,5 @@ public interface UserGroupService {
     List<GroupInfoDto> getGroupDtoByUserId(Long userId, boolean isOwner);
     void deleteBookmark(Long userId, Long groupId);
     void checkDuplicateGroup(Long userId, Long groupId, boolean isOwner);
+    void saveDefaultGroup(String email);
 }

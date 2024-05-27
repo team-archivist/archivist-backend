@@ -24,4 +24,5 @@ public interface GroupService {
 
     void changeToLinkImg(Long groupId, LinkImg linkImg);
     List<GroupInfoDto> getAllGroups();
+    Group saveDefaultGroup();
 }

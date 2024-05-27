@@ -34,6 +34,8 @@ public class Group extends BaseEntity {
     private String isGroupPublic; // default: 'Y'
     @Column
     private List<Category> categories;
+    @Column
+    private String isDefault;
     @Formula("(SELECT COUNT(lg.link_group_id) FROM link_group lg WHERE lg.group_id = group_id)")
     private Long linkCount;
 
@@ -48,13 +50,14 @@ public class Group extends BaseEntity {
 
 
     @Builder
-    public Group(String groupName, String groupDesc, String isGroupPublic, List<Category> categories, Long linkCount, List<LinkGroup> linkGroups) {
+    public Group(String groupName, String groupDesc, String isGroupPublic, List<Category> categories, Long linkCount, List<LinkGroup> linkGroups, String isDefault) {
         this.groupName = groupName;
         this.groupDesc = groupDesc;
         this.isGroupPublic = isGroupPublic == null ? "Y" : isGroupPublic;
         this.categories = categories;
         this.linkCount = linkCount;
         this.linkGroups = linkGroups;
+        this.isDefault = isDefault == null ? "N" : isDefault;
     }
     public void update(GroupDto groupDto) {
         this.groupName = groupDto.getGroupName();
@@ -71,5 +74,14 @@ public class Group extends BaseEntity {
     }
     public void saveGroupImg(GroupImg groupImg){
         this.groupImg = groupImg;
+    }
+
+    public static Group fetchDefaultGroup() { // 기본 그룹 비공개
+        return Group.builder()
+                .groupName("기본 그룹")
+                .groupDesc("기본 그룹")
+                .isDefault("Y")
+                .isGroupPublic("N")
+                .build();
     }
 }

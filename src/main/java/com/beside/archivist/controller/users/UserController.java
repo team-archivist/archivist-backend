@@ -5,11 +5,9 @@ import com.beside.archivist.dto.users.KakaoLoginDto;
 import com.beside.archivist.dto.users.UserDto;
 import com.beside.archivist.dto.users.UserInfoDto;
 import com.beside.archivist.entity.users.Category;
-import com.beside.archivist.entity.users.UserImg;
 import com.beside.archivist.exception.common.ExceptionCode;
 import com.beside.archivist.exception.users.EmailTokenMismatchException;
-import com.beside.archivist.exception.users.MissingAuthenticationException;
-import com.beside.archivist.service.users.UserImgService;
+import com.beside.archivist.service.usergroup.UserGroupService;
 import com.beside.archivist.service.users.UserService;
 import com.beside.archivist.utils.JwtTokenUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,6 +32,7 @@ public class UserController {
 
     private final KakaoService kakaoServiceImpl;
     private final UserService userServiceImpl;
+    private final UserGroupService userGroupServiceImpl;
     private final JwtTokenUtil jwtTokenUtil;
 
     @PostMapping("/login/kakao")
@@ -58,6 +57,7 @@ public class UserController {
             throw new EmailTokenMismatchException(ExceptionCode.EMAIL_TOKEN_MISMATCH);
         }
         UserInfoDto savedUser = userServiceImpl.saveUser(userDto);
+        userGroupServiceImpl.saveDefaultGroup(savedUser.getEmail()); // 회원 가입 시 기본 그룹 자동 생성
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 
