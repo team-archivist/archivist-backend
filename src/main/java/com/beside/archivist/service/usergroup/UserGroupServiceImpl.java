@@ -31,8 +31,8 @@ public class UserGroupServiceImpl implements UserGroupService {
         
         UserGroup userGroup = UserGroup.builder()
                 .isOwner(isOwner) // save / bookmark 그룹 구분
-                .users(userServiceImpl.getUserByEmail(email))
-                .groups(groupServiceImpl.getGroup(groupId))
+                .users(findUser)
+                .groups(findGroup)
                 .build();
 
         userGroup.getUsers().addUserGroup(userGroup);
@@ -62,5 +62,19 @@ public class UserGroupServiceImpl implements UserGroupService {
             throw new GroupInBookmarkNotFoundException(ExceptionCode.GROUP_IN_BOOKMARK_NOT_FOUND);
         }
         userGroupRepository.delete(userGroup);
+    }
+
+    @Override
+    public void saveDefaultGroup(String email) {
+        User findUser = userServiceImpl.getUserByEmail(email);
+        Group defaultGroup = groupServiceImpl.saveDefaultGroup();
+
+        UserGroup userGroup = UserGroup.builder()
+                .groups(defaultGroup)
+                .users(findUser)
+                .isOwner(true)
+                .build();
+
+        userGroupRepository.save(userGroup);
     }
 }

@@ -158,4 +158,17 @@ public class GroupServiceImpl implements GroupService {
                 .toList();
         return groupMapperImpl.toDtoList(groups);
     }
+
+    /**
+     * 회원별로 신규 가입 시 기본 그룹 자동 생성 ( 수정/삭제 X, 비공개 )
+     * @return
+     */
+    @Override
+    public Group saveDefaultGroup() {
+        Group defaultGroup = groupRepository.save(Group.fetchDefaultGroup());
+        GroupImg groupImg = GroupImg.initializeDefaultLinkImg();
+        groupImg.saveGroup(defaultGroup);
+        groupImgServiceImpl.saveGroupImg(groupImg);
+        return defaultGroup;
+    }
 }
