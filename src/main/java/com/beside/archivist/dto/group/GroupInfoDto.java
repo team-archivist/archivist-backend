@@ -3,8 +3,6 @@ package com.beside.archivist.dto.group;
 import com.beside.archivist.entity.group.Group;
 import com.beside.archivist.entity.users.Category;
 import com.querydsl.core.annotations.QueryProjection;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -19,9 +17,10 @@ public class GroupInfoDto {
     private List<Category> categories;  //그룹 카테고리
     private String imgUrl;
     private Long linkCount;
+    private String isDefault;
 
     @Builder
-    public GroupInfoDto(Long groupId, String groupName, String groupDesc, String isGroupPublic, List<Category> categories, String imgUrl, Long linkCount) {
+    public GroupInfoDto(Long groupId, String groupName, String groupDesc, String isGroupPublic, List<Category> categories, String imgUrl, Long linkCount, String isDefault) {
         this.groupId = groupId;
         this.groupName = groupName != null ? groupName.trim() : groupName;
         this.groupDesc = groupDesc;
@@ -29,6 +28,7 @@ public class GroupInfoDto {
         this.categories = categories;
         this.imgUrl = imgUrl;
         this.linkCount = linkCount;
+        this.isDefault = isDefault;
     }
 
     @QueryProjection
@@ -40,5 +40,6 @@ public class GroupInfoDto {
         this.categories = group.getCategories();
         this.imgUrl = group.getGroupImg().getImgUrl();
         this.linkCount = group.getLinkCount();
+        this.isDefault = group.getIsDefault();
     }
 }

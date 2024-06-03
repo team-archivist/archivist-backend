@@ -1,5 +1,6 @@
 package com.beside.archivist.service.users;
 
+import com.beside.archivist.dto.group.GroupInfoDto;
 import com.beside.archivist.dto.users.UserDto;
 import com.beside.archivist.dto.users.UserInfoDto;
 import com.beside.archivist.entity.users.Category;
@@ -7,6 +8,7 @@ import com.beside.archivist.exception.users.UserAlreadyExistsException;
 import com.beside.archivist.exception.users.UserNotFoundException;
 import com.beside.archivist.repository.users.UserImgRepository;
 import com.beside.archivist.repository.users.UserRepository;
+import com.beside.archivist.service.usergroup.UserGroupService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,6 +31,8 @@ class UserServiceTest {
     UserImgRepository userImgRepository;
     @Autowired
     UserService userServiceImpl;
+    @Autowired
+    UserGroupService userGroupServiceImpl;
 
     @AfterEach
     void tearDown() {
@@ -59,6 +63,28 @@ class UserServiceTest {
                 () ->  assertEquals(userRequest.getEmail(),savedUser.getEmail()),
                 () -> assertEquals(userRequest.getNickname(),savedUser.getNickname()),
                 ()-> assertEquals(userRequest.getCategories(),savedUser.getCategories())
+        );
+    }
+
+    @Test
+    @DisplayName("회원 가입 시 기본 그룹이 자동으로 생성된다.")
+    public void saveUserWithDefaultGroupTest(){
+        // given
+        UserDto userRequest = createUserRequest("limnj@test.com",
+                List.of(Category.CULTURE, Category.KNOWLEDGE), "limnj");
+        UserInfoDto savedUser = userServiceImpl.saveUser(userRequest);
+
+        // when
+        userGroupServiceImpl.saveDefaultGroup(savedUser.getEmail());
+
+        // then
+        GroupInfoDto groupInfoDtos =
+                userGroupServiceImpl.getGroupDtoByUserId(savedUser.getUserId(), true).get(0);
+        assertAll("groupInfoDtos",
+                () ->  assertEquals(groupInfoDtos.getGroupName(),"기본 그룹"),
+                () -> assertEquals(groupInfoDtos.getGroupDesc(),"기본 그룹"),
+                ()-> assertEquals(groupInfoDtos.getIsGroupPublic(),"N"),
+                ()-> assertEquals(groupInfoDtos.getIsDefault(),"Y")
         );
     }
 
