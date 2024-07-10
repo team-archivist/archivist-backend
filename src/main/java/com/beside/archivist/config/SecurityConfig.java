@@ -25,7 +25,7 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig{
+public class SecurityConfig {
 
     private final UserService userServiceImpl;
     private final AuthenticationEntryPointImpl authenticationEntryPointImpl;
@@ -41,26 +41,26 @@ public class SecurityConfig{
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-                .authorizeHttpRequests(
-                        request -> request
-                                .requestMatchers(HttpMethod.POST, "/user").permitAll() // Controller 에서 인증
-                                .requestMatchers("/user/**").authenticated()
-                                .requestMatchers(HttpMethod.GET, "/link/{linkId}").permitAll()
-                                .requestMatchers("/link","/link/{linkId}").authenticated()
-                                .requestMatchers(HttpMethod.GET, "/group/{groupId}").permitAll()
-                                .requestMatchers("/group","/group/{groupId}").authenticated()
-                                .requestMatchers("/bookmark/**").authenticated()
-                                .anyRequest().permitAll()
-                )
-                .csrf().disable()
-                .cors().configurationSource(corsConfigurationSource())// cors 설정
-                .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .exceptionHandling().authenticationEntryPoint(authenticationEntryPointImpl)
-                .and()
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtExceptionFilter, JwtRequestFilter.class)
+            .authorizeHttpRequests(
+                request -> request
+                    .requestMatchers(HttpMethod.POST, "/user").permitAll() // Controller 에서 인증
+                    .requestMatchers("/user/**").authenticated()
+                    .requestMatchers(HttpMethod.GET, "/link/{linkId}").permitAll()
+                    .requestMatchers("/link", "/link/{linkId}").authenticated()
+                    .requestMatchers(HttpMethod.GET, "/group/{groupId}").permitAll()
+                    .requestMatchers("/group", "/group/{groupId}").authenticated()
+                    .requestMatchers("/bookmark/**").authenticated()
+                    .anyRequest().permitAll()
+            )
+            .csrf().disable()
+            .cors().configurationSource(corsConfigurationSource())// cors 설정
+            .and()
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and()
+            .exceptionHandling().authenticationEntryPoint(authenticationEntryPointImpl)
+            .and()
+            .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(jwtExceptionFilter, JwtRequestFilter.class)
         ;
 
         return http.build();
@@ -82,16 +82,21 @@ public class SecurityConfig{
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of("http://localhost:5220","http://www.arcave-official.com",
-                "http://www.test.arcave-official.com","http://www.stage.arcave-official.com",
-                "https://archivist-frontend-web.vercel.app"));
+        configuration.setAllowedOrigins(List.of(
+            "http://localhost:5220",
+            "http://www.arcave-official.com",
+            "http://www.test.arcave-official.com",
+            "http://www.stage.arcave-official.com",
+            "https://archivist-frontend-web.vercel.app",
+            "https://archivist-frontend-pgonee.vercel.app"
+        ));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setExposedHeaders(List.of("*"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**",configuration);
+        source.registerCorsConfiguration("/**", configuration);
 
         return source;
     }
