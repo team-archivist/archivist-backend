@@ -36,9 +36,9 @@ public class UserServiceImpl implements UserService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(ExceptionCode.USER_NOT_FOUND));
         return new org.springframework.security.core.userdetails.User(
-                user.getEmail(), user.getPassword(),
-                true, true, true, true,
-                new ArrayList<>()
+            user.getEmail(), user.getPassword(),
+            true, true, true, true,
+            new ArrayList<>()
         );
     }
 
@@ -47,9 +47,9 @@ public class UserServiceImpl implements UserService {
         Optional<User> findUser = userRepository.findByEmail(email);
         if (findUser.isEmpty()) {
             User user = User.builder()
-                            .email(email)
-                            .password(password)
-                            .build();
+                .email(email)
+                .password(password)
+                .build();
             userRepository.save(user);
         }
     }
@@ -60,12 +60,12 @@ public class UserServiceImpl implements UserService {
         checkInvalidCategory(userDto.getCategories()); // 카테고리 null 값 체크
 
         User savedUser = userRepository.save(
-                User.builder()
-                        .email(userDto.getEmail())
-                        .password(UUID.randomUUID().toString())
-                        .categories(userDto.getCategories())
-                        .nickname(userDto.getNickname())
-                        .build()
+            User.builder()
+                .email(userDto.getEmail())
+                .password(UUID.randomUUID().toString())
+                .categories(userDto.getCategories())
+                .nickname(userDto.getNickname())
+                .build()
         );
 
         /* 초기 디폴트 이미지 저장 */
@@ -80,17 +80,17 @@ public class UserServiceImpl implements UserService {
     public UserInfoDto getUserInfo(String email) {
 
         return getUserFromRedis(email)
-                .orElseGet(() -> {
-                    User user = getUserByEmail(email);
-                    saveUserToRedis(user);
-                    return userMapperImpl.toDto(user);
-                });
+            .orElseGet(() -> {
+                User user = getUserByEmail(email);
+                saveUserToRedis(user);
+                return userMapperImpl.toDto(user);
+            });
     }
 
     public Optional<UserInfoDto> getUserFromRedis(String email) {
         // Redis에서 해당 이메일을 키로 하는 사용자 정보 조회
         return userRedisRepository.findById(email)
-                .map(users -> UserInfoDto.builder().email(users.getEmail()).nickname(users.getNickname()).categories(users.getCategories()).imgUrl(users.getImgUrl()).userId(users.getUserId()).build());
+            .map(users -> UserInfoDto.builder().email(users.getEmail()).nickname(users.getNickname()).categories(users.getCategories()).imgUrl(users.getImgUrl()).userId(users.getUserId()).build());
     }
 
     public void saveUserToRedis(User user) {
@@ -99,20 +99,26 @@ public class UserServiceImpl implements UserService {
         userRedisRepository.save(users);
     }
 
+    public void deleteUserFromRedis(User user) {
+        // Redis에 사용자 정보 제거
+        Users users = new Users(user.getEmail(), user.getNickname(), user.getPassword(), user.getCategories(), user.getUserImg().getImgUrl(), user.getId());
+        userRedisRepository.deleteAll();
+    }
+
     @Override
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(
-                () -> new UserNotFoundException(ExceptionCode.USER_NOT_FOUND));
+            () -> new UserNotFoundException(ExceptionCode.USER_NOT_FOUND));
     }
 
     @Override
     public UserInfoDto updateUser(Long userId, UserDto userDto, MultipartFile userImgFile) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new UserNotFoundException(ExceptionCode.USER_NOT_FOUND));
+            () -> new UserNotFoundException(ExceptionCode.USER_NOT_FOUND));
 
         checkInvalidCategory(userDto.getCategories()); // 카테고리 null 값 체크
-        user.updateUserInfo(userDto.getNickname(),userDto.getCategories()); // 유저 정보 update
-        if (userImgFile != null){
+        user.updateUserInfo(userDto.getNickname(), userDto.getCategories()); // 유저 정보 update
+        if (userImgFile != null) {
             userImgServiceImpl.changeUserImg(user.getUserImg().getId(), userImgFile); // 유저 이미지 update
         }
         this.saveUserToRedis(user);
@@ -127,6 +133,7 @@ public class UserServiceImpl implements UserService {
         user.updateUserEmail(maskEmail(user.getEmail()));
         user.setIsDeleted("Y");
         user.setDeletedAt(new Date().toInstant());
+        this.deleteUserFromRedis(user);
     }
 
     @Override
@@ -143,7 +150,7 @@ public class UserServiceImpl implements UserService {
             throw new InvalidCategoryNameException(ExceptionCode.INVALID_CATEGORY_NAME);
         }
     }
-    
+
     @Override
     public List<String> getNicknames() {
         return userRepository.getNicknames();
