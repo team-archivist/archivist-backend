@@ -115,6 +115,7 @@ public class UserServiceImpl implements UserService {
         if (userImgFile != null){
             userImgServiceImpl.changeUserImg(user.getUserImg().getId(), userImgFile); // 유저 이미지 update
         }
+        this.saveUserToRedis(user);
 
         return userMapperImpl.toDto(user);
     }
