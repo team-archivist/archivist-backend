@@ -88,7 +88,8 @@ public class SecurityConfig {
             "http://www.test.arcave-official.com",
             "http://www.stage.arcave-official.com",
             "https://archivist-frontend-web.vercel.app",
-            "https://archivist-frontend-pgonee.vercel.app"
+            "https://archivist-frontend-pgonee.vercel.app",
+            "https://app.arcave-official.com"
         ));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setExposedHeaders(List.of("*"));
